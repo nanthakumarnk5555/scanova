@@ -9,12 +9,20 @@ from app.models.entities import UploadedImage, Prediction, User
 from app.services.audit_service import log_audit_event
 
 # Ensure model directory is on sys.path
-model_dir = os.path.abspath(os.path.join(settings.BASE_DIR, "..", "model"))
-if model_dir not in sys.path:
-    sys.path.insert(0, model_dir)
+for candidate_dir in [
+    os.path.abspath(os.path.join(settings.BASE_DIR, "model")),
+    os.path.abspath(os.path.join(settings.BASE_DIR, "..", "model")),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "model"))
+]:
+    if os.path.exists(candidate_dir) and candidate_dir not in sys.path:
+        sys.path.insert(0, candidate_dir)
 
-from densenet_model import get_inference_service
-from xray_validator import get_xray_validator
+try:
+    from model.densenet_model import get_inference_service
+    from model.xray_validator import get_xray_validator
+except ImportError:
+    from densenet_model import get_inference_service
+    from xray_validator import get_xray_validator
 
 def run_densenet_prediction(
     db: Session,
