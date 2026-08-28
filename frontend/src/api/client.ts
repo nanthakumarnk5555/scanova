@@ -186,7 +186,8 @@ export interface SampleXRay {
   patient_sex?: string;
 }
 
-const API_BASE = '/api/v1';
+export const API_HOST = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+export const API_BASE = `${API_HOST}/api/v1`;
 
 function getAuthHeaders(): HeadersInit {
   const token = localStorage.getItem('scanova_auth_token');

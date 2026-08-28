@@ -4,6 +4,7 @@ import {
   ExternalLink, FileSpreadsheet, Layers, BookOpen, Clock
 } from 'lucide-react';
 import type { PerformanceMetric, DriftEvent } from '../types';
+import { API_BASE } from '../api/client';
 
 interface ComplianceReportsProps {
   metrics: PerformanceMetric | null;
@@ -12,7 +13,7 @@ interface ComplianceReportsProps {
 
 export const ComplianceReports: React.FC<ComplianceReportsProps> = ({ metrics, driftData }) => {
   const handleDownloadSurveillancePdf = () => {
-    window.open('/api/v1/reports/surveillance/pdf', '_blank');
+    window.open(`${API_BASE}/reports/surveillance/pdf`, '_blank');
   };
 
   return (

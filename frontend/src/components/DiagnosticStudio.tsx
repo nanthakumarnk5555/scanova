@@ -4,6 +4,7 @@ import {
   Layers, RefreshCw, Sparkles, User, Info, Stethoscope, Eye, Sliders
 } from 'lucide-react';
 import type { SampleXRay, ImageData, PredictionData, RadiologistReportData } from '../types';
+import { API_BASE } from '../api/client';
 
 interface DiagnosticStudioProps {
   samples: SampleXRay[];
@@ -129,7 +130,7 @@ export const DiagnosticStudio: React.FC<DiagnosticStudioProps> = ({
 
   const handleDownloadCasePdf = () => {
     if (!currentImage) return;
-    window.open(`/api/v1/reports/case/${currentImage.id}/pdf`, '_blank');
+    window.open(`${API_BASE}/reports/case/${currentImage.id}/pdf`, '_blank');
   };
 
   return (

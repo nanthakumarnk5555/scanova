@@ -4,6 +4,7 @@ import {
   Search, Filter, Eye, ChevronRight, X, Sparkles, Layers, Stethoscope
 } from 'lucide-react';
 import type { CaseHistoryItem } from '../types';
+import { API_BASE } from '../api/client';
 
 interface AdjudicationQueueProps {
   cases: CaseHistoryItem[];
@@ -196,7 +197,7 @@ export const AdjudicationQueue: React.FC<AdjudicationQueueProps> = ({ cases, onR
                         Inspect
                       </button>
                       <button
-                        onClick={() => window.open(`/api/v1/reports/case/${item.image_id}/pdf`, '_blank')}
+                        onClick={() => window.open(`${API_BASE}/reports/case/${item.image_id}/pdf`, '_blank')}
                         className="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 text-[11px] border border-slate-700 transition-colors"
                         title="Download Case PDF"
                       >
@@ -280,7 +281,7 @@ export const AdjudicationQueue: React.FC<AdjudicationQueueProps> = ({ cases, onR
 
             <div className="flex justify-end space-x-3 pt-2">
               <button
-                onClick={() => window.open(`/api/v1/reports/case/${selectedCase.image_id}/pdf`, '_blank')}
+                onClick={() => window.open(`${API_BASE}/reports/case/${selectedCase.image_id}/pdf`, '_blank')}
                 className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold flex items-center space-x-1.5 shadow-lg shadow-sky-500/20"
               >
                 <Download className="w-3.5 h-3.5" />
