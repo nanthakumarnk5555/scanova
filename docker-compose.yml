@@ -1,0 +1,74 @@
+services:
+  # MySQL 8.0 Enterprise Database Service
+  mysql:
+    image: mysql:8.0
+    container_name: scanova-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: RootPassword2026!
+      MYSQL_DATABASE: scanova_db
+      MYSQL_USER: scanova_user
+      MYSQL_PASSWORD: ScanovaSecure2026!
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/init_mysql.sql:/docker-entrypoint-initdb.d/init_mysql.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "scanova_user", "-pScanovaSecure2026!"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - scanova-network
+
+  # FastAPI + DenseNet-121 + AI Monitoring Agent Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: scanova-backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=mysql+pymysql://scanova_user:ScanovaSecure2026!@mysql:3306/scanova_db
+      - JWT_SECRET=scanova-clinical-ai-surveillance-secret-key-2026
+      - JWT_ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=1440
+      - UPLOADS_DIR=/app/uploads
+      - MODEL_NAME=densenet121
+      - ENVIRONMENT=production
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_uploads:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - scanova-network
+
+  # React 19 + TypeScript + Nginx Reverse Proxy Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: scanova-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - scanova-network
+
+volumes:
+  mysql_data:
+    driver: local
+  backend_uploads:
+    driver: local
+
+networks:
+  scanova-network:
+    driver: bridge

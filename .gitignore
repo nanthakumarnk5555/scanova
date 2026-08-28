@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Production builds
+dist/
+frontend/dist/
+build/
+
+# Python & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.eggs/
+
+# Environments
+.env
+.env.local
+.venv
+env/
+venv/
+ENV/
+
+# Database & SQLite files
+*.db
+*.sqlite
+*.sqlite3
+backend/scanova_surveillance.db
+
+# Uploads & Generated files
+backend/uploads/xrays/*
+!backend/uploads/xrays/.gitkeep
+backend/uploads/heatmaps/*
+!backend/uploads/heatmaps/.gitkeep
+backend/uploads/reports/*
+!backend/uploads/reports/.gitkeep
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
