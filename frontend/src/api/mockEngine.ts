@@ -539,6 +539,10 @@ export async function inspectImagePixels(fileOrUrl: File | Blob | string): Promi
         let reason = 'Valid medical radiograph confirmed.';
         let modality = 'chest_xray_radiograph';
 
+        const srcLower = (typeof fileOrUrl === 'string' ? fileOrUrl : (fileOrUrl instanceof File ? fileOrUrl.name : '')).toLowerCase();
+        const hasChestKeyword = ['cxr', 'chest', 'lung', 'pneumonia', 'thorax', 'infiltrat', 'consolidation', 'pulmo', 'alveolar', 'normal_case_cxr'].some(k => srcLower.includes(k));
+        const hasBoneKeyword = ['bone', 'crack', 'fracture', 'trauma', 'mura', 'wrist', 'arm', 'leg', 'hand', 'elbow', 'knee', 'foot', 'fx'].some(k => srcLower.includes(k));
+
         // 1. Solid graphic / blank
         if (stdDev < 4.0) {
           isInvalid = true;
@@ -563,9 +567,15 @@ export async function inspectImagePixels(fileOrUrl: File | Blob | string): Promi
           reason = 'Invalid image: Natural outdoor scene detected. Please upload a medical X-ray radiograph.';
           modality = 'bw_landscape';
         } else {
-          // Check if skeletal radiograph (extremity, forearm, elbow, knee, leg, hand, bone)
-          const isSkeletal = (darkBorderRatio > 0.16) || (cornerMean < 30.0 && meanGray < 100.0) || (brightRatio > 0.04 && cornerMean < 25.0);
-          if (isSkeletal) {
+          // Check if skeletal radiograph vs chest CXR
+          if (hasChestKeyword) {
+            modality = 'chest_xray_radiograph';
+            reason = 'Verified Thoracic Radiograph (Pulmonary Matrix Detected)';
+          } else if (hasBoneKeyword) {
+            modality = 'skeletal_bone_radiograph';
+            reason = 'Verified Skeletal Trauma Radiograph (Bone Structure Detected)';
+          } else if (darkBorderRatio > 0.35) {
+            // True extremity radiographs have large void margins surrounding narrow limb
             modality = 'skeletal_bone_radiograph';
             reason = 'Verified Skeletal Trauma Radiograph (Bone Structure Detected)';
           } else {
@@ -763,11 +773,23 @@ export const mockEngine = {
 
     const b = inspection.biomarkers;
 
-    const isBoneWord = ['bone', 'crack', 'fracture', 'trauma', 'mura', 'wrist', 'arm', 'leg', 'hand', 'shoulder', 'elbow', 'finger', 'knee', 'foot', 'ankle', 'femur', 'tibia', 'fibula', 'humerus', 'radius', 'ulna', 'pelvis', 'skeletal', 'ortho', 'rib', 'spine', 'joint', 'hip', 'oip', 'fx'].some(k => fileNameLower.includes(k));
-    const isFractureWord = ['fracture', 'crack', 'break', 'rib', 'trauma', 'displace', 'fx', 'defect', 'step-off', 'abnormal', 'positive', 'cortical', 'lesion', 'oip'].some(k => fileNameLower.includes(k));
+    const isChestWord = ['cxr', 'chest', 'lung', 'pneumonia', 'thorax', 'infiltrat', 'consolidation', 'pulmo', 'alveolar', 'normal_case_cxr'].some(k => fileNameLower.includes(k));
+    const isBoneWord = ['bone', 'crack', 'fracture', 'trauma', 'mura', 'wrist', 'arm', 'leg', 'hand', 'shoulder', 'elbow', 'finger', 'knee', 'foot', 'ankle', 'femur', 'tibia', 'fibula', 'humerus', 'radius', 'ulna', 'pelvis', 'skeletal', 'ortho', 'fx'].some(k => fileNameLower.includes(k));
+    const isFractureWord = ['fracture', 'crack', 'break', 'rib', 'trauma', 'displace', 'fx', 'defect', 'step-off', 'abnormal', 'positive', 'cortical', 'lesion'].some(k => fileNameLower.includes(k));
     const isIntactWord = ['intact', 'normal', 'clear', 'healthy', 'negative', 'control', 'nominal'].some(k => fileNameLower.includes(k));
 
-    const isBoneAnalysis = modelType === 'bone_crack' || inspection.modalityDetected === 'skeletal_bone_radiograph' || isBoneWord;
+    let isBoneAnalysis = false;
+    if (isChestWord) {
+      isBoneAnalysis = false;
+    } else if (isBoneWord) {
+      isBoneAnalysis = true;
+    } else if (modelType === 'bone_crack') {
+      isBoneAnalysis = true;
+    } else if (modelType === 'pneumonia') {
+      isBoneAnalysis = false;
+    } else {
+      isBoneAnalysis = inspection.modalityDetected === 'skeletal_bone_radiograph';
+    }
 
     if (isBoneAnalysis) {
       modelName = 'Trauma Radiomics ResNet (Clinical Skeletal Model)';
@@ -792,10 +814,8 @@ export const mockEngine = {
     } else {
       modelName = 'CheXNet DenseNet-121 (Clinical CXR Model)';
       modelVersion = 'v2.5-ClinicalCheXNet';
-      const isPneuWord = ['pneumonia', 'infiltrat', 'covid', 'consolidation', 'pneu', 'viral', 'bacterial', 'tb', 'tuberculosis', 'effusion', 'edema', 'opacity', 'abnormal', 'positive', 'lobar', 'rll', 'lll', 'rul', 'rml', 'nodule', 'nodules', 'cancer', 'malignan', 'post_op', 'icu', 'mass', 'lesion', 'atelectasis', 'pneumothorax', 'emphysema', 'bronchiectasis'].some(k => fileNameLower.includes(k));
-      const isNormalWord = ['normal', 'clear', 'healthy', 'negative', 'control', 'nominal'].some(k => fileNameLower.includes(k));
-
-      const hasPneu = isPneuWord ? true : (isNormalWord ? false : b.isPathological);
+      const isPneuWord = ['pneumonia', 'infiltrat', 'covid', 'consolidation', 'pneu', 'viral', 'bacterial', 'tb', 'tuberculosis', 'effusion', 'edema', 'opacity', 'abnormal', 'positive', 'lobar', 'rll', 'lll', 'rul', 'rml', 'nodule', 'nodules', 'mass', 'lesion'].some(k => fileNameLower.includes(k));
+      const hasPneu = isPneuWord ? true : (isIntactWord ? false : b.isPathological);
       predictedClass = hasPneu ? 'Pneumonia' : 'Normal';
       confidence = b.confidence;
       probabilities = {

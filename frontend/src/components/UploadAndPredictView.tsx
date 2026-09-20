@@ -179,11 +179,18 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
     setResultImage(null);
 
     const nameLower = file.name.toLowerCase();
-    const boneKeywords = ['bone', 'crack', 'fracture', 'trauma', 'mura', 'wrist', 'arm', 'leg', 'hand', 'shoulder', 'elbow', 'finger', 'knee', 'foot', 'ankle', 'femur', 'tibia', 'fibula', 'humerus', 'radius', 'ulna', 'pelvis', 'skeletal', 'ortho', 'rib', 'spine', 'joint', 'hip', 'oip', 'fx'];
-    const isBoneHint = boneKeywords.some(k => nameLower.includes(k));
+    const chestKeywords = ['chest', 'lung', 'pneumonia', 'cxr', 'thorax', 'infiltrate', 'consolidation', 'pulmo', 'alveolar', 'normal_case_cxr'];
+    const boneKeywords = ['bone', 'crack', 'fracture', 'trauma', 'mura', 'wrist', 'arm', 'leg', 'hand', 'shoulder', 'elbow', 'finger', 'knee', 'foot', 'ankle', 'femur', 'tibia', 'fibula', 'humerus', 'radius', 'ulna', 'pelvis', 'skeletal', 'ortho', 'fx'];
+
+    const isChestHint = chestKeywords.some(k => nameLower.includes(k));
+    const isBoneHint = !isChestHint && boneKeywords.some(k => nameLower.includes(k));
 
     let currentChosenModel = activeModel;
-    if (isBoneHint) {
+    if (isChestHint) {
+      currentChosenModel = 'pneumonia';
+      setActiveModel('pneumonia');
+      setAutoRouteNotice('🫁 Auto-detected Chest Radiograph: Switched to CheXNet DenseNet-121 (Pneumonia Model)');
+    } else if (isBoneHint) {
       currentChosenModel = 'bone_crack';
       setActiveModel('bone_crack');
       setAutoRouteNotice('🦴 Auto-detected Skeletal Radiograph: Switched to Trauma ResNet-50 (Bone Crack Model)');
@@ -206,7 +213,10 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
         setValidationReason(valRes.reason || 'Verified Medical Radiograph');
 
         const mod = valRes.modality_detected?.toLowerCase() || '';
-        if (isBoneHint || mod.includes('skeletal') || mod.includes('bone')) {
+        if (isChestHint || mod.includes('chest') || mod.includes('thoracic')) {
+          setActiveModel('pneumonia');
+          setAutoRouteNotice('🫁 Auto-detected Chest Radiograph: Switched to CheXNet DenseNet-121 (Pneumonia Model)');
+        } else if (isBoneHint || mod.includes('skeletal') || mod.includes('bone')) {
           setActiveModel('bone_crack');
           setAutoRouteNotice('🦴 Auto-detected Skeletal Radiograph: Switched to Trauma ResNet-50 (Bone Crack Model)');
         }
@@ -249,13 +259,14 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
 
     try {
       const nameLower = selectedFile.name.toLowerCase();
-      const boneKeywords = ['bone', 'crack', 'fracture', 'trauma', 'mura', 'wrist', 'arm', 'leg', 'hand', 'shoulder', 'elbow', 'finger', 'knee', 'foot', 'ankle', 'femur', 'tibia', 'fibula', 'humerus', 'radius', 'ulna', 'pelvis', 'skeletal', 'ortho', 'rib', 'spine', 'joint', 'hip', 'oip', 'fx'];
-      const isBone = activeModel === 'bone_crack' || boneKeywords.some(k => nameLower.includes(k));
-      const targetModel = isBone ? 'bone_crack' : 'pneumonia';
+      const chestKeywords = ['chest', 'lung', 'pneumonia', 'cxr', 'thorax', 'infiltrate', 'consolidation', 'pulmo', 'alveolar', 'normal_case_cxr'];
+      const boneKeywords = ['bone', 'crack', 'fracture', 'trauma', 'mura', 'wrist', 'arm', 'leg', 'hand', 'shoulder', 'elbow', 'finger', 'knee', 'foot', 'ankle', 'femur', 'tibia', 'fibula', 'humerus', 'radius', 'ulna', 'pelvis', 'skeletal', 'ortho', 'fx'];
 
-      if (isBone && activeModel !== 'bone_crack') {
-        setActiveModel('bone_crack');
-      }
+      const isChest = chestKeywords.some(k => nameLower.includes(k));
+      const isBone = !isChest && (activeModel === 'bone_crack' || boneKeywords.some(k => nameLower.includes(k)));
+      const targetModel = isChest ? 'pneumonia' : (isBone ? 'bone_crack' : activeModel);
+
+      setActiveModel(targetModel);
 
       const formData = new FormData();
       formData.append('file', selectedFile);
@@ -270,8 +281,10 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
       setResultPrediction(res.prediction);
       setValidationStatus('valid');
 
-      // If the prediction returned is a bone fracture or skeletal model, sync activeModel
-      if (res.prediction.prediction === 'Bone Fracture' || res.prediction.prediction === 'Intact Bone' || res.prediction.model_name?.includes('ResNet') || res.prediction.model_name?.includes('Skeletal') || isBone) {
+      // Sync activeModel with prediction
+      if (res.prediction.prediction === 'Normal' || res.prediction.prediction === 'Pneumonia' || res.prediction.model_name?.includes('DenseNet') || res.prediction.model_name?.includes('CheXNet') || isChest) {
+        setActiveModel('pneumonia');
+      } else if (res.prediction.prediction === 'Bone Fracture' || res.prediction.prediction === 'Intact Bone' || res.prediction.model_name?.includes('ResNet') || res.prediction.model_name?.includes('Skeletal') || isBone) {
         setActiveModel('bone_crack');
       }
     } catch (err: any) {
@@ -371,13 +384,11 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
 
   const currentSamples = activeModel === 'pneumonia' ? pneumoniaSamples : boneSamples;
 
-  const isBoneResult = (activeModel === 'bone_crack') ||
-                       (resultPrediction?.prediction === 'Bone Fracture') ||
+  const isBoneResult = (resultPrediction?.prediction === 'Bone Fracture') ||
                        (resultPrediction?.prediction === 'Intact Bone') ||
-                       (resultPrediction?.model_name?.toLowerCase().includes('bone') ?? false) ||
-                       (resultPrediction?.model_name?.toLowerCase().includes('resnet') ?? false) ||
                        (resultPrediction?.model_name?.toLowerCase().includes('trauma') ?? false) ||
-                       (resultPrediction?.model_name?.toLowerCase().includes('skeletal') ?? false);
+                       (resultPrediction?.model_name?.toLowerCase().includes('skeletal') ?? false) ||
+                       (activeModel === 'bone_crack' && resultPrediction?.prediction !== 'Normal' && resultPrediction?.prediction !== 'Pneumonia');
 
   const isFractureResult = resultPrediction?.prediction === 'Bone Fracture';
   const isPneumoniaResult = resultPrediction?.prediction === 'Pneumonia';
