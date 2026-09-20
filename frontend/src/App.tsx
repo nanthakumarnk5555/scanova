@@ -12,7 +12,7 @@ import { ReportGenerationView } from './components/ReportGenerationView';
 import { PneumoniaDashboardView } from './components/PneumoniaDashboardView';
 import { BoneCrackDashboardView } from './components/BoneCrackDashboardView';
 import { api, type UserProfile } from './api/client';
-import { ShieldCheck, Award, Lock } from 'lucide-react';
+import { ShieldCheck, Award, Lock, Activity } from 'lucide-react';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<string>('cxr_scan');
@@ -88,19 +88,20 @@ export function App() {
   if (isInitializing) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col items-center justify-center space-y-6 relative overflow-hidden">
-        {/* Subtle Ambient Backdrops */}
-        <div className="absolute w-[500px] h-[500px] bg-emerald-500/[0.04] rounded-full blur-[140px] pointer-events-none" />
+        {/* Ambient Backdrops */}
+        <div className="absolute w-[500px] h-[500px] bg-blue-500/[0.06] rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute w-[400px] h-[400px] bg-indigo-500/[0.05] rounded-full blur-[120px] pointer-events-none" />
 
         {/* Clean Clinical Spinner */}
         <div className="relative flex items-center justify-center">
-          <div className="w-16 h-16 rounded-full border-2 border-slate-200 border-t-emerald-600 border-r-emerald-500 animate-spin shadow-sm" />
-          <div className="absolute w-8 h-8 rounded-full border border-emerald-400/30 animate-ping" />
-          <div className="absolute w-2.5 h-2.5 rounded-full bg-emerald-600" />
+          <div className="w-16 h-16 rounded-full border-2 border-slate-200 border-t-blue-600 border-r-indigo-500 animate-spin shadow-sm" />
+          <div className="absolute w-8 h-8 rounded-full border border-blue-400/30 animate-ping" />
+          <div className="absolute w-2.5 h-2.5 rounded-full bg-blue-600" />
         </div>
 
         <div className="text-center space-y-1.5 z-10">
-          <p className="text-lg font-extrabold text-slate-900 tracking-wider uppercase font-display">
-            SCANOVA <span className="text-emerald-600">AI</span>
+          <p className="text-lg font-black text-slate-900 tracking-wider uppercase font-display">
+            SCANOVA <span className="text-blue-600">AI</span>
           </p>
           <p className="text-xs font-mono text-slate-500 tracking-wide">
             Initializing Clinical Intelligence Engine...
@@ -116,7 +117,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col selection:bg-emerald-500/20 selection:text-emerald-900 medical-grid-bg relative">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col selection:bg-blue-500/20 selection:text-blue-900 medical-grid-bg relative">
       {/* Navigation Header */}
       <HeaderNavbar
         activeTab={activeTab}
@@ -183,11 +184,11 @@ export function App() {
       </main>
 
       {/* Enterprise Healthcare Light Medical Footer */}
-      <footer className="border-t border-slate-200 bg-white/95 backdrop-blur-xl px-6 py-6 text-xs text-slate-500 mt-16 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+      <footer className="border-t border-slate-200/90 bg-white/95 backdrop-blur-xl px-6 py-6 text-xs text-slate-500 mt-16 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 text-center md:text-left">
             <span className="font-extrabold text-slate-900 text-sm tracking-tight font-display">
-              SCANOVA<span className="text-emerald-600">.AI</span>
+              SCANOVA<span className="text-blue-600">.AI</span>
             </span>
             <span className="text-slate-300">•</span>
             <span className="text-slate-600 font-medium">Lattice Health Systems Clinical Radiology Suite</span>
@@ -196,17 +197,17 @@ export function App() {
           {/* Regulatory Badges */}
           <div className="flex flex-wrap items-center justify-center gap-3 font-mono text-[11px]">
             <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-700 shadow-sm">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
               <span>FDA 21 CFR 820.198</span>
             </div>
 
             <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-700 shadow-sm">
-              <Lock className="w-3.5 h-3.5 text-blue-600" />
+              <Lock className="w-3.5 h-3.5 text-indigo-600" />
               <span>HIPAA SHA-256</span>
             </div>
 
-            <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 shadow-sm">
-              <Award className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 shadow-sm">
+              <Award className="w-3.5 h-3.5 text-blue-600" />
               <span>ISO 13485:2016</span>
             </div>
           </div>
