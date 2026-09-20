@@ -87,23 +87,22 @@ export function App() {
   // If initial auth check is in progress
   if (isInitializing) {
     return (
-      <div className="min-h-screen bg-[#181C26] text-white flex flex-col items-center justify-center space-y-6 relative overflow-hidden">
+      <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col items-center justify-center space-y-6 relative overflow-hidden">
         {/* Subtle Ambient Backdrops */}
-        <div className="absolute w-[500px] h-[500px] bg-white/[0.03] rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute w-[450px] h-[450px] bg-amber-500/[0.04] rounded-full blur-[160px] pointer-events-none" />
+        <div className="absolute w-[500px] h-[500px] bg-emerald-500/[0.04] rounded-full blur-[140px] pointer-events-none" />
         
-        {/* Holographic Orbital Rings */}
+        {/* Clean Clinical Spinner */}
         <div className="relative flex items-center justify-center">
-          <div className="w-16 h-16 rounded-full border-2 border-white/15 border-t-white border-r-amber-400 animate-spin shadow-[0_0_30px_rgba(255,255,255,0.35)]" />
-          <div className="absolute w-8 h-8 rounded-full border border-amber-400/30 animate-ping" />
-          <div className="absolute w-2 h-2 rounded-full bg-white shadow-[0_0_12px_#FFFFFF]" />
+          <div className="w-16 h-16 rounded-full border-2 border-slate-200 border-t-emerald-600 border-r-emerald-500 animate-spin shadow-sm" />
+          <div className="absolute w-8 h-8 rounded-full border border-emerald-400/30 animate-ping" />
+          <div className="absolute w-2.5 h-2.5 rounded-full bg-emerald-600" />
         </div>
 
         <div className="text-center space-y-1.5 z-10">
-          <p className="text-lg font-extrabold text-white tracking-wider uppercase font-display">
-            SCANOVA <span className="text-amber-400 drop-shadow-[0_0_12px_rgba(245,158,11,0.5)]">AI</span>
+          <p className="text-lg font-extrabold text-slate-900 tracking-wider uppercase font-display">
+            SCANOVA <span className="text-emerald-600">AI</span>
           </p>
-          <p className="text-xs font-mono text-slate-400 tracking-wide">
+          <p className="text-xs font-mono text-slate-500 tracking-wide">
             Initializing Clinical Intelligence Engine...
           </p>
         </div>
@@ -117,12 +116,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#181C26] text-white flex flex-col selection:bg-white/20 selection:text-white medical-grid-bg relative">
-      {/* Ambient Multi-Chromatic Radiant Backdrops */}
-      <div className="fixed top-0 left-1/4 w-[650px] h-[650px] bg-white/[0.03] rounded-full blur-[200px] pointer-events-none -z-10" />
-      <div className="fixed top-1/3 right-10 w-[750px] h-[750px] bg-amber-500/[0.04] rounded-full blur-[220px] pointer-events-none -z-10" />
-      <div className="fixed bottom-10 left-1/3 w-[650px] h-[650px] bg-white/[0.02] rounded-full blur-[190px] pointer-events-none -z-10" />
-
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col selection:bg-emerald-500/20 selection:text-emerald-900 medical-grid-bg relative">
       {/* Navigation Header */}
       <HeaderNavbar
         activeTab={activeTab}
@@ -188,31 +182,31 @@ export function App() {
         )}
       </main>
 
-      {/* Enterprise Healthcare Luxury Glass Footer */}
-      <footer className="border-t border-white/20 bg-[#222836]/90 backdrop-blur-2xl px-6 py-6 text-xs text-slate-300 mt-16 shadow-[0_-10px_30px_rgba(15,23,42,0.6)]">
+      {/* Enterprise Healthcare Light Medical Footer */}
+      <footer className="border-t border-slate-200 bg-white/95 backdrop-blur-xl px-6 py-6 text-xs text-slate-500 mt-16 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 text-center md:text-left">
-            <span className="font-extrabold text-white text-sm tracking-tight font-display">
-              SCANOVA<span className="text-amber-400">.AI</span>
+            <span className="font-extrabold text-slate-900 text-sm tracking-tight font-display">
+              SCANOVA<span className="text-emerald-600">.AI</span>
             </span>
-            <span className="text-slate-600">•</span>
-            <span className="text-slate-300 font-medium">Lattice Health Systems Clinical Radiology Suite</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-600 font-medium">Lattice Health Systems Clinical Radiology Suite</span>
           </div>
 
           {/* Regulatory Badges */}
           <div className="flex flex-wrap items-center justify-center gap-3 font-mono text-[11px]">
-            <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.15)]">
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+            <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-700 shadow-sm">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>FDA 21 CFR 820.198</span>
             </div>
 
-            <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.15)]">
-              <Lock className="w-3.5 h-3.5 text-white" />
+            <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-700 shadow-sm">
+              <Lock className="w-3.5 h-3.5 text-blue-600" />
               <span>HIPAA SHA-256</span>
             </div>
 
-            <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-emerald-500/30 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
-              <Award className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 shadow-sm">
+              <Award className="w-3.5 h-3.5 text-emerald-600" />
               <span>ISO 13485:2016</span>
             </div>
           </div>

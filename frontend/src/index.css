@@ -5,125 +5,101 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
-  --bg-void: #181C26;             /* Medical Platinum Slate Gray (NOT Black) */
-  --surface-card: rgba(34, 40, 54, 0.88); /* Mid Slate Gray Card */
-  --surface-border: rgba(255, 255, 255, 0.20);
-  --blanco-pure: #FFFFFF;
-  --platinum-gray: #CBD5E1;
-  --slate-mid: #334155;
-  --solar-amber: #F59E0B;
-  --solar-gold: #FBBF24;
-  --solar-flare: #FFB800;
-  --clinical-mint: #10B981;
-  --clinical-coral: #F43F5E;
-}
-
-select {
-  color-scheme: dark;
-}
-
-select option {
-  background-color: #1e2536 !important;
-  color: #ffffff !important;
+  color-scheme: light;
+  --bg-void: #F8FAFC;
+  --surface-card: #FFFFFF;
+  --surface-border: #E2E8F0;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --clinical-blue: #0284C7;
+  --clinical-emerald: #059669;
+  --clinical-teal: #0D9488;
+  --clinical-coral: #E11D48;
+  --clinical-amber: #D97706;
 }
 
 body {
   margin: 0;
   padding: 0;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-  background-color: #181C26;      /* Medical Platinum Slate Gray */
-  color: #FFFFFF;
+  background-color: #F8FAFC;
+  color: #0F172A;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Ambient Medical Slate Canvas with White Specular & Solar Auroras */
+/* Clean Medical Grid Background */
 .medical-grid-bg {
-  background-color: #181C26;
+  background-color: #F8FAFC;
   background-image: 
-    radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 85% 30%, rgba(245, 158, 11, 0.07) 0%, transparent 40%),
-    radial-gradient(circle at 50% 85%, rgba(251, 191, 36, 0.05) 0%, transparent 50%),
-    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+    radial-gradient(circle at 10% 10%, rgba(2, 132, 199, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 90% 20%, rgba(5, 150, 105, 0.04) 0%, transparent 40%),
+    linear-gradient(to right, rgba(226, 232, 240, 0.6) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
 }
 
-/* Lumina Blanco & Platinum Slate Glassmorphic Cards with High-Contrast White Specular Borders */
+/* Clean Clinical White Cards */
 .glass-card {
-  background: rgba(34, 40, 54, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.20);
-  box-shadow: 0 16px 40px -8px rgba(15, 23, 42, 0.60), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
   border-radius: 1.25rem;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s ease;
 }
 
 .glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.45);
-  box-shadow: 0 20px 48px -8px rgba(15, 23, 42, 0.75), 0 0 25px rgba(245, 158, 11, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.40);
-  transform: translateY(-2px);
+  border-color: #CBD5E1;
+  box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.10), 0 4px 10px -2px rgba(15, 23, 42, 0.06);
+  transform: translateY(-1px);
 }
 
 .glass-elevated {
-  background: rgba(43, 51, 69, 0.90);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 24px 50px -10px rgba(15, 23, 42, 0.70), 0 0 35px rgba(245, 158, 11, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 20px 35px -8px rgba(15, 23, 42, 0.08), 0 6px 16px -4px rgba(15, 23, 42, 0.04);
   border-radius: 1.5rem;
 }
 
 .glass-dock {
-  background: rgba(34, 40, 54, 0.90);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.30);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08);
 }
 
-/* Primary Solar Gold Action Button */
+/* Primary Clinical Action Buttons */
 .btn-aidoc-orange, .btn-lumina-primary {
-  background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 50%, #FFD700 100%);
-  color: #181C26;
-  font-weight: 800;
+  background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+  color: #FFFFFF;
+  font-weight: 700;
   border-radius: 9999px;
-  box-shadow: 0 0 25px rgba(245, 158, 11, 0.45);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+  transition: all 0.2s ease;
 }
 
 .btn-aidoc-orange:hover, .btn-lumina-primary:hover {
-  box-shadow: 0 0 40px rgba(245, 158, 11, 0.75), 0 0 15px rgba(255, 255, 255, 0.6);
-  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.45);
+  transform: translateY(-1px);
 }
 
-/* Stark Lumina Pure White Button */
 .btn-lumina-white {
   background: #FFFFFF;
-  color: #181C26;
-  font-weight: 800;
+  color: #0F172A;
+  font-weight: 700;
   border-radius: 9999px;
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.45);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid #CBD5E1;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  transition: all 0.2s ease;
 }
 
 .btn-lumina-white:hover {
-  box-shadow: 0 0 35px rgba(255, 255, 255, 0.8), 0 0 15px rgba(245, 158, 11, 0.4);
-  transform: translateY(-1px) scale(1.01);
-}
-
-/* Subtle Specular Glow Pill */
-.active-pill-white {
-  background: #FFFFFF;
-  color: #181C26;
-  font-weight: 900;
-  box-shadow: 0 0 22px rgba(255, 255, 255, 0.40);
-  border: 1px solid #FFFFFF;
+  background: #F8FAFC;
+  border-color: #94A3B8;
+  transform: translateY(-1px);
 }
 
 /* Medical Custom Scrollbar */
@@ -133,51 +109,41 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #181C26;
+  background: #F1F5F9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #364057;
+  background: #CBD5E1;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #CBD5E1;
+  background: #94A3B8;
 }
 
 /* Monospace Telemetry Badges */
 .telemetry-badge {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.6875rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   padding: 0.2rem 0.6rem;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.08);
-  color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  background: #F1F5F9;
+  color: #334155;
 }
 
 /* Virtual Scan Beam Animation */
 @keyframes laser-sweep {
-  0% {
-    top: 0%;
-    opacity: 0.9;
-  }
-  50% {
-    top: 96%;
-    opacity: 1;
-  }
-  100% {
-    top: 0%;
-    opacity: 0.9;
-  }
+  0% { top: 0%; opacity: 0.9; }
+  50% { top: 96%; opacity: 1; }
+  100% { top: 0%; opacity: 0.9; }
 }
 
 .animate-scan-beam {
   animation: laser-sweep 2.4s ease-in-out infinite;
 }
 
-/* Target Crosshairs Reticle Animation */
 @keyframes reticle-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -185,24 +151,4 @@ body {
 
 .animate-reticle {
   animation: reticle-spin 12s linear infinite;
-}
-
-/* Surveillance Radar Sweep */
-@keyframes radar-sweep {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.animate-radar {
-  animation: radar-sweep 3.5s linear infinite;
-}
-
-/* Biometric Waveform Canvas Pulse */
-@keyframes waveform {
-  0%, 100% { transform: scaleY(0.4); }
-  50% { transform: scaleY(1.0); }
-}
-
-.animate-waveform {
-  animation: waveform 1.6s ease-in-out infinite;
 }

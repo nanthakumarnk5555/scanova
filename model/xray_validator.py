@@ -11,8 +11,8 @@ class MedicalXRayValidator:
       - Skeletal & Orthopedic Radiographs (Rib fractures, cortical cracks, limb/extremity X-rays)
       - Screen/Lightbox captured clinical radiographs
     while strictly rejecting:
-      - Natural color photos (selfies, human faces, animals, landscapes, food, cartoons)
-      - Blank/solid graphics, documents, white paper forms, text notes
+      - Natural color photos (selfies, human faces, animals, landscapes, food, memes, cartoons)
+      - Blank/solid graphics, documents, white paper forms, text notes, receipts
       - Black-and-white natural scenery / portraits
     """
 
@@ -53,7 +53,7 @@ class MedicalXRayValidator:
 
             overall_mean = float(np.mean(np_gray))
             std_dev = float(np.std(np_gray))
-            bright_pixel_ratio = float(np.mean(np_gray > 220.0))
+            bright_pixel_ratio = float(np.mean(np_gray > 215.0))
 
             # Margin corners (top-left, top-right, bottom-left, bottom-right)
             margin_h, margin_w = max(4, int(h * 0.10)), max(4, int(w * 0.10))
@@ -68,7 +68,7 @@ class MedicalXRayValidator:
             # ============================================================
             # 1. BLANK / CORRUPTED / SOLID GRAPHIC REJECTION
             # ============================================================
-            if std_dev < 3.5:
+            if std_dev < 4.0:
                 return {
                     "is_xray": False,
                     "confidence": 0.99,
@@ -78,35 +78,32 @@ class MedicalXRayValidator:
 
             # ============================================================
             # 2. DOCUMENT, WHITE PAPER & SPREADSHEET REJECTION
-            # White paper documents have very high mean brightness (>200) and mostly bright corners
             # ============================================================
-            if overall_mean > 215.0 or (overall_mean > 195.0 and bright_pixel_ratio > 0.65 and corner_mean > 190.0):
+            if overall_mean > 205.0 or (overall_mean > 185.0 and bright_pixel_ratio > 0.50 and corner_mean > 180.0):
                 return {
                     "is_xray": False,
-                    "confidence": 0.96,
+                    "confidence": 0.98,
                     "reason": "Invalid image: Document, certificate or text scan detected. Please upload a medical X-ray radiograph.",
                     "modality_detected": "document_or_form"
                 }
 
             # ============================================================
             # 3. COLOR SATURATION & NATURAL PHOTO REJECTION (Selfies, Food, Nature)
-            # Medical radiographs are predominantly monochromatic (grayscale/cyan/blue tints).
-            # We calculate HSV color saturation across the image.
             # ============================================================
             hsv_img = analysis_img.convert("HSV")
             np_hsv = np.array(hsv_img, dtype=np.float32)
             saturation = np_hsv[:, :, 1] / 255.0  # 0.0 to 1.0
             mean_saturation = float(np.mean(saturation))
-            high_sat_ratio = float(np.mean(saturation > 0.45))
+            high_sat_ratio = float(np.mean(saturation > 0.35))
 
             r, g, b = np_rgb[:, :, 0], np_rgb[:, :, 1], np_rgb[:, :, 2]
             color_delta = float(np.mean(np.abs(r - g) + np.abs(g - b) + np.abs(b - r)))
 
-            # Clear natural color photos (high saturation or large color divergence)
-            if mean_saturation > 0.38 or high_sat_ratio > 0.28 or color_delta > 110.0:
+            # Strict natural color photo detection
+            if mean_saturation > 0.24 or high_sat_ratio > 0.16 or color_delta > 50.0:
                 return {
                     "is_xray": False,
-                    "confidence": round(float(min(0.99, max(mean_saturation, color_delta / 80.0))), 2),
+                    "confidence": round(float(min(0.99, max(mean_saturation, color_delta / 60.0))), 2),
                     "reason": "Invalid image: Non-medical color photo detected. Please upload a medical X-ray radiograph.",
                     "modality_detected": "color_photo"
                 }
@@ -117,17 +114,16 @@ class MedicalXRayValidator:
             top_third_mean = float(np.mean(np_gray[:int(h * 0.30), :]))
             bottom_third_mean = float(np.mean(np_gray[int(h * 0.70):, :]))
 
-            if top_third_mean > 210.0 and bottom_third_mean < 60.0 and (top_third_mean - bottom_third_mean) > 135.0:
+            if top_third_mean > 200.0 and bottom_third_mean < 70.0 and (top_third_mean - bottom_third_mean) > 120.0:
                 return {
                     "is_xray": False,
-                    "confidence": 0.92,
+                    "confidence": 0.94,
                     "reason": "Invalid image: Natural outdoor scene detected. Please upload a medical X-ray radiograph.",
                     "modality_detected": "bw_landscape"
                 }
 
             # ============================================================
             # 5. VALID MEDICAL RADIOGRAPH DETECTED & CLASSIFIED
-            # Determine whether it is thoracic (chest CXR) or skeletal (bone)
             # ============================================================
             left_zone = np_gray[int(h * 0.30):int(h * 0.70), int(w * 0.15):int(w * 0.40)]
             right_zone = np_gray[int(h * 0.30):int(h * 0.70), int(w * 0.60):int(w * 0.85)]
@@ -137,8 +133,8 @@ class MedicalXRayValidator:
             modality = "chest_xray_radiograph" if is_bilateral_cxr else "skeletal_radiograph"
 
             xray_confidence = float(np.clip(
-                0.90 + (std_dev / 140.0) * 0.08,
-                0.88,
+                0.91 + (std_dev / 140.0) * 0.08,
+                0.89,
                 0.99
             ))
 
@@ -149,12 +145,12 @@ class MedicalXRayValidator:
                 "modality_detected": modality
             }
 
-        except Exception as e:
+        except Exception:
             return {
-                "is_xray": True,  # Fallback to permissive on decode error for robustness
-                "confidence": 0.85,
-                "reason": "Valid radiograph confirmed.",
-                "modality_detected": "general_radiograph"
+                "is_xray": False,
+                "confidence": 0.0,
+                "reason": "Invalid or unreadable image file. Please upload a valid X-ray image.",
+                "modality_detected": "corrupted_file"
             }
 
 # Global singleton
@@ -165,3 +161,4 @@ def get_xray_validator() -> MedicalXRayValidator:
     if _validator_instance is None:
         _validator_instance = MedicalXRayValidator()
     return _validator_instance
+

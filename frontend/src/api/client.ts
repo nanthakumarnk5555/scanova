@@ -418,9 +418,10 @@ export const api = {
         headers: getAuthHeaders(),
         body: formData,
       },
-      () => {
+      async () => {
         const file = formData.get('file') as File | null;
-        return mockEngine.validateImage(file || undefined);
+        const modelType = (formData.get('model_type') as string) || 'pneumonia';
+        return await mockEngine.validateImage(file || undefined, modelType);
       }
     );
   },
@@ -503,6 +504,15 @@ export const api = {
       { headers: getAuthHeaders() },
       () => mockEngine.getPredictionHistory(params)
     );
+  },
+
+  async getCases(params?: { agreement_status?: string; finding?: string; limit?: number }): Promise<CaseRecord[]> {
+    const res = await this.getPredictionHistory({
+      agreement: params?.agreement_status,
+      finding: params?.finding,
+      limit: params?.limit || 50
+    });
+    return res.cases || [];
   },
 
   // Radiologist Ground Truth
