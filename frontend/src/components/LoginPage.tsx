@@ -18,9 +18,10 @@ import { api, type UserProfile } from '../api/client';
 
 interface LoginPageProps {
   onLoginSuccess: (user: UserProfile, redirectTab: string) => void;
+  onClose?: () => void;
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
+export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onClose }) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('radiologist@scanova.health');
   const [password, setPassword] = useState('Scanova2026!');
@@ -232,8 +233,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 </p>
               </div>
 
-              <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 shadow-sm">
-                <Lock className="w-5 h-5 text-emerald-600" />
+              <div className="flex items-center space-x-2">
+                <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 shadow-sm">
+                  <Lock className="w-5 h-5 text-emerald-600" />
+                </div>
+                {onClose && (
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    title="Return to Clinical Dashboard"
+                    className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-all cursor-pointer shadow-sm"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
               </div>
             </div>
 

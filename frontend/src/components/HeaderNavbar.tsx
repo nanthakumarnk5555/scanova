@@ -14,7 +14,8 @@ import {
   Sparkles,
   LogOut,
   UserCheck,
-  Bone
+  Bone,
+  Lock
 } from 'lucide-react';
 import { type UserProfile } from '../api/client';
 
@@ -50,6 +51,7 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
   currentUser,
   currentRole,
   onRoleChange,
+  onOpenAuthModal,
   onLogout,
 }) => {
   const [liveTime, setLiveTime] = useState<string>('');
@@ -120,6 +122,16 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
         </div>
 
         <div className="flex items-center space-x-3 flex-shrink-0">
+          <button
+            type="button"
+            onClick={onOpenAuthModal}
+            title="Open Login Portal / Switch Account"
+            className="flex items-center space-x-1 text-slate-600 hover:text-emerald-700 transition-colors cursor-pointer"
+          >
+            <Lock className="w-3 h-3 text-emerald-600" />
+            <span className="font-semibold">Login / Switch User</span>
+          </button>
+          <span className="text-slate-300">|</span>
           <a
             href="http://127.0.0.1:8000/docs"
             target="_blank"
@@ -206,25 +218,32 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
               ))}
             </div>
 
-            {/* User Badge */}
-            <div className="flex items-center space-x-2 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full shadow-sm">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center font-extrabold text-xs shadow-sm">
-                {currentUser?.full_name?.charAt(0) || 'D'}
-              </div>
-              <div className="hidden md:block text-left">
-                <p className="text-xs font-bold text-slate-900 flex items-center space-x-1 leading-tight">
-                  <span className="truncate max-w-[130px]">{currentUser?.full_name || 'Dr. Julian Reed'}</span>
-                  <UserCheck className="w-3 h-3 text-emerald-600 inline flex-shrink-0" />
-                </p>
-                <p className="text-[9px] font-mono text-emerald-700 font-semibold capitalize leading-none">
-                  {currentUser?.role || currentRole}
-                </p>
-              </div>
+            {/* User Badge & Login / Switch User */}
+            <div className="flex items-center space-x-1.5">
+              <button
+                type="button"
+                onClick={onOpenAuthModal}
+                title="Click to Open Login Page or Switch Account"
+                className="flex items-center space-x-2 bg-slate-50 hover:bg-emerald-50/70 border border-slate-200 hover:border-emerald-300 px-2.5 py-1 rounded-full shadow-sm transition-all cursor-pointer group text-left"
+              >
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center font-extrabold text-xs shadow-sm group-hover:scale-105 transition-transform">
+                  {currentUser?.full_name?.charAt(0) || 'D'}
+                </div>
+                <div className="hidden md:block text-left">
+                  <p className="text-xs font-bold text-slate-900 group-hover:text-emerald-950 flex items-center space-x-1 leading-tight">
+                    <span className="truncate max-w-[130px]">{currentUser?.full_name || 'Dr. Julian Reed'}</span>
+                    <UserCheck className="w-3 h-3 text-emerald-600 inline flex-shrink-0" />
+                  </p>
+                  <p className="text-[9px] font-mono text-emerald-700 font-semibold capitalize leading-none">
+                    {currentUser?.role || currentRole} • <span className="underline">Switch/Login</span>
+                  </p>
+                </div>
+              </button>
 
               <button
                 type="button"
                 onClick={onLogout}
-                title="Sign out of Clinical Portal"
+                title="Sign out to Login Page"
                 className="p-1.5 rounded-full bg-white border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50 transition-all cursor-pointer shadow-sm"
               >
                 <LogOut className="w-3.5 h-3.5" />

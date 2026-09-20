@@ -21,6 +21,7 @@ export function App() {
   const [currentRole, setCurrentRole] = useState<'clinician' | 'radiologist' | 'admin'>('clinician');
   const [activeAlertsCount, setActiveAlertsCount] = useState<number>(0);
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     initApp();
@@ -64,6 +65,7 @@ export function App() {
   const handleLoginSuccess = (user: UserProfile, redirectTab: string) => {
     setCurrentUser(user);
     setCurrentRole((user.role as any) || 'clinician');
+    setIsAuthModalOpen(false);
     setActiveTab(redirectTab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -71,6 +73,7 @@ export function App() {
   const handleLogout = () => {
     api.logout();
     setCurrentUser(null);
+    setIsAuthModalOpen(false);
     setActiveTab('cxr_scan');
   };
 
@@ -110,9 +113,14 @@ export function App() {
     );
   }
 
-  // If unauthenticated, render the full-screen Login Page
-  if (!currentUser) {
-    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+  // If unauthenticated or explicitly requested Login/Switch User
+  if (!currentUser || isAuthModalOpen) {
+    return (
+      <LoginPage
+        onLoginSuccess={handleLoginSuccess}
+        onClose={currentUser ? () => setIsAuthModalOpen(false) : undefined}
+      />
+    );
   }
 
   return (
@@ -125,7 +133,7 @@ export function App() {
         currentUser={currentUser}
         currentRole={currentRole}
         onRoleChange={handleRoleChange}
-        onOpenAuthModal={() => { }}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
         onLogout={handleLogout}
       />
 
