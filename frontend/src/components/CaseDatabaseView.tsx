@@ -6,8 +6,7 @@ import {
   RefreshCw,
   Copy,
   Check,
-  Terminal,
-  FileText
+  Terminal
 } from 'lucide-react';
 import { api, type CaseRecord } from '../api/client';
 
@@ -97,34 +96,31 @@ LIMIT 100;`;
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 space-y-1.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#222836] via-[#2B3345] to-[#222836] border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-xl relative overflow-hidden">
+        <div className="space-y-1.5">
           <div className="flex items-center space-x-2">
-            <span className="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200 flex items-center space-x-1">
-              <Server className="w-3 h-3 text-blue-600 inline" />
+            <span className="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-white/10 text-white border border-white/20 flex items-center space-x-1 shadow-[0_0_12px_rgba(255,255,255,0.2)]">
+              <Server className="w-3 h-3 text-amber-400 inline" />
               <span>ENGINE: MySQL 8.0 • InnoDB Pool</span>
             </span>
-            <span className="text-xs text-slate-500 font-mono">scanova_db.uploaded_images</span>
+            <span className="text-xs text-slate-400 font-mono">scanova_db.uploaded_images</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-display">
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-display">
             PACS & Relational Case Archive
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 max-w-2xl font-sans leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-400 max-w-2xl font-sans leading-relaxed">
             Direct interface to MySQL 8.0 study tables, DenseNet-121 inference logs, and doctor ground-truth concordance records.
           </p>
         </div>
 
-        <div className="relative z-10 flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
           <button
             type="button"
             onClick={() => setShowSqlViewer(!showSqlViewer)}
-            className={`flex items-center space-x-1.5 px-4 py-2.5 rounded-full text-xs font-mono font-bold transition-all border cursor-pointer ${
-              showSqlViewer
-                ? 'bg-slate-900 text-white font-extrabold border-slate-900 shadow-sm'
-                : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
-            }`}
+            className={`flex items-center space-x-1.5 px-4 py-2.5 rounded-full text-xs font-mono font-bold transition-all border cursor-pointer ${showSqlViewer
+                ? 'bg-white text-black font-extrabold border-white shadow-[0_0_20px_rgba(255,255,255,0.4)]'
+                : 'bg-white/[0.04] text-slate-200 border-white/10 hover:border-white'
+              }`}
           >
             <Code2 className="w-3.5 h-3.5" />
             <span>{showSqlViewer ? 'Hide SQL' : 'View SQL Query'}</span>
@@ -133,9 +129,9 @@ LIMIT 100;`;
           <button
             type="button"
             onClick={loadCases}
-            className="flex items-center space-x-2 px-4 py-2.5 rounded-full bg-slate-100 border border-slate-200 hover:bg-slate-200 text-xs font-mono font-bold text-slate-700 transition-colors shadow-sm cursor-pointer"
+            className="flex items-center space-x-2 px-4 py-2.5 rounded-full bg-white/[0.04] border border-white/10 hover:border-white text-xs font-mono font-bold text-slate-200 hover:text-white transition-colors shadow-md cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-blue-600' : 'text-blue-600'}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-amber-400' : 'text-amber-400'}`} />
             <span>Query Refresh</span>
           </button>
         </div>
@@ -143,9 +139,9 @@ LIMIT 100;`;
 
       {/* SQL Query Console Drawer */}
       {showSqlViewer && (
-        <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 space-y-2.5 font-mono text-xs animate-in fade-in duration-200 text-white">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-            <span className="text-cyan-400 font-bold flex items-center space-x-1.5">
+        <div className="p-5 rounded-3xl bg-[#222836] border border-white/15 space-y-2.5 font-mono text-xs animate-in fade-in duration-200">
+          <div className="flex items-center justify-between border-b border-white/10 pb-2">
+            <span className="text-amber-400 font-bold flex items-center space-x-1.5">
               <Terminal className="w-3.5 h-3.5" />
               <span>ACTIVE_SQL_STATEMENT</span>
             </span>
@@ -154,30 +150,30 @@ LIMIT 100;`;
               <button
                 type="button"
                 onClick={handleCopySql}
-                className="flex items-center space-x-1 px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-200 border border-slate-700 cursor-pointer"
+                className="flex items-center space-x-1 px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/10 text-[11px] text-slate-200 border border-white/10 cursor-pointer"
               >
-                {copiedSql ? <Check className="w-3 h-3 text-cyan-400" /> : <Copy className="w-3 h-3" />}
+                {copiedSql ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                 <span>{copiedSql ? 'Copied' : 'Copy SQL'}</span>
               </button>
               <button
                 type="button"
                 onClick={handleCopyJson}
-                className="flex items-center space-x-1 px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-200 border border-slate-700 cursor-pointer"
+                className="flex items-center space-x-1 px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/10 text-[11px] text-slate-200 border border-white/10 cursor-pointer"
               >
-                {copiedJson ? <Check className="w-3 h-3 text-cyan-400" /> : <Copy className="w-3 h-3" />}
+                {copiedJson ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                 <span>{copiedJson ? 'Copied' : 'Export Table JSON'}</span>
               </button>
             </div>
           </div>
 
-          <pre className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-[11px] text-cyan-300 overflow-x-auto select-all">
+          <pre className="p-3.5 rounded-2xl bg-[#181C26] border border-white/10 text-[11px] text-amber-300 overflow-x-auto select-all">
             {currentSqlQuery}
           </pre>
         </div>
       )}
 
       {/* Filter and Search Bar */}
-      <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="p-5 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
           <input
@@ -185,21 +181,20 @@ LIMIT 100;`;
             placeholder="WHERE accession LIKE '%...%' OR site..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 font-mono"
+            className="w-full pl-10 pr-3 py-2.5 bg-white/[0.03] border border-white/10 rounded-2xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-white font-mono"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           {/* Finding Filter */}
-          <div className="flex items-center space-x-1 bg-slate-50 p-1 rounded-2xl border border-slate-200 text-xs font-bold">
+          <div className="flex items-center space-x-1 bg-white/[0.03] p-1 rounded-2xl border border-white/10 text-xs font-bold">
             {(['all', 'Normal', 'Pneumonia'] as const).map((fn) => (
               <button
                 key={fn}
                 type="button"
                 onClick={() => setFilterFinding(fn)}
-                className={`px-3 py-1.5 rounded-xl capitalize transition-all cursor-pointer ${
-                  filterFinding === fn ? 'bg-blue-600 text-white font-extrabold shadow-sm' : 'text-slate-500 hover:text-slate-900'
-                }`}
+                className={`px-3 py-1.5 rounded-xl capitalize transition-all cursor-pointer ${filterFinding === fn ? 'bg-white text-black font-extrabold shadow-[0_0_12px_rgba(255,255,255,0.4)]' : 'text-slate-400 hover:text-white'
+                  }`}
               >
                 {fn === 'all' ? 'All Findings' : fn}
               </button>
@@ -207,15 +202,14 @@ LIMIT 100;`;
           </div>
 
           {/* Agreement Filter */}
-          <div className="flex items-center space-x-1 bg-slate-50 p-1 rounded-2xl border border-slate-200 text-xs font-bold">
+          <div className="flex items-center space-x-1 bg-white/[0.03] p-1 rounded-2xl border border-white/10 text-xs font-bold">
             {(['all', 'Concordant', 'Discordant', 'Pending'] as const).map((ag) => (
               <button
                 key={ag}
                 type="button"
                 onClick={() => setFilterAgreement(ag)}
-                className={`px-3 py-1.5 rounded-xl capitalize transition-all cursor-pointer ${
-                  filterAgreement === ag ? 'bg-indigo-600 text-white font-extrabold shadow-sm' : 'text-slate-500 hover:text-slate-900'
-                }`}
+                className={`px-3 py-1.5 rounded-xl capitalize transition-all cursor-pointer ${filterAgreement === ag ? 'bg-white/20 text-white border border-white' : 'text-slate-400 hover:text-white'
+                  }`}
               >
                 {ag}
               </button>
@@ -225,10 +219,10 @@ LIMIT 100;`;
       </div>
 
       {/* Relational Table View */}
-      <div className="rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-sm">
+      <div className="rounded-3xl bg-[#222836]/90 border border-white/15 overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-50 text-slate-600 text-[10px] uppercase border-b border-slate-200 select-none">
+            <thead className="bg-[#181C26] text-slate-400 text-[10px] uppercase border-b border-white/10 select-none">
               <tr>
                 <th className="py-3.5 px-4">ACCESSION_ID</th>
                 <th className="py-3.5 px-4">PATIENT_HASH</th>
@@ -239,64 +233,62 @@ LIMIT 100;`;
                 <th className="py-3.5 px-4 text-right">ACTIONS</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/[0.06]">
               {filteredCases.map((c) => {
                 const isPneumonia = c.prediction?.label === 'Pneumonia';
                 const isConcordant = c.radiologist?.agreement === 'Concordant';
                 const isDiscordant = c.radiologist?.agreement === 'Discordant';
 
                 return (
-                  <tr key={c.image_id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3.5 px-4 text-slate-900 font-bold">{c.accession_number}</td>
-                    <td className="py-3.5 px-4 text-slate-500 font-mono">{c.patient_id_hash.substring(0, 12)}...</td>
-                    <td className="py-3.5 px-4 text-slate-700">{c.site_id}</td>
+                  <tr key={c.image_id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-3.5 px-4 text-white font-bold">{c.accession_number}</td>
+                    <td className="py-3.5 px-4 text-slate-400 font-mono">{c.patient_id_hash.substring(0, 12)}...</td>
+                    <td className="py-3.5 px-4 text-slate-200">{c.site_id}</td>
                     <td className="py-3.5 px-4">
                       {c.prediction ? (
                         <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            isPneumonia
-                              ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                              : 'bg-blue-50 text-blue-700 border border-blue-200'
-                          }`}
+                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isPneumonia
+                              ? 'bg-rose-950/70 text-rose-300 border border-rose-500/40'
+                              : 'bg-white/10 text-white border border-white/20'
+                            }`}
                         >
                           {c.prediction.label}
                         </span>
                       ) : (
-                        <span className="text-slate-400">NULL</span>
+                        <span className="text-slate-500">NULL</span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-700">
+                    <td className="py-3.5 px-4 text-slate-200">
                       {c.prediction ? `${(c.prediction.confidence * 100).toFixed(1)}%` : '—'}
                     </td>
                     <td className="py-3.5 px-4">
                       {isConcordant && (
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-500/40">
                           Concordant
                         </span>
                       )}
                       {isDiscordant && (
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-950/70 text-rose-300 border border-rose-500/40 animate-pulse">
                           Discordant
                         </span>
                       )}
-                      {!c.radiologist && <span className="text-slate-400 text-[10px]">Pending Read</span>}
+                      {!c.radiologist && <span className="text-slate-500 text-[10px]">Pending Read</span>}
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end space-x-1.5">
                         <button
                           type="button"
                           onClick={() => setSelectedCase(c)}
-                          className="px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-[10px] cursor-pointer shadow-sm"
+                          className="px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/10 text-slate-200 border border-white/10 text-[10px] cursor-pointer"
                         >
                           Inspect
                         </button>
                         <button
                           type="button"
                           onClick={() => onNavigateToReports(c.image_id)}
-                          className="px-3 py-1 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-[10px] font-bold transition-colors cursor-pointer shadow-sm flex items-center space-x-1"
+                          className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 text-[10px] font-bold transition-colors cursor-pointer"
                         >
-                          <FileText className="w-3 h-3" />
-                          <span>PDF</span>
+                          PDF
                         </button>
                       </div>
                     </td>
@@ -310,32 +302,32 @@ LIMIT 100;`;
 
       {/* Inspection Modal */}
       {selectedCase && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200 font-mono">
-          <div className="w-full max-w-xl bg-white border border-slate-200 rounded-3xl shadow-xl p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <span className="text-sm font-bold text-slate-900 font-display">RECORD_INSPECTION: {selectedCase.accession_number}</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 font-mono">
+          <div className="w-full max-w-xl bg-[#222836] border border-white/15 rounded-3xl shadow-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <span className="text-sm font-bold text-white font-display">RECORD_INSPECTION: {selectedCase.accession_number}</span>
               <button
                 type="button"
                 onClick={() => setSelectedCase(null)}
-                className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 hover:text-slate-900 text-xs cursor-pointer"
+                className="px-3 py-1 rounded-full bg-white/[0.04] text-slate-400 hover:text-white text-xs cursor-pointer"
               >
                 Close
               </button>
             </div>
 
             <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                <span className="text-[10px] text-slate-500 font-bold">IMAGE_METRICS</span>
-                <p className="text-slate-700">ID: {selectedCase.image_id}</p>
-                <p className="text-slate-700">Age / Sex: {selectedCase.patient_age} / {selectedCase.patient_sex}</p>
-                <p className="text-slate-700">Site: {selectedCase.site_id}</p>
+              <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] space-y-1">
+                <span className="text-[10px] text-slate-400">IMAGE_METRICS</span>
+                <p className="text-slate-200">ID: {selectedCase.image_id}</p>
+                <p className="text-slate-200">Age / Sex: {selectedCase.patient_age} / {selectedCase.patient_sex}</p>
+                <p className="text-slate-200">Site: {selectedCase.site_id}</p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                <span className="text-[10px] text-slate-500 font-bold">INFERENCE_OUTPUT</span>
-                <p className="text-slate-900 font-bold">Prediction: {selectedCase.prediction?.label || 'None'}</p>
-                <p className="text-slate-700">Confidence: {selectedCase.prediction ? `${(selectedCase.prediction.confidence * 100).toFixed(1)}%` : '—'}</p>
-                <p className="text-blue-700">Latency: {selectedCase.prediction?.latency_ms?.toFixed(1) || '—'} ms</p>
+              <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] space-y-1">
+                <span className="text-[10px] text-slate-400">INFERENCE_OUTPUT</span>
+                <p className="text-white font-bold">Prediction: {selectedCase.prediction?.label || 'None'}</p>
+                <p className="text-slate-200">Confidence: {selectedCase.prediction ? `${(selectedCase.prediction.confidence * 100).toFixed(1)}%` : '—'}</p>
+                <p className="text-amber-400">Latency: {selectedCase.prediction?.latency_ms?.toFixed(1) || '—'} ms</p>
               </div>
             </div>
 
@@ -347,7 +339,7 @@ LIMIT 100;`;
                   setSelectedCase(null);
                   onNavigateToRadiologist(id);
                 }}
-                className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold shadow-sm cursor-pointer font-display"
+                className="px-4 py-2 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white text-xs font-bold shadow-md cursor-pointer font-display"
               >
                 File Ground Truth
               </button>
@@ -358,7 +350,7 @@ LIMIT 100;`;
                   setSelectedCase(null);
                   onNavigateToReports(id);
                 }}
-                className="px-5 py-2 rounded-full text-xs font-black cursor-pointer font-display bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-600/25"
+                className="px-5 py-2 rounded-full text-xs font-black cursor-pointer font-display btn-lumina-primary"
               >
                 Download PDF
               </button>

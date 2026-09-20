@@ -10,17 +10,13 @@
   --surface-card: #FFFFFF;
   --surface-border: #E2E8F0;
   --text-primary: #0F172A;
-  --text-secondary: #334155;
+  --text-secondary: #475569;
   --text-muted: #64748B;
-  
-  /* Brand New Luxury Palette: Electric Sapphire, Cyber Cyan, Sunset Coral, Royal Violet */
-  --brand-primary: #2563EB;
-  --brand-indigo: #4F46E5;
-  --brand-cyan: #06B6D4;
-  --brand-sky: #0284C7;
-  --brand-violet: #7C3AED;
-  --brand-sunset: #EA580C;
-  --brand-rose: #E11D48;
+  --clinical-blue: #0284C7;
+  --clinical-emerald: #059669;
+  --clinical-teal: #0D9488;
+  --clinical-coral: #E11D48;
+  --clinical-amber: #D97706;
 }
 
 body {
@@ -34,30 +30,29 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Luxury Multi-Mesh Medical Background */
+/* Clean Medical Grid Background */
 .medical-grid-bg {
   background-color: #F8FAFC;
-  background-image: 
-    radial-gradient(circle at 5% 5%, rgba(37, 99, 235, 0.06) 0%, transparent 45%),
-    radial-gradient(circle at 95% 15%, rgba(79, 70, 229, 0.06) 0%, transparent 45%),
-    radial-gradient(circle at 50% 85%, rgba(6, 182, 212, 0.04) 0%, transparent 40%),
-    linear-gradient(to right, rgba(226, 232, 240, 0.55) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(226, 232, 240, 0.55) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+  background-image:
+    radial-gradient(circle at 10% 10%, rgba(2, 132, 199, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 90% 20%, rgba(5, 150, 105, 0.04) 0%, transparent 40%),
+    linear-gradient(to right, rgba(226, 232, 240, 0.6) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
 }
 
-/* Premium Glass & Surface Cards */
+/* Clean Clinical White Cards */
 .glass-card {
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
   border-radius: 1.25rem;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s ease;
 }
 
 .glass-card:hover {
-  border-color: #93C5FD;
-  box-shadow: 0 12px 28px -4px rgba(37, 99, 235, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  border-color: #CBD5E1;
+  box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.10), 0 4px 10px -2px rgba(15, 23, 42, 0.06);
   transform: translateY(-1px);
 }
 
@@ -73,22 +68,23 @@ body {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid #E2E8F0;
-  box-shadow: 0 10px 30px -5px rgba(37, 99, 235, 0.06);
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08);
 }
 
-/* Electric Sapphire / Royal Indigo Action Buttons */
-.btn-aidoc-orange, .btn-lumina-primary {
-  background: linear-gradient(135deg, #2563EB 0%, #4F46E5 50%, #06B6D4 100%);
+/* Primary Clinical Action Buttons */
+.btn-aidoc-orange,
+.btn-lumina-primary {
+  background: linear-gradient(135deg, #059669 0%, #10B981 100%);
   color: #FFFFFF;
   font-weight: 700;
   border-radius: 9999px;
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+  transition: all 0.2s ease;
 }
 
-.btn-aidoc-orange:hover, .btn-lumina-primary:hover {
-  background: linear-gradient(135deg, #1D4ED8 0%, #4338CA 50%, #0891B2 100%);
-  box-shadow: 0 6px 22px rgba(37, 99, 235, 0.45);
+.btn-aidoc-orange:hover,
+.btn-lumina-primary:hover {
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.45);
   transform: translateY(-1px);
 }
 
@@ -98,14 +94,13 @@ body {
   font-weight: 700;
   border-radius: 9999px;
   border: 1px solid #CBD5E1;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
   transition: all 0.2s ease;
 }
 
 .btn-lumina-white:hover {
   background: #F8FAFC;
-  border-color: #93C5FD;
-  color: #2563EB;
+  border-color: #94A3B8;
   transform: translateY(-1px);
 }
 
@@ -140,76 +135,40 @@ body {
   color: #334155;
 }
 
-/* ==========================================================================
-   ADVANCED MEDICAL SCANNING LASER & HUD ANIMATIONS
-   ========================================================================== */
-
-/* 1. Hyper-Realistic Vertical Laser Sweep */
-@keyframes medical-laser-sweep {
+/* Virtual Scan Beam Animation */
+@keyframes laser-sweep {
   0% {
     top: 0%;
-    opacity: 0;
+    opacity: 0.9;
   }
-  10% {
+
+  50% {
+    top: 96%;
     opacity: 1;
   }
-  90% {
-    opacity: 1;
-  }
+
   100% {
-    top: 98%;
-    opacity: 0;
+    top: 0%;
+    opacity: 0.9;
   }
 }
 
-.animate-medical-scan {
-  animation: medical-laser-sweep 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+.animate-scan-beam {
+  animation: laser-sweep 2.4s ease-in-out infinite;
 }
 
-/* 2. Concentric Radar Pulse */
-@keyframes radar-ripple {
-  0% {
-    transform: scale(0.6);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1.6);
-    opacity: 0;
-  }
-}
-
-.animate-radar-pulse {
-  animation: radar-ripple 1.8s ease-out infinite;
-}
-
-/* 3. Reticle Rotation & Targeting */
 @keyframes reticle-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-reticle {
-  animation: reticle-spin 10s linear infinite;
-}
-
-/* 4. Scanning Grid HUD Overlay */
-.scan-grid-overlay {
-  background-size: 24px 24px;
-  background-image: 
-    linear-gradient(to right, rgba(37, 99, 235, 0.15) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(37, 99, 235, 0.15) 1px, transparent 1px);
-}
-
-.scan-bone-grid-overlay {
-  background-size: 24px 24px;
-  background-image: 
-    linear-gradient(to right, rgba(234, 88, 12, 0.16) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(234, 88, 12, 0.16) 1px, transparent 1px);
-}
-
-/* 5. Glowing Laser Beam Glow */
-.laser-beam-glow {
-  box-shadow: 0 0 16px 4px rgba(37, 99, 235, 0.85), 0 0 32px 8px rgba(6, 182, 212, 0.6);
+  animation: reticle-spin 12s linear infinite;
 }
 
 .laser-bone-beam-glow {

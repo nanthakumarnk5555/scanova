@@ -316,7 +316,7 @@ async function safeFetch<T>(
       const res = await fetch(url, fetchOptions);
       clearTimeout(timeoutId);
       const contentType = res.headers.get('content-type') || '';
-      
+
       if (contentType.includes('text/html') || !res.ok) {
         return await fallbackFn();
       }
@@ -338,7 +338,7 @@ async function safeFetch<T>(
     const res = await fetch(url, fetchOptions);
     clearTimeout(timeoutId);
     const contentType = res.headers.get('content-type') || '';
-    
+
     // If response is HTML (which happens when Vercel rewrites /api/... to index.html)
     if (contentType.includes('text/html')) {
       if (fallbackFn) return await fallbackFn();
@@ -498,21 +498,12 @@ export const api = {
     if (params?.finding && params.finding !== 'all') url += `&finding=${params.finding}`;
     if (params?.agreement && params.agreement !== 'all') url += `&agreement=${params.agreement}`;
     if (params?.model_type && params.model_type !== 'all') url += `&model_type=${params.model_type}`;
-    
+
     return safeFetch(
       url,
       { headers: getAuthHeaders() },
       () => mockEngine.getPredictionHistory(params)
     );
-  },
-
-  async getCases(params?: { agreement_status?: string; finding?: string; limit?: number }): Promise<CaseRecord[]> {
-    const res = await this.getPredictionHistory({
-      agreement: params?.agreement_status,
-      finding: params?.finding,
-      limit: params?.limit || 50
-    });
-    return res.cases || [];
   },
 
   // Radiologist Ground Truth

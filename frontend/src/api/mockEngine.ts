@@ -669,7 +669,7 @@ export const mockEngine = {
 
   async validateImage(file?: File, modelType: string = 'pneumonia'): Promise<{ is_valid_xray: boolean; reason: string; modality_detected: string; filename?: string }> {
     const fname = file?.name?.toLowerCase() || '';
-    
+
     // Check filename keywords for obvious non-medical images
     const nonMedicalKeywords = ['selfie', 'photo', 'face', 'cert', 'doc', 'pdf', 'passport', 'id_card', 'license', 'screenshot', 'meme', 'cat', 'dog', 'food', 'car', 'flower'];
     if (nonMedicalKeywords.some(k => fname.includes(k))) {
@@ -745,7 +745,7 @@ export const mockEngine = {
       modelVersion = 'v1.8-TraumaSkeletal';
       const isFractureWord = ['fracture', 'crack', 'break', 'rib', 'trauma', 'displace', 'fx', 'defect', 'step-off', 'abnormal', 'positive', 'cortical', 'lesion'].some(k => fileNameLower.includes(k));
       const isIntactWord = ['intact', 'normal', 'clear', 'healthy', 'negative', 'control', 'nominal'].some(k => fileNameLower.includes(k));
-      
+
       const hasBreak = isFractureWord ? true : (isIntactWord ? false : b.isPathological);
       predictedClass = hasBreak ? 'Bone Fracture' : 'Intact Bone';
       confidence = b.confidence;
@@ -767,7 +767,7 @@ export const mockEngine = {
       modelVersion = 'v2.5-ClinicalCheXNet';
       const isPneuWord = ['pneumonia', 'infiltrat', 'covid', 'consolidation', 'pneu', 'viral', 'bacterial', 'tb', 'tuberculosis', 'effusion', 'edema', 'opacity', 'abnormal', 'positive', 'lobar', 'rll', 'lll', 'rul', 'rml', 'nodule', 'nodules', 'cancer', 'malignan', 'post_op', 'icu', 'mass', 'lesion', 'atelectasis', 'pneumothorax', 'emphysema', 'bronchiectasis'].some(k => fileNameLower.includes(k));
       const isNormalWord = ['normal', 'clear', 'healthy', 'negative', 'control', 'nominal'].some(k => fileNameLower.includes(k));
-      
+
       const hasPneu = isPneuWord ? true : (isNormalWord ? false : b.isPathological);
       predictedClass = hasPneu ? 'Pneumonia' : 'Normal';
       confidence = b.confidence;

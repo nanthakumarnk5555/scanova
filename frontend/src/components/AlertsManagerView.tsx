@@ -4,8 +4,10 @@ import {
   ShieldAlert,
   Clock,
   CheckCircle2,
+  AlertTriangle,
   RefreshCw,
   Search,
+  ChevronRight,
   X
 } from 'lucide-react';
 import { api, type AlertData } from '../api/client';
@@ -86,20 +88,18 @@ export const AlertsManagerView: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 space-y-1.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#222836] via-[#2B3345] to-[#222836] border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-xl relative overflow-hidden">
+        <div className="space-y-1.5">
           <div className="flex items-center space-x-2">
-            <span className="px-3 py-1 rounded-full text-[10px] uppercase font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
+            <span className="px-3 py-1 rounded-full text-[10px] uppercase font-mono font-bold bg-white/10 text-white border border-white/20 shadow-[0_0_12px_rgba(255,255,255,0.2)]">
               Safety & Incident Queue
             </span>
-            <span className="text-xs text-slate-500 font-medium">Automated AI Quality Alerts & SLA Timers</span>
+            <span className="text-xs text-slate-400 font-medium">Automated AI Quality Alerts & SLA Timers</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-display">
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-display">
             Clinical Safety Alerts & Triage Management
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed font-sans">
+          <p className="text-xs sm:text-sm text-slate-400 max-w-2xl leading-relaxed font-sans">
             Live alerts triggered whenever diagnostic accuracy deviates, unexpected imaging shifts occur, or doctor-AI disagreements exceed SLA thresholds.
           </p>
         </div>
@@ -107,48 +107,48 @@ export const AlertsManagerView: React.FC = () => {
         <button
           type="button"
           onClick={loadAlerts}
-          className="relative z-10 flex items-center space-x-2 px-5 py-2.5 rounded-full bg-slate-100 border border-slate-200 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-all shadow-sm cursor-pointer"
+          className="flex items-center space-x-2 px-5 py-2.5 rounded-full bg-white/[0.04] border border-white/15 hover:border-white text-xs font-bold text-slate-200 hover:text-white transition-all shadow-md cursor-pointer"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-blue-600' : 'text-blue-600'}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-amber-400' : 'text-amber-400'}`} />
           <span>Refresh Alerts</span>
         </button>
       </div>
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="p-5 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-slate-500">Active Open Incidents</span>
-            <p className="text-2xl font-black text-slate-900 mt-1 font-display">{openCount}</p>
+            <span className="text-xs font-semibold text-slate-400">Active Open Incidents</span>
+            <p className="text-2xl font-black text-white mt-1 font-display">{openCount}</p>
           </div>
-          <div className="p-3 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 shadow-sm">
-            <Bell className="w-5 h-5 animate-pulse" />
+          <div className="p-3 rounded-2xl bg-white/10 border border-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+            <Bell className="w-5 h-5 animate-pulse text-amber-400" />
           </div>
         </div>
 
-        <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="p-5 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-slate-500">Critical Severity (24h SLA)</span>
-            <p className="text-2xl font-black text-rose-600 mt-1 font-display">{criticalCount}</p>
+            <span className="text-xs font-semibold text-slate-400">Critical Severity (24h SLA)</span>
+            <p className="text-2xl font-black text-rose-400 mt-1 font-display">{criticalCount}</p>
           </div>
-          <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 shadow-sm">
+          <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-400/30 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.25)]">
             <ShieldAlert className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="p-5 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-slate-500">Resolved Incidents</span>
-            <p className="text-2xl font-black text-blue-700 mt-1 font-display">{resolvedCount}</p>
+            <span className="text-xs font-semibold text-slate-400">Resolved Incidents</span>
+            <p className="text-2xl font-black text-emerald-400 mt-1 font-display">{resolvedCount}</p>
           </div>
-          <div className="p-3 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 shadow-sm">
+          <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-400/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.25)]">
             <CheckCircle2 className="w-5 h-5" />
           </div>
         </div>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="p-5 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
           <input
@@ -156,23 +156,22 @@ export const AlertsManagerView: React.FC = () => {
             placeholder="Search incident title, type, details..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 font-sans"
+            className="w-full pl-10 pr-3 py-2.5 bg-white/[0.03] border border-white/10 rounded-2xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-white font-sans"
           />
         </div>
 
         <div className="flex items-center space-x-3 w-full sm:w-auto">
           {/* Status Filter */}
-          <div className="flex items-center space-x-1 bg-slate-50 p-1 rounded-2xl border border-slate-200 text-xs font-bold">
+          <div className="flex items-center space-x-1 bg-white/[0.03] p-1 rounded-2xl border border-white/10 text-xs font-bold">
             {(['all', 'Open', 'Investigating', 'Resolved'] as const).map((st) => (
               <button
                 key={st}
                 type="button"
                 onClick={() => setFilterStatus(st)}
-                className={`px-3 py-1.5 rounded-xl capitalize transition-all cursor-pointer ${
-                  filterStatus === st
-                    ? 'bg-blue-600 text-white font-extrabold shadow-sm'
-                    : 'text-slate-500 hover:text-slate-900'
-                }`}
+                className={`px-3 py-1.5 rounded-xl capitalize transition-all cursor-pointer ${filterStatus === st
+                    ? 'bg-white text-black font-extrabold shadow-[0_0_12px_rgba(255,255,255,0.4)]'
+                    : 'text-slate-400 hover:text-white'
+                  }`}
               >
                 {st}
               </button>
@@ -180,17 +179,16 @@ export const AlertsManagerView: React.FC = () => {
           </div>
 
           {/* Severity Filter */}
-          <div className="flex items-center space-x-1 bg-slate-50 p-1 rounded-2xl border border-slate-200 text-xs font-bold">
+          <div className="flex items-center space-x-1 bg-white/[0.03] p-1 rounded-2xl border border-white/10 text-xs font-bold">
             {(['all', 'Critical', 'High', 'Medium', 'Low'] as const).map((sv) => (
               <button
                 key={sv}
                 type="button"
                 onClick={() => setFilterSeverity(sv)}
-                className={`px-3 py-1.5 rounded-xl capitalize transition-all cursor-pointer ${
-                  filterSeverity === sv
-                    ? 'bg-indigo-600 text-white font-extrabold shadow-sm'
-                    : 'text-slate-500 hover:text-slate-900 border border-transparent'
-                }`}
+                className={`px-3 py-1.5 rounded-xl capitalize transition-all cursor-pointer ${filterSeverity === sv
+                    ? 'bg-white/20 text-white border border-white shadow-[0_0_10px_rgba(255,255,255,0.25)]'
+                    : 'text-slate-400 hover:text-white border border-transparent'
+                  }`}
               >
                 {sv}
               </button>
@@ -200,10 +198,10 @@ export const AlertsManagerView: React.FC = () => {
       </div>
 
       {/* Alerts Table */}
-      <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm">
+      <div className="p-6 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_15px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] tracking-wider border-b border-slate-200">
+            <thead className="bg-[#181C26] text-slate-400 uppercase text-[10px] tracking-wider border-b border-white/10">
               <tr>
                 <th className="py-3 px-3.5">Severity</th>
                 <th className="py-3 px-3.5">Alert Type</th>
@@ -213,7 +211,7 @@ export const AlertsManagerView: React.FC = () => {
                 <th className="py-3 px-3.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/[0.06]">
               {filteredAlerts.map((a) => {
                 const isCrit = a.severity === 'Critical';
                 const isHigh = a.severity === 'High';
@@ -222,35 +220,34 @@ export const AlertsManagerView: React.FC = () => {
                 const isInvestigating = a.status === 'Investigating';
 
                 return (
-                  <tr key={a.id} className="hover:bg-slate-50/80 transition-colors">
+                  <tr key={a.id} className="hover:bg-white/[0.02] transition-colors">
                     {/* Severity */}
                     <td className="py-3.5 px-3.5">
                       <span
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
-                          isCrit
-                            ? 'bg-rose-50 text-rose-700 border border-rose-200 animate-pulse'
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${isCrit
+                            ? 'bg-rose-950/70 text-rose-300 border border-rose-500/40 animate-pulse'
                             : isHigh
-                            ? 'bg-orange-50 text-orange-700 border border-orange-200'
-                            : isMed
-                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                            : 'bg-blue-50 text-blue-700 border border-blue-200'
-                        }`}
+                              ? 'bg-orange-950/70 text-orange-300 border border-orange-500/40'
+                              : isMed
+                                ? 'bg-amber-950/70 text-amber-300 border border-amber-500/40'
+                                : 'bg-emerald-950/70 text-emerald-300 border border-emerald-500/40'
+                          }`}
                       >
                         {a.severity}
                       </span>
                     </td>
 
                     {/* Alert Type */}
-                    <td className="py-3.5 px-3.5 font-bold text-slate-900 font-display">
+                    <td className="py-3.5 px-3.5 font-bold text-white font-display">
                       {a.alert_type}
                     </td>
 
                     {/* Title & Description */}
                     <td className="py-3.5 px-3.5 max-w-md">
-                      <p className="font-bold text-slate-900 font-display">{a.title}</p>
-                      <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">{a.description}</p>
+                      <p className="font-bold text-white font-display">{a.title}</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-2">{a.description}</p>
                       {a.resolution_notes && (
-                        <p className="text-[10px] text-blue-700 mt-1 italic font-mono font-medium">
+                        <p className="text-[10px] text-emerald-400 mt-1 italic font-mono">
                           Resolution: {a.resolution_notes}
                         </p>
                       )}
@@ -258,8 +255,8 @@ export const AlertsManagerView: React.FC = () => {
 
                     {/* SLA Timer */}
                     <td className="py-3.5 px-3.5 whitespace-nowrap">
-                      <div className="flex items-center space-x-1.5 text-slate-600">
-                        <Clock className="w-3.5 h-3.5 text-amber-600" />
+                      <div className="flex items-center space-x-1.5 text-slate-300">
+                        <Clock className="w-3.5 h-3.5 text-amber-400" />
                         <span className="font-mono text-[11px]">
                           {new Date(a.sla_expires_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ({a.sla_hours}h SLA)
                         </span>
@@ -269,13 +266,12 @@ export const AlertsManagerView: React.FC = () => {
                     {/* Status */}
                     <td className="py-3.5 px-3.5">
                       <span
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                          isResolved
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isResolved
+                            ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-500/40'
                             : isInvestigating
-                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                            : 'bg-rose-50 text-rose-700 border border-rose-200'
-                        }`}
+                              ? 'bg-amber-950/70 text-amber-300 border border-amber-500/40'
+                              : 'bg-rose-950/70 text-rose-300 border border-rose-500/40'
+                          }`}
                       >
                         {a.status}
                       </span>
@@ -290,7 +286,7 @@ export const AlertsManagerView: React.FC = () => {
                               type="button"
                               disabled={actionLoading}
                               onClick={() => handleAcknowledge(a.id)}
-                              className="px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[11px] font-semibold transition-colors cursor-pointer shadow-sm"
+                              className="px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white text-[11px] font-semibold transition-colors cursor-pointer shadow-sm"
                             >
                               Investigate
                             </button>
@@ -301,7 +297,7 @@ export const AlertsManagerView: React.FC = () => {
                               setResolvingAlert(a);
                               setResolutionNotes('');
                             }}
-                            className="px-3 py-1 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-[11px] font-bold transition-colors cursor-pointer shadow-md shadow-blue-600/25"
+                            className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-[11px] font-bold transition-colors cursor-pointer shadow-sm"
                           >
                             Resolve
                           </button>
@@ -318,26 +314,26 @@ export const AlertsManagerView: React.FC = () => {
 
       {/* Resolution Modal */}
       {resolvingAlert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-xl overflow-hidden p-6 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2 font-display">
-                <CheckCircle2 className="w-4 h-4 text-blue-600" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-[#222836] border border-white/15 rounded-3xl shadow-2xl overflow-hidden p-6 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <h3 className="text-sm font-bold text-white flex items-center space-x-2 font-display">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                 <span>Resolve Clinical Incident Alert</span>
               </h3>
-              <button onClick={() => setResolvingAlert(null)} className="text-slate-400 hover:text-slate-700 cursor-pointer">
+              <button onClick={() => setResolvingAlert(null)} className="text-slate-400 hover:text-white cursor-pointer">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div>
-              <p className="text-xs font-bold text-slate-900 font-display">{resolvingAlert.title}</p>
-              <p className="text-[11px] text-slate-500 mt-1">{resolvingAlert.description}</p>
+              <p className="text-xs font-bold text-white font-display">{resolvingAlert.title}</p>
+              <p className="text-[11px] text-slate-400 mt-1">{resolvingAlert.description}</p>
             </div>
 
             <form onSubmit={handleResolveSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
                   Clinical QA Root Cause & Resolution Documentation
                 </label>
                 <textarea
@@ -346,7 +342,7 @@ export const AlertsManagerView: React.FC = () => {
                   value={resolutionNotes}
                   onChange={(e) => setResolutionNotes(e.target.value)}
                   placeholder="Document the corrective action, scanner calibration, radiologist re-reading, or model recalibration notes..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 font-sans"
+                  className="w-full px-3 py-2 bg-white/[0.03] border border-white/10 rounded-2xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-white font-sans"
                 />
               </div>
 
@@ -354,14 +350,14 @@ export const AlertsManagerView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setResolvingAlert(null)}
-                  className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                  className="px-4 py-2 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-slate-300 text-xs font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={actionLoading}
-                  className="px-5 py-2 rounded-full text-xs font-bold cursor-pointer font-display bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-600/25"
+                  className="px-5 py-2 rounded-full text-xs font-bold cursor-pointer font-display btn-lumina-primary"
                 >
                   {actionLoading ? 'Resolving...' : 'Sign & Close Incident'}
                 </button>
