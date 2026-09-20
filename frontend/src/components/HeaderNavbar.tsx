@@ -23,6 +23,7 @@ interface NavItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
+  badgeColor?: string;
   isAlert?: boolean;
   isCore?: boolean;
 }
@@ -66,18 +67,19 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
 
   const navGroups: NavGroup[] = [
     {
-      name: 'Clinical AI',
+      name: 'Clinical AI & Architecture',
       items: [
+        { id: 'platform_overview', label: 'Architecture & Pipeline', icon: Sparkles, badge: '4-Stage', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
         { id: 'cxr_scan', label: 'AI Diagnostic Studio', icon: Zap, isCore: true },
-        { id: 'pneumonia_model', label: 'Pneumonia CXR', icon: Stethoscope, badge: 'DenseNet' },
-        { id: 'bone_model', label: 'Bone Fracture', icon: Bone, badge: 'ResNet' },
+        { id: 'pneumonia_model', label: 'Pneumonia CXR', icon: Stethoscope, badge: 'DenseNet', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+        { id: 'bone_model', label: 'Bone Fracture', icon: Bone, badge: 'ResNet', badgeColor: 'bg-amber-50 text-amber-700 border-amber-200' },
         { id: 'doctor_review', label: 'Doctor Review', icon: FileCheck2 },
       ]
     },
     {
-      name: 'Surveillance',
+      name: 'Surveillance & Safety',
       items: [
-        { id: 'analytics', label: 'Fleet Overview', icon: LayoutDashboard },
+        { id: 'analytics', label: 'Fleet Surveillance', icon: LayoutDashboard },
         { id: 'drift_monitor', label: 'Drift & Safety', icon: TrendingDown },
         {
           id: 'alerts',
@@ -89,11 +91,10 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
       ]
     },
     {
-      name: 'Records & System',
+      name: 'Records & Dossiers',
       items: [
         { id: 'cases', label: 'Case Archive', icon: Database },
-        { id: 'reports', label: 'Dossiers', icon: FileText },
-        { id: 'platform_overview', label: 'Architecture', icon: Sparkles },
+        { id: 'reports', label: 'Dossiers & PDF', icon: FileText },
       ]
     }
   ];
@@ -270,7 +271,7 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
                               ? 'bg-rose-600 text-white animate-pulse'
                               : isActive
                               ? 'bg-emerald-800 text-white'
-                              : 'bg-slate-100 text-slate-600 border border-slate-200'
+                              : item.badgeColor || 'bg-slate-100 text-slate-600 border border-slate-200'
                           }`}
                         >
                           {item.badge}

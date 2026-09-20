@@ -24,7 +24,9 @@ import {
   Trash2,
   RotateCcw,
   XCircle,
-  Lock
+  Lock,
+  Cpu,
+  Target
 } from 'lucide-react';
 import {
   api,
@@ -58,6 +60,10 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
   const [resultPrediction, setResultPrediction] = useState<PredictionInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Scanning Progress & Live HUD Animation Telemetry
+  const [scanProgress, setScanProgress] = useState<number>(0);
+  const [scanStepText, setScanStepText] = useState<string>('Ingesting 2048x2048 radiograph matrix...');
+
   // PACS Viewport state
   const [heatmapOpacity, setHeatmapOpacity] = useState<number>(75);
   const [dicomFilter, setDicomFilter] = useState<'default' | 'lung' | 'bone' | 'invert'>('default');
@@ -78,6 +84,41 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
       handleLoadSample('sample_bone_fracture.jpg', 'bone_crack');
     }
   }, [activeModel]);
+
+  // Live scanning animation progress timer
+  useEffect(() => {
+    let interval: any = null;
+    if (loading) {
+      setScanProgress(5);
+      setScanStepText('Step 1/4: Ingesting 2048x2048 high-resolution radiograph matrix...');
+      const startTime = Date.now();
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        if (elapsed < 300) {
+          setScanProgress(25);
+          setScanStepText('Step 1/4: Normalizing physical tissue attenuation & DICOM header...');
+        } else if (elapsed < 700) {
+          setScanProgress(55);
+          setScanStepText(
+            activeModel === 'pneumonia'
+              ? 'Step 2/4: CheXNet DenseNet-121 121-layer convolutional feature extraction...'
+              : 'Step 2/4: Trauma ResNet-50 multiscale cortical contour extraction...'
+          );
+        } else if (elapsed < 1100) {
+          setScanProgress(80);
+          setScanStepText('Step 3/4: Calculating Grad-CAM backprop activation gradients & saliency...');
+        } else if (elapsed < 1500) {
+          setScanProgress(94);
+          setScanStepText('Step 4/4: Measuring dynamic radiomic biomarkers & reader concordance...');
+        }
+      }, 100);
+    } else {
+      setScanProgress(0);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [loading, activeModel]);
 
   const handleModelSwitch = (model: 'pneumonia' | 'bone_crack') => {
     setActiveModel(model);
@@ -299,7 +340,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
               }`}
             >
               <Bone className="w-3.5 h-3.5" />
-              <span>Bone Crack (Trauma Radiomics ResNet)</span>
+              <span>Bone Fracture (Trauma ResNet-50)</span>
             </button>
           </div>
 
@@ -313,7 +354,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
           </p>
           <div className="inline-flex items-center text-xs font-medium text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-md">
             <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-amber-600" />
-            AI Clinical Decision Support Mode • Strictly Accepts Valid X-Ray Radiographs
+            AI Clinical Decision Support Mode • Real-Time CT/Laser Scanning & Radiomics Analysis
           </div>
         </div>
 
@@ -369,7 +410,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
               </span>
             </div>
 
-            {/* Drag & Drop Zone */}
+            {/* Drag & Drop Zone with Real-Time Scanning Laser Effect */}
             <div
               onDragOver={(e) => {
                 e.preventDefault();
@@ -378,7 +419,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
               onDragLeave={() => setIsDragOver(false)}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 ${
+              className={`border-2 border-dashed rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 relative overflow-hidden ${
                 isDragOver
                   ? activeModel === 'pneumonia'
                     ? 'border-emerald-500 bg-emerald-50/50'
@@ -402,12 +443,46 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
 
               {filePreview ? (
                 <div className="space-y-3 w-full py-1">
-                  <div className="relative inline-block mx-auto">
+                  <div className="relative inline-block mx-auto overflow-hidden rounded-xl border border-slate-300 bg-black shadow-md">
                     <img
                       src={filePreview}
                       alt="Preview"
-                      className="w-36 h-36 object-contain rounded-xl mx-auto border border-slate-300 bg-black shadow-md"
+                      className="w-40 h-40 object-contain mx-auto"
                     />
+
+                    {/* LIVE SCANNING TIME LASER ANIMATION OVERLAY */}
+                    {(loading || validating) && (
+                      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                        {/* Scanning Grid Background */}
+                        <div className={`absolute inset-0 ${activeModel === 'pneumonia' ? 'scan-grid-overlay' : 'scan-bone-grid-overlay'} opacity-60`} />
+
+                        {/* Glowing Laser Beam */}
+                        <div className={`absolute left-0 right-0 h-1.5 z-20 animate-medical-scan ${
+                          activeModel === 'pneumonia'
+                            ? 'bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-400 laser-beam-glow'
+                            : 'bg-gradient-to-r from-amber-400 via-orange-300 to-amber-400 laser-bone-beam-glow'
+                        }`}>
+                          <div className={`w-full h-8 -mt-8 ${
+                            activeModel === 'pneumonia'
+                              ? 'bg-gradient-to-b from-transparent to-emerald-500/30'
+                              : 'bg-gradient-to-b from-transparent to-amber-500/30'
+                          }`} />
+                        </div>
+
+                        {/* Targeting Reticle & Crosshair Corners */}
+                        <div className="absolute inset-2 border border-dashed border-emerald-400/40 rounded-lg flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-full border border-emerald-400/60 animate-reticle" />
+                          <div className="w-3 h-3 rounded-full bg-emerald-400/40 animate-ping" />
+                        </div>
+
+                        {/* Top Scanning HUD Badge */}
+                        <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-black/80 backdrop-blur-sm border border-emerald-400/40 text-[9px] font-mono text-emerald-300 font-bold flex items-center space-x-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          <span>SCANNING {scanProgress}%</span>
+                        </div>
+                      </div>
+                    )}
+
                     <button
                       type="button"
                       onClick={(e) => {
@@ -415,11 +490,12 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                         handleClearImage();
                       }}
                       title="Clear image"
-                      className="absolute -top-2 -right-2 p-1.5 rounded-full bg-rose-600 hover:bg-rose-500 text-white shadow-md border border-white transition-transform hover:scale-110 cursor-pointer"
+                      className="absolute -top-1 -right-1 p-1.5 rounded-full bg-rose-600 hover:bg-rose-500 text-white shadow-md border border-white transition-transform hover:scale-110 cursor-pointer z-30"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
+
                   <div className="flex flex-col items-center justify-center space-y-1">
                     <p className="text-xs font-mono text-slate-800 font-bold truncate max-w-[240px]">
                       {selectedFile?.name || (activeModel === 'pneumonia' ? 'Active Chest Radiograph' : 'Active Bone Radiograph')}
@@ -645,7 +721,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                     validationStatus === 'invalid'
                       ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed opacity-75'
                       : loading || validating
-                      ? 'bg-emerald-400 text-white cursor-wait opacity-75'
+                      ? 'bg-emerald-500 text-white cursor-wait opacity-90 shadow-lg'
                       : activeModel === 'pneumonia'
                       ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/30 cursor-pointer active:scale-[0.99]'
                       : 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold shadow-md shadow-amber-500/30 cursor-pointer active:scale-[0.99]'
@@ -654,7 +730,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                   {loading ? (
                     <>
                       <RefreshCw className="w-4 h-4 animate-spin text-white" />
-                      <span>Analyzing Radiograph...</span>
+                      <span>Scanning Radiograph ({scanProgress}%)...</span>
                     </>
                   ) : validationStatus === 'invalid' ? (
                     <>
@@ -685,7 +761,100 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
 
         {/* Right Column: Radiograph & Result Separation (8 cols) */}
         <div className="lg:col-span-8 space-y-6">
-          {resultPrediction && resultImage ? (
+          {loading ? (
+            /* REAL-TIME MEDICAL SCANNING TIME ANIMATION HUD VIEWPORT */
+            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5 text-slate-900 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+                  <span className="text-xs font-mono font-bold text-slate-900">
+                    REAL-TIME RADIOGRAPHIC SCANNING HUD
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
+                  {activeModel === 'pneumonia' ? 'CheXNet DenseNet-121 Core' : 'Trauma Radiomics ResNet Core'}
+                </span>
+              </div>
+
+              {/* Large Scanning Viewport */}
+              <div className="rounded-2xl overflow-hidden border border-slate-900 bg-black aspect-video sm:aspect-[16/10] relative flex items-center justify-center shadow-lg">
+                {filePreview ? (
+                  <img
+                    src={filePreview}
+                    alt="Active Radiograph Scanning"
+                    className="w-full h-full object-contain filter contrast-125 brightness-95 opacity-80"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-slate-950 flex items-center justify-center">
+                    <Stethoscope className="w-16 h-16 text-emerald-600/40 animate-pulse" />
+                  </div>
+                )}
+
+                {/* Laser Sweep Beam Animation */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                  {/* Grid Overlay */}
+                  <div className={`absolute inset-0 ${activeModel === 'pneumonia' ? 'scan-grid-overlay' : 'scan-bone-grid-overlay'} opacity-75`} />
+
+                  {/* Vertical Neon Laser Beam */}
+                  <div className={`absolute left-0 right-0 h-2 z-20 animate-medical-scan ${
+                    activeModel === 'pneumonia'
+                      ? 'bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-400 laser-beam-glow'
+                      : 'bg-gradient-to-r from-amber-400 via-orange-300 to-amber-400 laser-bone-beam-glow'
+                  }`}>
+                    <div className={`w-full h-14 -mt-14 ${
+                      activeModel === 'pneumonia'
+                        ? 'bg-gradient-to-b from-transparent to-emerald-400/25'
+                        : 'bg-gradient-to-b from-transparent to-amber-400/25'
+                    }`} />
+                  </div>
+
+                  {/* Anatomical Targeting Reticles */}
+                  <div className="absolute top-1/4 left-1/4 w-16 h-16 border-2 border-dashed border-emerald-400/70 rounded-xl flex items-center justify-center animate-pulse">
+                    <span className="text-[8px] font-mono text-emerald-300 absolute -top-4 left-0 bg-black/70 px-1 rounded font-bold">
+                      ROI 01: APEX
+                    </span>
+                    <div className="w-4 h-4 rounded-full border border-emerald-400/50 animate-reticle" />
+                  </div>
+
+                  <div className="absolute bottom-1/4 right-1/4 w-20 h-20 border-2 border-dashed border-cyan-400/70 rounded-xl flex items-center justify-center animate-pulse">
+                    <span className="text-[8px] font-mono text-cyan-300 absolute -top-4 left-0 bg-black/70 px-1 rounded font-bold">
+                      ROI 02: BASILAR
+                    </span>
+                    <div className="w-6 h-6 rounded-full border border-cyan-400/50 animate-reticle" />
+                  </div>
+
+                  {/* Viewport Top Telemetry Overlay */}
+                  <div className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-black/85 backdrop-blur-sm border border-emerald-500/40 text-[10px] font-mono text-emerald-300 flex items-center space-x-2">
+                    <Activity className="w-3.5 h-3.5 text-emerald-400 animate-spin" />
+                    <span className="font-bold">DICOM 3.0 MATRIX SCANNING • {scanProgress}%</span>
+                  </div>
+
+                  <div className="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-black/85 backdrop-blur-sm border border-white/20 text-[10px] font-mono text-slate-300">
+                    LATENCY TARGET &lt; 200ms
+                  </div>
+
+                  {/* Viewport Bottom Live Status Ticker */}
+                  <div className="absolute bottom-3 left-3 right-3 p-3 rounded-xl bg-black/85 backdrop-blur-sm border border-emerald-500/30 text-white space-y-2">
+                    <div className="flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-emerald-400 font-bold flex items-center space-x-1.5">
+                        <Cpu className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                        <span>{scanStepText}</span>
+                      </span>
+                      <span className="text-white font-bold">{scanProgress}%</span>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700">
+                      <div
+                        className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 transition-all duration-150 rounded-full"
+                        style={{ width: `${scanProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : resultPrediction && resultImage ? (
             <div className="space-y-6">
               {/* SECTION 1: IMAGE & MODEL PREDICTION OUTPUT */}
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5 text-slate-900">
