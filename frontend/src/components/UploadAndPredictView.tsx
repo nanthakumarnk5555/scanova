@@ -25,8 +25,7 @@ import {
   RotateCcw,
   XCircle,
   Lock,
-  Cpu,
-  Target
+  Cpu
 } from 'lucide-react';
 import {
   api,
@@ -315,16 +314,16 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Studio Header Banner with Model Selection Tabs - Clean White Medical Aesthetic */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
+      {/* Studio Header Banner with Model Selection Tabs */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-3">
           {/* Model Switcher Tabs */}
-          <div className="flex items-center space-x-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 w-fit">
+          <div className="flex items-center space-x-2 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200 w-fit">
             <button
               onClick={() => handleModelSwitch('pneumonia')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeModel === 'pneumonia'
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/25'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -335,7 +334,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
               onClick={() => handleModelSwitch('bone_crack')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeModel === 'bone_crack'
-                  ? 'bg-amber-500 text-slate-950 font-extrabold shadow-md shadow-amber-500/20'
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold shadow-md shadow-amber-500/25'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -352,8 +351,8 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
               ? 'Upload or select a chest X-ray to detect pulmonary conditions (Normal vs. Pneumonia), examine Grad-CAM lesion heatmaps, and measure quantitative biomarkers.'
               : 'Upload or select a bone X-ray to detect skeletal fractures, analyze cortical integrity indices, and inspect orthopedic alignment metrics.'}
           </p>
-          <div className="inline-flex items-center text-xs font-medium text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-md">
-            <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-amber-600" />
+          <div className="inline-flex items-center text-xs font-medium text-blue-800 bg-blue-50 border border-blue-200 px-3 py-1 rounded-md">
+            <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-blue-600" />
             AI Clinical Decision Support Mode • Real-Time CT/Laser Scanning & Radiomics Analysis
           </div>
         </div>
@@ -365,13 +364,13 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
               onClick={() => onNavigateToRadiologist(resultImage.id)}
               className="flex items-center space-x-2 px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-xs font-bold text-slate-700 hover:text-slate-900 transition-all shadow-sm cursor-pointer"
             >
-              <FileCheck2 className="w-3.5 h-3.5 text-amber-600" />
+              <FileCheck2 className="w-3.5 h-3.5 text-indigo-600" />
               <span>Doctor Review</span>
             </button>
             <button
               type="button"
               onClick={() => onNavigateToReports(resultImage.id)}
-              className="flex items-center space-x-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20 cursor-pointer"
+              className="flex items-center space-x-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/25 cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5" />
               <span>PDF Dossier</span>
@@ -389,7 +388,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
               <div className="flex items-center space-x-2">
                 <div className={`p-2 rounded-xl border ${
                   activeModel === 'pneumonia' 
-                    ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                    ? 'bg-blue-50 text-blue-600 border-blue-200'
                     : 'bg-amber-50 text-amber-600 border-amber-200'
                 }`}>
                   <UploadCloud className="w-4 h-4" />
@@ -403,7 +402,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
               </div>
               <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border font-semibold ${
                 activeModel === 'pneumonia'
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  ? 'bg-blue-50 text-blue-700 border-blue-200'
                   : 'bg-amber-50 text-amber-700 border-amber-200'
               }`}>
                 {activeModel === 'pneumonia' ? 'Chest (CXR)' : 'Skeletal (Bone)'}
@@ -422,11 +421,11 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
               className={`border-2 border-dashed rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 relative overflow-hidden ${
                 isDragOver
                   ? activeModel === 'pneumonia'
-                    ? 'border-emerald-500 bg-emerald-50/50'
+                    ? 'border-blue-500 bg-blue-50/50'
                     : 'border-amber-500 bg-amber-50/50'
                   : validationStatus === 'invalid'
                   ? 'border-rose-400 bg-rose-50/40 hover:border-rose-500'
-                  : 'border-slate-300 hover:border-emerald-500 bg-slate-50/60 hover:bg-emerald-50/20'
+                  : 'border-slate-300 hover:border-blue-500 bg-slate-50/60 hover:bg-blue-50/20'
               }`}
             >
               <input
@@ -459,25 +458,25 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                         {/* Glowing Laser Beam */}
                         <div className={`absolute left-0 right-0 h-1.5 z-20 animate-medical-scan ${
                           activeModel === 'pneumonia'
-                            ? 'bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-400 laser-beam-glow'
+                            ? 'bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400 laser-beam-glow'
                             : 'bg-gradient-to-r from-amber-400 via-orange-300 to-amber-400 laser-bone-beam-glow'
                         }`}>
                           <div className={`w-full h-8 -mt-8 ${
                             activeModel === 'pneumonia'
-                              ? 'bg-gradient-to-b from-transparent to-emerald-500/30'
+                              ? 'bg-gradient-to-b from-transparent to-blue-500/30'
                               : 'bg-gradient-to-b from-transparent to-amber-500/30'
                           }`} />
                         </div>
 
                         {/* Targeting Reticle & Crosshair Corners */}
-                        <div className="absolute inset-2 border border-dashed border-emerald-400/40 rounded-lg flex items-center justify-center">
-                          <div className="w-8 h-8 rounded-full border border-emerald-400/60 animate-reticle" />
-                          <div className="w-3 h-3 rounded-full bg-emerald-400/40 animate-ping" />
+                        <div className="absolute inset-2 border border-dashed border-blue-400/40 rounded-lg flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-full border border-blue-400/60 animate-reticle" />
+                          <div className="w-3 h-3 rounded-full bg-blue-400/40 animate-ping" />
                         </div>
 
                         {/* Top Scanning HUD Badge */}
-                        <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-black/80 backdrop-blur-sm border border-emerald-400/40 text-[9px] font-mono text-emerald-300 font-bold flex items-center space-x-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-black/80 backdrop-blur-sm border border-blue-400/40 text-[9px] font-mono text-cyan-300 font-bold flex items-center space-x-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
                           <span>SCANNING {scanProgress}%</span>
                         </div>
                       </div>
@@ -521,7 +520,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                 <div className="space-y-2 py-2">
                   <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center mx-auto shadow-sm ${
                     activeModel === 'pneumonia'
-                      ? 'bg-emerald-50 border-emerald-200 text-emerald-600'
+                      ? 'bg-blue-50 border-blue-200 text-blue-600'
                       : 'bg-amber-50 border-amber-200 text-amber-600'
                   }`}>
                     {activeModel === 'pneumonia' ? <ImageIcon className="w-6 h-6" /> : <Bone className="w-6 h-6" />}
@@ -539,7 +538,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
             {/* Reference Sample Selector */}
             <div className="space-y-2.5 pt-2 border-t border-slate-100">
               <div className="flex items-center space-x-1.5 font-display">
-                <Sparkles className={`w-3.5 h-3.5 ${activeModel === 'pneumonia' ? 'text-emerald-600' : 'text-amber-600'}`} />
+                <Sparkles className={`w-3.5 h-3.5 ${activeModel === 'pneumonia' ? 'text-blue-600' : 'text-amber-600'}`} />
                 <span className="text-xs font-bold text-slate-800">
                   {activeModel === 'pneumonia' ? 'Reference Chest X-Rays' : 'Reference Bone X-Rays'}
                 </span>
@@ -556,7 +555,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                       className={`p-2.5 rounded-2xl border text-left transition-all flex items-center space-x-2.5 cursor-pointer ${
                         isCurrent
                           ? activeModel === 'pneumonia'
-                            ? 'bg-emerald-50 border-emerald-500 shadow-sm'
+                            ? 'bg-blue-50 border-blue-500 shadow-sm'
                             : 'bg-amber-50 border-amber-500 shadow-sm'
                           : sample.isAbnormal
                           ? 'bg-rose-50/40 border-rose-200 hover:border-rose-400 hover:bg-rose-50'
@@ -591,7 +590,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                     type="text"
                     value={patientId}
                     onChange={(e) => setPatientId(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:bg-white focus:border-blue-500"
                   />
                 </div>
 
@@ -600,7 +599,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                   <select
                     value={siteId}
                     onChange={(e) => setSiteId(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:bg-white focus:border-blue-500"
                   >
                     <option value="Main Campus Hospital">Main Campus Hospital</option>
                     <option value="North Pavilion ER">North Pavilion ER</option>
@@ -616,7 +615,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                     type="number"
                     value={patientAge}
                     onChange={(e) => setPatientAge(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:bg-white focus:border-blue-500"
                   />
                 </div>
 
@@ -625,7 +624,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                   <select
                     value={patientSex}
                     onChange={(e) => setPatientSex(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:bg-white focus:border-blue-500"
                   >
                     <option value="M">Male (M)</option>
                     <option value="F">Female (F)</option>
@@ -647,12 +646,12 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
             )}
 
             {!validating && validationStatus === 'valid' && selectedFile && (
-              <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs flex items-center justify-between shadow-sm animate-in fade-in">
+              <div className="p-3.5 rounded-2xl bg-blue-50 border border-blue-300 text-blue-900 text-xs flex items-center justify-between shadow-sm animate-in fade-in">
                 <div className="flex items-center space-x-2.5">
-                  <ShieldCheck className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                  <ShieldCheck className="w-5 h-5 text-blue-600 flex-shrink-0" />
                   <div>
                     <p className="font-bold font-display">Verified Medical Radiograph</p>
-                    <p className="text-[10px] text-emerald-700 font-mono">
+                    <p className="text-[10px] text-blue-700 font-mono">
                       {validationReason || `Validated for ${activeModel === 'pneumonia' ? 'Chest (CXR)' : 'Skeletal (Bone)'} analysis`}
                     </p>
                   </div>
@@ -661,7 +660,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                   type="button"
                   onClick={handleClearImage}
                   title="Clear Image"
-                  className="p-1.5 rounded-lg bg-emerald-100 hover:bg-rose-100 text-emerald-800 hover:text-rose-700 transition-colors cursor-pointer"
+                  className="p-1.5 rounded-lg bg-blue-100 hover:bg-rose-100 text-blue-800 hover:text-rose-700 transition-colors cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -721,10 +720,10 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                     validationStatus === 'invalid'
                       ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed opacity-75'
                       : loading || validating
-                      ? 'bg-emerald-500 text-white cursor-wait opacity-90 shadow-lg'
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white cursor-wait opacity-90 shadow-lg'
                       : activeModel === 'pneumonia'
-                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/30 cursor-pointer active:scale-[0.99]'
-                      : 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold shadow-md shadow-amber-500/30 cursor-pointer active:scale-[0.99]'
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-md shadow-blue-600/30 cursor-pointer active:scale-[0.99]'
+                      : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-extrabold shadow-md shadow-amber-500/30 cursor-pointer active:scale-[0.99]'
                   }`}
                 >
                   {loading ? (
@@ -766,12 +765,12 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
             <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5 text-slate-900 animate-in fade-in duration-200">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center space-x-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-ping" />
                   <span className="text-xs font-mono font-bold text-slate-900">
                     REAL-TIME RADIOGRAPHIC SCANNING HUD
                   </span>
                 </div>
-                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
+                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-bold">
                   {activeModel === 'pneumonia' ? 'CheXNet DenseNet-121 Core' : 'Trauma Radiomics ResNet Core'}
                 </span>
               </div>
@@ -786,7 +785,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                   />
                 ) : (
                   <div className="w-full h-full bg-slate-950 flex items-center justify-center">
-                    <Stethoscope className="w-16 h-16 text-emerald-600/40 animate-pulse" />
+                    <Stethoscope className="w-16 h-16 text-blue-600/40 animate-pulse" />
                   </div>
                 )}
 
@@ -798,22 +797,22 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                   {/* Vertical Neon Laser Beam */}
                   <div className={`absolute left-0 right-0 h-2 z-20 animate-medical-scan ${
                     activeModel === 'pneumonia'
-                      ? 'bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-400 laser-beam-glow'
+                      ? 'bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400 laser-beam-glow'
                       : 'bg-gradient-to-r from-amber-400 via-orange-300 to-amber-400 laser-bone-beam-glow'
                   }`}>
                     <div className={`w-full h-14 -mt-14 ${
                       activeModel === 'pneumonia'
-                        ? 'bg-gradient-to-b from-transparent to-emerald-400/25'
+                        ? 'bg-gradient-to-b from-transparent to-blue-400/25'
                         : 'bg-gradient-to-b from-transparent to-amber-400/25'
                     }`} />
                   </div>
 
                   {/* Anatomical Targeting Reticles */}
-                  <div className="absolute top-1/4 left-1/4 w-16 h-16 border-2 border-dashed border-emerald-400/70 rounded-xl flex items-center justify-center animate-pulse">
-                    <span className="text-[8px] font-mono text-emerald-300 absolute -top-4 left-0 bg-black/70 px-1 rounded font-bold">
+                  <div className="absolute top-1/4 left-1/4 w-16 h-16 border-2 border-dashed border-blue-400/70 rounded-xl flex items-center justify-center animate-pulse">
+                    <span className="text-[8px] font-mono text-cyan-300 absolute -top-4 left-0 bg-black/70 px-1 rounded font-bold">
                       ROI 01: APEX
                     </span>
-                    <div className="w-4 h-4 rounded-full border border-emerald-400/50 animate-reticle" />
+                    <div className="w-4 h-4 rounded-full border border-blue-400/50 animate-reticle" />
                   </div>
 
                   <div className="absolute bottom-1/4 right-1/4 w-20 h-20 border-2 border-dashed border-cyan-400/70 rounded-xl flex items-center justify-center animate-pulse">
@@ -824,8 +823,8 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                   </div>
 
                   {/* Viewport Top Telemetry Overlay */}
-                  <div className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-black/85 backdrop-blur-sm border border-emerald-500/40 text-[10px] font-mono text-emerald-300 flex items-center space-x-2">
-                    <Activity className="w-3.5 h-3.5 text-emerald-400 animate-spin" />
+                  <div className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-black/85 backdrop-blur-sm border border-blue-500/40 text-[10px] font-mono text-cyan-300 flex items-center space-x-2">
+                    <Activity className="w-3.5 h-3.5 text-blue-400 animate-spin" />
                     <span className="font-bold">DICOM 3.0 MATRIX SCANNING • {scanProgress}%</span>
                   </div>
 
@@ -834,10 +833,10 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                   </div>
 
                   {/* Viewport Bottom Live Status Ticker */}
-                  <div className="absolute bottom-3 left-3 right-3 p-3 rounded-xl bg-black/85 backdrop-blur-sm border border-emerald-500/30 text-white space-y-2">
+                  <div className="absolute bottom-3 left-3 right-3 p-3 rounded-xl bg-black/85 backdrop-blur-sm border border-blue-500/30 text-white space-y-2">
                     <div className="flex items-center justify-between text-[11px] font-mono">
-                      <span className="text-emerald-400 font-bold flex items-center space-x-1.5">
-                        <Cpu className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                      <span className="text-cyan-400 font-bold flex items-center space-x-1.5">
+                        <Cpu className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
                         <span>{scanStepText}</span>
                       </span>
                       <span className="text-white font-bold">{scanProgress}%</span>
@@ -846,7 +845,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                     {/* Progress Bar */}
                     <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700">
                       <div
-                        className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 transition-all duration-150 rounded-full"
+                        className="h-full bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-400 transition-all duration-150 rounded-full"
                         style={{ width: `${scanProgress}%` }}
                       />
                     </div>
@@ -867,7 +866,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                       Model: {resultPrediction.model_name} ({resultPrediction.model_version})
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-semibold">
+                  <span className="text-[10px] font-mono text-blue-800 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded font-semibold">
                     Clinical AI Output
                   </span>
                 </div>
@@ -879,7 +878,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                       className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white shadow-md ${
                         resultPrediction.prediction.includes('Pneumonia') || resultPrediction.prediction.includes('Fracture')
                           ? 'bg-gradient-to-br from-rose-500 to-red-600 shadow-rose-500/20'
-                          : 'bg-emerald-600 shadow-emerald-600/20'
+                          : 'bg-gradient-to-br from-blue-600 to-indigo-600 shadow-blue-600/20'
                       }`}
                     >
                       {activeModel === 'pneumonia' ? (
@@ -898,7 +897,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                           className={`px-2.5 py-0.5 rounded-full text-xs font-mono font-bold ${
                             resultPrediction.prediction.includes('Pneumonia') || resultPrediction.prediction.includes('Fracture')
                               ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                              : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-blue-50 text-blue-700 border border-blue-200'
                           }`}
                         >
                           {(resultPrediction.confidence * 100).toFixed(1)}% Confidence
@@ -917,11 +916,11 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                       onClick={() => handleQuickFeedback('thumbs_up')}
                       className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full border text-xs font-bold transition-all cursor-pointer ${
                         feedbackSent === 'thumbs_up'
-                          ? 'bg-emerald-100 text-emerald-800 border-emerald-400 shadow-sm'
+                          ? 'bg-blue-100 text-blue-800 border-blue-400 shadow-sm'
                           : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                       }`}
                     >
-                      <ThumbsUp className="w-3.5 h-3.5 text-emerald-600" />
+                      <ThumbsUp className="w-3.5 h-3.5 text-blue-600" />
                       <span>Concur</span>
                     </button>
                     <button
@@ -973,7 +972,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                       onClick={() => setShowGradCamLayer(!showGradCamLayer)}
                       className={`flex items-center space-x-1.5 px-3 py-1 rounded-xl text-[10px] font-bold transition-all cursor-pointer ${
                         showGradCamLayer
-                          ? 'bg-emerald-600 text-white border border-emerald-600 shadow-sm'
+                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border border-blue-600 shadow-sm'
                           : 'bg-white text-slate-600 border border-slate-200 hover:text-slate-900 hover:bg-slate-50'
                       }`}
                     >
@@ -1037,7 +1036,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                         max="100"
                         value={heatmapOpacity}
                         onChange={(e) => setHeatmapOpacity(parseInt(e.target.value))}
-                        className="w-20 accent-emerald-400 cursor-pointer"
+                        className="w-20 accent-blue-500 cursor-pointer"
                       />
                     </div>
                   )}
@@ -1047,7 +1046,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
                     <div className="flex items-center space-x-2 text-xs font-bold text-slate-900 font-display">
-                      <Eye className="w-4 h-4 text-emerald-600" />
+                      <Eye className="w-4 h-4 text-blue-600" />
                       <span>Diagnostic Impression</span>
                     </div>
                     <p className="text-xs text-slate-700 leading-relaxed font-sans">
@@ -1063,7 +1062,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
                     <div className="flex items-center space-x-2 text-xs font-bold text-slate-900 font-display">
-                      <Activity className="w-4 h-4 text-emerald-600" />
+                      <Activity className="w-4 h-4 text-blue-600" />
                       <span>Dynamic Radiomic Biomarkers</span>
                     </div>
                     {activeModel === 'pneumonia' ? (
@@ -1082,7 +1081,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                         </div>
                         <div className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
                           <p className="text-[9px] font-mono text-slate-500 uppercase font-semibold">Aeration</p>
-                          <p className="text-sm font-bold text-emerald-600 font-mono mt-0.5">
+                          <p className="text-sm font-bold text-blue-600 font-mono mt-0.5">
                             {resultPrediction.biomarkers?.aeration_index_pct || (resultPrediction.prediction === 'Pneumonia' ? 74 : 96)}%
                           </p>
                         </div>
@@ -1113,18 +1112,18 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                 </div>
               </div>
 
-              {/* SECTION 2: MODEL PERFORMANCE MONITORING - Clean White Container */}
+              {/* SECTION 2: MODEL PERFORMANCE MONITORING */}
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4 text-slate-900">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                   <div className="flex items-center space-x-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
                       PART 2: FLEET SURVEILLANCE &amp; MODEL MONITORING METRICS
                     </span>
                     <span className="text-xs text-slate-500 font-mono">
                       Cohort Size: N={activeModel === 'pneumonia' ? '248' : '210'} Cases
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono text-emerald-700 flex items-center space-x-1 font-semibold">
+                  <span className="text-[11px] font-mono text-blue-700 flex items-center space-x-1 font-semibold">
                     <CheckCircle className="w-3.5 h-3.5" />
                     <span>Surveillance Status: Nominal</span>
                   </span>
@@ -1136,7 +1135,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                     <p className="text-lg font-black text-slate-900 font-mono mt-1">
                       {activeModel === 'pneumonia' ? '96.4%' : '95.2%'}
                     </p>
-                    <span className="text-[9px] text-emerald-600 font-semibold">&ge; 90% SLA Target</span>
+                    <span className="text-[9px] text-blue-600 font-semibold">&ge; 90% SLA Target</span>
                   </div>
 
                   <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200">
@@ -1168,7 +1167,7 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                     <p className="text-lg font-black text-slate-900 font-mono mt-1">
                       {activeModel === 'pneumonia' ? '0.928' : '0.908'}
                     </p>
-                    <span className="text-[9px] text-emerald-600 font-semibold">Near-Perfect</span>
+                    <span className="text-[9px] text-blue-600 font-semibold">Near-Perfect</span>
                   </div>
 
                   <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200">
@@ -1176,13 +1175,13 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                     <p className="text-lg font-black text-slate-900 font-mono mt-1">
                       {activeModel === 'pneumonia' ? '0.024' : '0.021'}
                     </p>
-                    <span className="text-[9px] text-emerald-600 font-semibold">Stable (&lt; 0.10)</span>
+                    <span className="text-[9px] text-blue-600 font-semibold">Stable (&lt; 0.10)</span>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
                   <div className="flex items-center space-x-1.5 text-slate-600">
-                    <Info className="w-3.5 h-3.5 text-emerald-600" />
+                    <Info className="w-3.5 h-3.5 text-blue-600" />
                     <span>Real-time fleet monitoring and surveillance</span>
                   </div>
                   <span className="text-[11px] font-mono font-medium">Last Synchronized: Real-time</span>
@@ -1191,9 +1190,9 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
             </div>
           ) : (
             <div className="h-full min-h-[460px] p-8 rounded-3xl bg-white border-2 border-dashed border-slate-200 shadow-sm flex flex-col items-center justify-center text-center space-y-4">
-              <div className="w-16 h-16 rounded-3xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-700 shadow-sm">
+              <div className="w-16 h-16 rounded-3xl bg-blue-50/60 border border-blue-200 flex items-center justify-center text-blue-700 shadow-sm">
                 {activeModel === 'pneumonia' ? (
-                  <Stethoscope className="w-8 h-8 text-emerald-600" />
+                  <Stethoscope className="w-8 h-8 text-blue-600" />
                 ) : (
                   <Bone className="w-8 h-8 text-amber-600" />
                 )}

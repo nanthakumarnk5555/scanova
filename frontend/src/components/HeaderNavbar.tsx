@@ -71,7 +71,7 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
       items: [
         { id: 'platform_overview', label: 'Architecture & Pipeline', icon: Sparkles, badge: '4-Stage', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
         { id: 'cxr_scan', label: 'AI Diagnostic Studio', icon: Zap, isCore: true },
-        { id: 'pneumonia_model', label: 'Pneumonia CXR', icon: Stethoscope, badge: 'DenseNet', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+        { id: 'pneumonia_model', label: 'Pneumonia CXR', icon: Stethoscope, badge: 'DenseNet', badgeColor: 'bg-blue-50 text-blue-700 border-blue-200' },
         { id: 'bone_model', label: 'Bone Fracture', icon: Bone, badge: 'ResNet', badgeColor: 'bg-amber-50 text-amber-700 border-amber-200' },
         { id: 'doctor_review', label: 'Doctor Review', icon: FileCheck2 },
       ]
@@ -100,22 +100,22 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-xl shadow-sm">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200/90 bg-white/95 backdrop-blur-xl shadow-sm">
       {/* Top Telemetry Strip */}
-      <div className="border-b border-slate-100 bg-slate-50 px-4 sm:px-8 py-1.5 flex items-center justify-between text-[11px] font-mono text-slate-500">
+      <div className="border-b border-slate-100 bg-slate-50/80 px-4 sm:px-8 py-1.5 flex items-center justify-between text-[11px] font-mono text-slate-500">
         <div className="flex items-center space-x-3 overflow-x-auto scrollbar-none">
           <div className="flex items-center space-x-1.5 text-slate-900 font-semibold flex-shrink-0">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shadow-[0_0_8px_#10B981]" />
-            <span>AI CORE: CheXNet DenseNet-121 + Trauma ResNet-50</span>
+            <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping shadow-[0_0_8px_#2563EB]" />
+            <span className="text-blue-900 font-bold">AI CORE: CheXNet DenseNet-121 + Trauma ResNet-50</span>
           </div>
           <span className="text-slate-300">|</span>
           <div className="flex items-center space-x-1.5 text-slate-600 font-medium flex-shrink-0">
-            <Server className="w-3 h-3 text-emerald-600 inline" />
+            <Server className="w-3 h-3 text-blue-600 inline" />
             <span>FastAPI • High-Precision Diagnostics</span>
           </div>
           <span className="text-slate-300 hidden sm:inline">|</span>
           <div className="hidden sm:flex items-center space-x-1.5 text-slate-600 font-medium flex-shrink-0">
-            <Zap className="w-3 h-3 text-emerald-600 inline" />
+            <Zap className="w-3 h-3 text-cyan-600 inline" />
             <span>Real-Time Inference • Dynamic Radiomics</span>
           </div>
         </div>
@@ -125,9 +125,9 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
             href="http://127.0.0.1:8000/docs"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-1 text-slate-500 hover:text-emerald-700 transition-colors"
+            className="flex items-center space-x-1 text-slate-500 hover:text-blue-700 transition-colors"
           >
-            <Code2 className="w-3 h-3 text-emerald-600" />
+            <Code2 className="w-3 h-3 text-blue-600" />
             <span className="font-semibold">Swagger API</span>
             <ExternalLink className="w-2.5 h-2.5" />
           </a>
@@ -139,7 +139,7 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
       {/* Main Brand & Profile Header Bar */}
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16 py-2 gap-4">
-          {/* Brand Logo */}
+          {/* Brand Logo with Electric Sapphire Gradient */}
           <div
             className="flex items-center space-x-3 cursor-pointer select-none group flex-shrink-0"
             onClick={() => setActiveTab('cxr_scan')}
@@ -148,13 +148,13 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
               <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
                 <defs>
                   <linearGradient id="prismGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#059669" />
-                    <stop offset="50%" stopColor="#10B981" />
-                    <stop offset="100%" stopColor="#0284C7" />
+                    <stop offset="0%" stopColor="#2563EB" />
+                    <stop offset="50%" stopColor="#4F46E5" />
+                    <stop offset="100%" stopColor="#06B6D4" />
                   </linearGradient>
                   <linearGradient id="prismInner" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#ECFDF5" />
-                    <stop offset="100%" stopColor="#F0FDF4" />
+                    <stop offset="0%" stopColor="#EFF6FF" />
+                    <stop offset="100%" stopColor="#EEF2FF" />
                   </linearGradient>
                 </defs>
                 <polygon
@@ -163,25 +163,25 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
                   strokeWidth="4"
                   fill="url(#prismInner)"
                 />
-                <line x1="50" y1="6" x2="50" y2="94" stroke="#10B981" strokeWidth="1.5" strokeOpacity="0.4" />
-                <line x1="8" y1="50" x2="92" y2="50" stroke="#0284C7" strokeWidth="1.5" strokeOpacity="0.4" />
+                <line x1="50" y1="6" x2="50" y2="94" stroke="#2563EB" strokeWidth="1.5" strokeOpacity="0.4" />
+                <line x1="8" y1="50" x2="92" y2="50" stroke="#06B6D4" strokeWidth="1.5" strokeOpacity="0.4" />
                 <path
                   d="M 50 26 L 50 74 M 26 50 L 74 50"
                   stroke="url(#prismGrad)"
                   strokeWidth="6"
                   strokeLinecap="round"
                 />
-                <circle cx="50" cy="50" r="3.5" fill="#059669" />
+                <circle cx="50" cy="50" r="3.5" fill="#2563EB" />
               </svg>
-              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-blue-600 border-2 border-white shadow-sm" />
             </div>
 
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-xl font-black tracking-tight text-slate-900 font-display">
-                  SCANOVA<span className="text-emerald-600">.AI</span>
+                  SCANOVA<span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">.AI</span>
                 </span>
-                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase tracking-wider">
+                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 uppercase tracking-wider">
                   Clinical Radiology
                 </span>
               </div>
@@ -199,7 +199,7 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
                   onClick={() => onRoleChange(r)}
                   className={`px-3 py-1 rounded-full font-bold capitalize transition-all cursor-pointer ${
                     currentRole === r
-                      ? 'bg-white text-emerald-700 font-extrabold shadow-sm border border-slate-200'
+                      ? 'bg-white text-blue-700 font-extrabold shadow-sm border border-slate-200'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
@@ -210,15 +210,15 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
 
             {/* User Badge */}
             <div className="flex items-center space-x-2 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full shadow-sm">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center font-extrabold text-xs shadow-sm">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-extrabold text-xs shadow-sm">
                 {currentUser?.full_name?.charAt(0) || 'D'}
               </div>
               <div className="hidden md:block text-left">
                 <p className="text-xs font-bold text-slate-900 flex items-center space-x-1 leading-tight">
                   <span className="truncate max-w-[130px]">{currentUser?.full_name || 'Dr. Julian Reed'}</span>
-                  <UserCheck className="w-3 h-3 text-emerald-600 inline flex-shrink-0" />
+                  <UserCheck className="w-3 h-3 text-blue-600 inline flex-shrink-0" />
                 </p>
-                <p className="text-[9px] font-mono text-emerald-700 font-semibold capitalize leading-none">
+                <p className="text-[9px] font-mono text-blue-700 font-semibold capitalize leading-none">
                   {currentUser?.role || currentRole}
                 </p>
               </div>
@@ -254,7 +254,7 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
                       onClick={() => setActiveTab(item.id)}
                       className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 whitespace-nowrap cursor-pointer select-none font-display ${
                         isActive
-                          ? 'bg-emerald-600 text-white shadow-md shadow-emerald-700/20 font-extrabold'
+                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/25 font-extrabold'
                           : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
                       }`}
                     >
@@ -270,7 +270,7 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
                             item.isAlert
                               ? 'bg-rose-600 text-white animate-pulse'
                               : isActive
-                              ? 'bg-emerald-800 text-white'
+                              ? 'bg-blue-900/60 text-white border border-white/20'
                               : item.badgeColor || 'bg-slate-100 text-slate-600 border border-slate-200'
                           }`}
                         >

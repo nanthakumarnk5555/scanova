@@ -83,7 +83,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
   if (loading && !metrics) {
     return (
       <div className="flex flex-col items-center justify-center h-96 space-y-3">
-        <RefreshCw className="w-8 h-8 animate-spin text-emerald-600" />
+        <RefreshCw className="w-8 h-8 animate-spin text-blue-600" />
         <p className="text-sm font-semibold text-slate-800 font-sans">Synchronizing Scanova Clinical Intelligence...</p>
       </div>
     );
@@ -93,9 +93,11 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* HEADER & TOP BANNER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-sm relative overflow-hidden">
-        <div className="space-y-1.5">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 space-y-1.5">
           <div className="flex items-center space-x-2">
-            <span className="px-3 py-1 rounded-full text-[10px] uppercase font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="px-3 py-1 rounded-full text-[10px] uppercase font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
               CLINICAL AI MODEL MONITORING
             </span>
             <span className="text-xs text-slate-500 font-medium">Dual-Pipeline Surveillance Fleet</span>
@@ -106,27 +108,27 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
           <p className="text-xs sm:text-sm text-slate-600 max-w-2xl font-sans">
             Continuous diagnostic concordance surveillance, statistical drift tracking (PSI), and radiologist reference auditing across deployed medical imaging models.
           </p>
-          <div className="inline-flex items-center text-xs font-medium text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-md mt-1">
-            <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-amber-600" />
-            Continuous Telemetry / Illustrative Fleet Surveillance — Academic Demonstration
+          <div className="inline-flex items-center text-xs font-medium text-blue-900 bg-blue-50/80 border border-blue-200/80 px-3 py-1 rounded-lg mt-1">
+            <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-blue-600" />
+            Continuous Telemetry / Fleet Surveillance — Academic Demonstration
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 flex-shrink-0">
+        <div className="relative z-10 flex items-center space-x-3 flex-shrink-0">
           <button
             type="button"
             onClick={loadDashboardData}
             title="Refresh telemetry"
-            className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition-all shadow-sm cursor-pointer"
+            className="p-3 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 transition-all shadow-sm cursor-pointer"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-600' : 'text-slate-700'}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-blue-600' : 'text-slate-700'}`} />
           </button>
 
           <button
             type="button"
             onClick={handleRunSurveillanceCycle}
             disabled={recalculating}
-            className="flex items-center space-x-2 px-5 py-3 rounded-full text-xs font-black transition-all font-display cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+            className="flex items-center space-x-2 px-5 py-3 rounded-full text-xs font-black transition-all font-display cursor-pointer bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-600/25"
           >
             {recalculating ? (
               <RefreshCw className="w-4 h-4 animate-spin text-white" />
@@ -143,22 +145,22 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
           <p className="text-[11px] font-mono text-slate-500 uppercase tracking-wider">Total Models</p>
           <p className="text-2xl font-black text-slate-900 font-mono mt-1">2</p>
-          <span className="text-[10px] text-emerald-700 font-medium">Pneumonia + Bone Crack</span>
+          <span className="text-[10px] text-blue-700 font-semibold">Pneumonia + Bone Crack</span>
         </div>
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
           <p className="text-[11px] font-mono text-slate-500 uppercase tracking-wider">Active Models</p>
-          <p className="text-2xl font-black text-emerald-700 font-mono mt-1">2 / 2</p>
-          <span className="text-[10px] text-slate-500">100% Operational</span>
+          <p className="text-2xl font-black text-blue-700 font-mono mt-1">2 / 2</p>
+          <span className="text-[10px] text-cyan-600 font-semibold">100% Operational</span>
         </div>
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
           <p className="text-[11px] font-mono text-slate-500 uppercase tracking-wider">Monitored Cases</p>
           <p className="text-2xl font-black text-slate-900 font-mono mt-1">458</p>
-          <span className="text-[10px] text-teal-700 font-medium">Ground-Truth Audited</span>
+          <span className="text-[10px] text-indigo-700 font-semibold">Ground-Truth Audited</span>
         </div>
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
           <p className="text-[11px] font-mono text-slate-500 uppercase tracking-wider">Requiring Review</p>
           <p className="text-2xl font-black text-slate-900 font-mono mt-1">0</p>
-          <span className="text-[10px] text-emerald-700 font-medium">All Metrics Nominal</span>
+          <span className="text-[10px] text-blue-700 font-semibold">All Metrics Nominal</span>
         </div>
       </div>
 
@@ -166,7 +168,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-slate-900 font-display flex items-center space-x-2">
-            <Layers className="w-4 h-4 text-emerald-600" />
+            <Layers className="w-4 h-4 text-blue-600" />
             <span>Dedicated Model Surveillance Health</span>
           </h2>
           <span className="text-xs text-slate-500 font-mono">Independent Architecture Pipelines</span>
@@ -174,10 +176,10 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Pneumonia Model Health Card */}
-          <div className="p-6 rounded-3xl bg-white border border-slate-200 hover:border-emerald-300 shadow-sm transition-all space-y-4">
+          <div className="p-6 rounded-3xl bg-white border border-slate-200 hover:border-blue-300 shadow-sm transition-all space-y-4">
             <div className="flex items-start justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <div className="p-3 rounded-2xl bg-blue-50 text-blue-700 border border-blue-200">
                   <Stethoscope className="w-6 h-6" />
                 </div>
                 <div>
@@ -189,8 +191,8 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
                 </div>
               </div>
 
-              <span className="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
                 <span>Nominal</span>
               </span>
             </div>
@@ -199,17 +201,17 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                 <p className="text-[10px] font-mono text-slate-500">Accuracy</p>
                 <p className="text-lg font-black text-slate-900 font-mono mt-0.5">96.4%</p>
-                <span className="text-[9px] text-emerald-700 font-semibold">&ge; 92% SLA</span>
+                <span className="text-[9px] text-blue-700 font-semibold">&ge; 92% SLA</span>
               </div>
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                 <p className="text-[10px] font-mono text-slate-500">Rad. Kappa</p>
-                <p className="text-lg font-black text-emerald-700 font-mono mt-0.5">0.928</p>
+                <p className="text-lg font-black text-indigo-700 font-mono mt-0.5">0.928</p>
                 <span className="text-[9px] text-slate-500">Near-Perfect</span>
               </div>
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                 <p className="text-[10px] font-mono text-slate-500">Drift PSI</p>
                 <p className="text-lg font-black text-slate-900 font-mono mt-0.5">0.024</p>
-                <span className="text-[9px] text-emerald-700 font-semibold">Stable</span>
+                <span className="text-[9px] text-cyan-700 font-semibold">Stable</span>
               </div>
             </div>
 
@@ -218,7 +220,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
               <button
                 type="button"
                 onClick={() => onNavigateTab('pneumonia_model')}
-                className="flex items-center space-x-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
+                className="flex items-center space-x-1.5 text-xs font-bold text-blue-700 hover:text-blue-800 transition-colors"
               >
                 <span>View Pneumonia Dashboard</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -227,10 +229,10 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
           </div>
 
           {/* Bone Crack Model Health Card */}
-          <div className="p-6 rounded-3xl bg-white border border-slate-200 hover:border-amber-300 shadow-sm transition-all space-y-4">
+          <div className="p-6 rounded-3xl bg-white border border-slate-200 hover:border-orange-300 shadow-sm transition-all space-y-4">
             <div className="flex items-start justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-3 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200">
+                <div className="p-3 rounded-2xl bg-orange-50 text-orange-700 border border-orange-200">
                   <Bone className="w-6 h-6" />
                 </div>
                 <div>
@@ -242,8 +244,8 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
                 </div>
               </div>
 
-              <span className="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-700 border border-orange-200">
+                <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
                 <span>Nominal</span>
               </span>
             </div>
@@ -252,17 +254,17 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                 <p className="text-[10px] font-mono text-slate-500">Accuracy</p>
                 <p className="text-lg font-black text-slate-900 font-mono mt-0.5">95.2%</p>
-                <span className="text-[9px] text-amber-700 font-semibold">&ge; 90% SLA</span>
+                <span className="text-[9px] text-orange-700 font-semibold">&ge; 90% SLA</span>
               </div>
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                 <p className="text-[10px] font-mono text-slate-500">Rad. Kappa</p>
-                <p className="text-lg font-black text-amber-700 font-mono mt-0.5">0.908</p>
+                <p className="text-lg font-black text-indigo-700 font-mono mt-0.5">0.908</p>
                 <span className="text-[9px] text-slate-500">Near-Perfect</span>
               </div>
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                 <p className="text-[10px] font-mono text-slate-500">Drift PSI</p>
                 <p className="text-lg font-black text-slate-900 font-mono mt-0.5">0.021</p>
-                <span className="text-[9px] text-emerald-700 font-semibold">Stable</span>
+                <span className="text-[9px] text-cyan-700 font-semibold">Stable</span>
               </div>
             </div>
 
@@ -271,7 +273,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
               <button
                 type="button"
                 onClick={() => onNavigateTab('bone_model')}
-                className="flex items-center space-x-1.5 text-xs font-bold text-amber-700 hover:text-amber-800 transition-colors"
+                className="flex items-center space-x-1.5 text-xs font-bold text-orange-700 hover:text-orange-800 transition-colors"
               >
                 <span>View Bone Fracture Dashboard</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -288,12 +290,12 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
           <p className="text-2xl font-black text-slate-900 mt-2 font-display">
             {metrics ? `${roundPct(metrics.accuracy)}%` : '95.8%'}
           </p>
-          <p className="text-[10px] font-mono text-emerald-700 font-semibold mt-1">SLA Target &ge; 90.0%</p>
+          <p className="text-[10px] font-mono text-blue-700 font-semibold mt-1">SLA Target &ge; 90.0%</p>
         </div>
 
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm transition-all">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Precision (PPV)</span>
-          <p className="text-2xl font-black text-teal-700 mt-2 font-display">
+          <p className="text-2xl font-black text-cyan-700 mt-2 font-display">
             {metrics ? `${roundPct(metrics.ppv)}%` : '96.5%'}
           </p>
           <p className="text-[10px] font-mono text-slate-500 mt-1">Positive Predictive</p>
@@ -301,7 +303,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
 
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm transition-all">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Recall (Sensitivity)</span>
-          <p className="text-2xl font-black text-purple-700 mt-2 font-display">
+          <p className="text-2xl font-black text-indigo-700 mt-2 font-display">
             {metrics ? `${roundPct(metrics.sensitivity)}%` : '95.4%'}
           </p>
           <p className="text-[10px] font-mono text-slate-500 mt-1">True Positive Rate</p>
@@ -309,18 +311,18 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
 
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm transition-all">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">F1 Score</span>
-          <p className="text-2xl font-black text-amber-700 mt-2 font-display">
+          <p className="text-2xl font-black text-violet-700 mt-2 font-display">
             {metrics?.f1_score ? metrics.f1_score.toFixed(3) : '0.960'}
           </p>
           <p className="text-[10px] font-mono text-slate-500 mt-1">Harmonic Mean</p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white border border-emerald-200 shadow-sm transition-all">
+        <div className="p-4 rounded-2xl bg-white border border-blue-200 shadow-sm transition-all">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Agreement &kappa;</span>
-          <p className="text-2xl font-black text-emerald-700 mt-2 font-display">
+          <p className="text-2xl font-black text-blue-700 mt-2 font-display">
             {metrics?.cohen_kappa ? metrics.cohen_kappa.toFixed(3) : '0.918'}
           </p>
-          <p className="text-[10px] font-mono text-emerald-700 font-semibold mt-1">Near-Perfect Agreement</p>
+          <p className="text-[10px] font-mono text-blue-700 font-semibold mt-1">Near-Perfect Agreement</p>
         </div>
 
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm transition-all">
@@ -328,7 +330,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
           <p className="text-2xl font-black text-slate-900 mt-2 font-display">
             {drift?.drift_event?.psi_score ? drift.drift_event.psi_score.toFixed(3) : '0.023'}
           </p>
-          <p className="text-[10px] font-mono text-emerald-700 font-semibold mt-1">Status: Stable</p>
+          <p className="text-[10px] font-mono text-cyan-700 font-semibold mt-1">Status: Stable</p>
         </div>
       </div>
 
@@ -339,18 +341,18 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2 font-display">
-                <TrendingUp className="w-4 h-4 text-emerald-600" />
+                <TrendingUp className="w-4 h-4 text-blue-600" />
                 <span>14-Day Fleet Surveillance Trend</span>
               </h3>
               <p className="text-xs text-slate-500 font-sans">Daily rolling Accuracy vs Sensitivity over verified reads</p>
             </div>
             <div className="flex items-center space-x-3 text-xs font-semibold font-mono">
-              <div className="flex items-center space-x-1.5 text-emerald-700">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <div className="flex items-center space-x-1.5 text-blue-700">
+                <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
                 <span>Accuracy %</span>
               </div>
-              <div className="flex items-center space-x-1.5 text-purple-700">
-                <div className="w-2.5 h-2.5 rounded-full bg-purple-500" />
+              <div className="flex items-center space-x-1.5 text-indigo-700">
+                <div className="w-2.5 h-2.5 rounded-full bg-indigo-600" />
                 <span>Sensitivity %</span>
               </div>
             </div>
@@ -361,12 +363,12 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
               <AreaChart data={trends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="accGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#10B981" stopOpacity={0.0} />
+                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0.0} />
                   </linearGradient>
                   <linearGradient id="sensGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#A855F7" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#A855F7" stopOpacity={0.0} />
+                    <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#4F46E5" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
@@ -375,15 +377,15 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#FFFFFF',
-                    borderColor: '#E2E8F0',
+                    borderColor: '#CBD5E1',
                     borderRadius: '0.75rem',
                     fontSize: '12px',
                     color: '#0F172A',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                   }}
                 />
-                <Area type="monotone" dataKey="accuracy" stroke="#059669" strokeWidth={2.5} fillOpacity={1} fill="url(#accGrad)" name="Accuracy (%)" />
-                <Area type="monotone" dataKey="sensitivity" stroke="#9333EA" strokeWidth={2.5} fillOpacity={1} fill="url(#sensGrad)" name="Sensitivity (%)" />
+                <Area type="monotone" dataKey="accuracy" stroke="#2563EB" strokeWidth={2.5} fillOpacity={1} fill="url(#accGrad)" name="Accuracy (%)" />
+                <Area type="monotone" dataKey="sensitivity" stroke="#4F46E5" strokeWidth={2.5} fillOpacity={1} fill="url(#sensGrad)" name="Sensitivity (%)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -395,11 +397,11 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
 
           <div
             onClick={() => onNavigateTab('cxr_scan')}
-            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-emerald-300 hover:shadow-md cursor-pointer transition-all shadow-sm group"
+            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-300 hover:shadow-md cursor-pointer transition-all shadow-sm group"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 group-hover:scale-105 transition-transform">
+                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 group-hover:scale-105 transition-transform">
                   <UploadCloud className="w-5 h-5" />
                 </div>
                 <div>
@@ -407,17 +409,17 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
                   <p className="text-[11px] text-slate-500">Run AI disease prediction & Grad-CAM</p>
                 </div>
               </div>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-blue-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </div>
           </div>
 
           <div
             onClick={() => onNavigateTab('pneumonia_model')}
-            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-purple-300 hover:shadow-md cursor-pointer transition-all shadow-sm group"
+            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-300 hover:shadow-md cursor-pointer transition-all shadow-sm group"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-200 group-hover:scale-105 transition-transform">
+                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 group-hover:scale-105 transition-transform">
                   <Stethoscope className="w-5 h-5" />
                 </div>
                 <div>
@@ -425,17 +427,17 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
                   <p className="text-[11px] text-slate-500">Inspect CheXNet DenseNet-121 metrics</p>
                 </div>
               </div>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-purple-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-blue-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </div>
           </div>
 
           <div
             onClick={() => onNavigateTab('bone_model')}
-            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-amber-300 hover:shadow-md cursor-pointer transition-all shadow-sm group"
+            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-orange-300 hover:shadow-md cursor-pointer transition-all shadow-sm group"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 group-hover:scale-105 transition-transform">
+                <div className="p-2.5 rounded-xl bg-orange-50 text-orange-700 border border-orange-200 group-hover:scale-105 transition-transform">
                   <Bone className="w-5 h-5" />
                 </div>
                 <div>
@@ -443,17 +445,17 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
                   <p className="text-[11px] text-slate-500">Inspect Trauma ResNet-50 metrics</p>
                 </div>
               </div>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-amber-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-orange-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </div>
           </div>
 
           <div
             onClick={() => onNavigateTab('reports')}
-            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-teal-300 hover:shadow-md cursor-pointer transition-all shadow-sm group"
+            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-indigo-300 hover:shadow-md cursor-pointer transition-all shadow-sm group"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-teal-50 text-teal-700 border border-teal-200 group-hover:scale-105 transition-transform">
+                <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 group-hover:scale-105 transition-transform">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
@@ -461,7 +463,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
                   <p className="text-[11px] text-slate-500">Export signed clinical PDF dossier</p>
                 </div>
               </div>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </div>
           </div>
         </div>
@@ -472,7 +474,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2 font-display">
-              <Clock className="w-4 h-4 text-emerald-600" />
+              <Clock className="w-4 h-4 text-blue-600" />
               <span>Recent Diagnostic Case Telemetry</span>
             </h3>
             <p className="text-xs text-slate-500 font-sans">Real-time incoming studies and doctor concordance status</p>
@@ -480,7 +482,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
           <button
             type="button"
             onClick={() => onNavigateTab('cases')}
-            className="text-xs text-emerald-700 hover:text-emerald-800 font-bold flex items-center space-x-1 font-display cursor-pointer"
+            className="text-xs text-blue-700 hover:text-blue-800 font-bold flex items-center space-x-1 font-display cursor-pointer"
           >
             <span>View All Cases</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -513,7 +515,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
                     <td className="py-2.5 px-3 text-slate-500 font-mono">{c.patient_id_hash?.substring(0, 12)}...</td>
                     <td className="py-2.5 px-3 font-bold">
                       <span className={`px-2 py-0.5 rounded-full text-[10px] ${
-                        isAbnormal ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-slate-100 text-slate-700 border border-slate-200'
+                        isAbnormal ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-blue-50 text-blue-700 border border-blue-200'
                       }`}>
                         {predLabel || 'Pending'}
                       </span>
@@ -530,7 +532,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
                     </td>
                     <td className="py-2.5 px-3">
                       {isConcordant && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                           Concordant
                         </span>
                       )}
@@ -545,7 +547,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
                       <button
                         type="button"
                         onClick={() => onNavigateTab('cases')}
-                        className="px-3 py-1 rounded-full bg-slate-50 hover:bg-slate-100 text-[11px] text-slate-700 border border-slate-200 transition-colors shadow-sm cursor-pointer"
+                        className="px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-[11px] text-slate-700 border border-slate-300 transition-colors shadow-sm cursor-pointer"
                       >
                         Details
                       </button>

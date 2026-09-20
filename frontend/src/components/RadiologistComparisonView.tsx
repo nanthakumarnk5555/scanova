@@ -254,10 +254,12 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header - Clean White Theme */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-sm text-slate-900">
-        <div className="space-y-1.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-sm text-slate-900 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 space-y-1.5">
           <div className="flex items-center space-x-2">
-            <span className="px-3 py-1 rounded-full text-[10px] uppercase font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="px-3 py-1 rounded-full text-[10px] uppercase font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
               Doctor Review & Ground Truth Workstation
             </span>
             <span className="text-xs text-slate-500 font-medium">DICOM Viewport • Grad-CAM Overlay • Multi-Zone Pathology</span>
@@ -270,13 +272,13 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
           </p>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="relative z-10 flex items-center space-x-3">
           <button
             type="button"
             onClick={loadCases}
             className="flex items-center space-x-2 px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-xs font-bold text-slate-700 hover:text-slate-900 transition-all shadow-sm cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-emerald-600' : 'text-emerald-600'}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-blue-600' : 'text-blue-600'}`} />
             <span>Refresh Queue</span>
           </button>
         </div>
@@ -295,7 +297,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                 placeholder="Search accession # or patient..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 font-sans"
+                className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 font-sans"
               />
             </div>
 
@@ -308,7 +310,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                   onClick={() => setFilterAgreement(ag)}
                   className={`py-1.5 rounded-xl capitalize transition-all cursor-pointer ${
                     filterAgreement === ag
-                      ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
+                      ? 'bg-blue-600 text-white font-extrabold shadow-sm'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
@@ -332,7 +334,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                     onClick={() => handleSelectCase(c)}
                     className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
                       isSelected
-                        ? 'bg-emerald-50 border-emerald-500 shadow-sm'
+                        ? 'bg-blue-50/80 border-blue-500 shadow-sm'
                         : 'bg-slate-50/60 border-slate-200 hover:border-slate-300 hover:bg-slate-100/80'
                     }`}
                   >
@@ -359,7 +361,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                           <span
                             className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                               isConcordant
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                ? 'bg-blue-50 text-blue-700 border border-blue-200'
                                 : 'bg-rose-50 text-rose-700 border border-rose-200'
                             }`}
                           >
@@ -389,7 +391,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                       Study Workstation
                     </span>
                     <span className="text-slate-400">•</span>
-                    <span className="font-mono text-xs font-bold text-emerald-700">{selectedCase.accession_number}</span>
+                    <span className="font-mono text-xs font-bold text-blue-700">{selectedCase.accession_number}</span>
                   </div>
                   <p className="text-xs text-slate-600 mt-0.5 font-sans">
                     Patient: {selectedCase.patient_age}y / {selectedCase.patient_sex} | Site: <span className="font-semibold text-slate-900">{selectedCase.site_id}</span>
@@ -426,7 +428,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                     onClick={() => onNavigateToReports(selectedCase.image_id)}
                     className="flex items-center space-x-1.5 px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-bold transition-colors cursor-pointer shadow-sm"
                   >
-                    <FileText className="w-3.5 h-3.5 text-emerald-600" />
+                    <FileText className="w-3.5 h-3.5 text-blue-600" />
                     <span>PDF Dossier</span>
                   </button>
                 </div>
@@ -467,7 +469,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                     onClick={() => setShowGradCamLayer(!showGradCamLayer)}
                     className={`flex items-center space-x-1.5 px-3 py-1 rounded-xl text-[10px] font-bold transition-all cursor-pointer ${
                       showGradCamLayer
-                        ? 'bg-emerald-600 text-white border border-emerald-600 shadow-sm'
+                        ? 'bg-blue-600 text-white border border-blue-600 shadow-sm'
                         : 'bg-white text-slate-600 border border-slate-200 hover:text-slate-900'
                     }`}
                   >
@@ -551,7 +553,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                         step="0.05"
                         value={gradCamOpacity}
                         onChange={(e) => setGradCamOpacity(parseFloat(e.target.value))}
-                        className="w-16 h-1 accent-emerald-400 cursor-pointer"
+                        className="w-16 h-1 accent-cyan-400 cursor-pointer"
                       />
                     </div>
                   )}
@@ -563,7 +565,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                       <span className="text-[10px] uppercase font-mono font-bold text-slate-500">
                         DenseNet-121 Clinical AI Finding
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-100 text-blue-800 border border-blue-300">
                         PyTorch 2.6
                       </span>
                     </div>
@@ -583,7 +585,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                       </div>
                       <div className="text-right text-[11px] font-mono text-slate-500">
                         <p>Latency: <span className="text-slate-900 font-bold">{selectedCase.prediction?.latency_ms} ms</span></p>
-                        <p className="text-emerald-600 font-semibold">Sub-200ms Target</p>
+                        <p className="text-blue-600 font-semibold">Sub-200ms Target</p>
                       </div>
                     </div>
 
@@ -597,7 +599,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                           <span className="text-slate-500">Concordance:</span>
                           <span
                             className={`font-bold font-mono ${
-                              selectedCase.radiologist.agreement === 'Concordant' ? 'text-emerald-600' : 'text-rose-600'
+                              selectedCase.radiologist.agreement === 'Concordant' ? 'text-blue-600' : 'text-rose-600'
                             }`}
                           >
                             {selectedCase.radiologist.agreement}
@@ -613,13 +615,13 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                   <div className="pt-2 border-t border-slate-200 space-y-2">
                     <div className="flex items-center justify-between text-[11px] text-slate-600 font-medium">
                       <span>Agree with AI Finding?</span>
-                      <span className="text-emerald-700 font-mono font-bold">1-Click Fast Adjudication</span>
+                      <span className="text-blue-700 font-mono font-bold">1-Click Fast Adjudication</span>
                     </div>
                     <button
                       type="button"
                       disabled={submitting}
                       onClick={handleQuickConcordantSign}
-                      className="w-full py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer font-display shadow-sm"
+                      className="w-full py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer font-display shadow-md shadow-blue-600/25"
                     >
                       <Zap className="w-4 h-4" />
                       <span>Concur & 1-Click Sign as Concordant</span>
@@ -632,7 +634,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 shadow-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-900 flex items-center space-x-1.5 font-display">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                    <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                     <span>Smart Clinical Dictation Templates</span>
                   </span>
                   <span className="text-[10px] text-slate-500 font-sans">Click to insert structured impression:</span>
@@ -642,9 +644,9 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                   <button
                     type="button"
                     onClick={() => applyTemplate('normal')}
-                    className="p-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 text-left transition-all cursor-pointer group shadow-sm"
+                    className="p-3 rounded-2xl bg-white border border-slate-200 hover:border-blue-500 text-left transition-all cursor-pointer group shadow-sm"
                   >
-                    <p className="text-[11px] font-bold text-emerald-700 group-hover:text-emerald-800">Clear / Normal</p>
+                    <p className="text-[11px] font-bold text-blue-700 group-hover:text-blue-800">Clear / Normal</p>
                     <p className="text-[9px] text-slate-500 truncate">No consolidation or effusion</p>
                   </button>
 
@@ -681,7 +683,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <span className="text-xs font-bold text-slate-900 flex items-center space-x-1.5 font-display">
-                    <Tag className="w-3.5 h-3.5 text-emerald-600" />
+                    <Tag className="w-3.5 h-3.5 text-blue-600" />
                     <span>Secondary Pathology Tags & Localization</span>
                   </span>
                   <div className="flex items-center space-x-1 text-[11px]">
@@ -690,7 +692,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                     <select
                       value={selectedZone}
                       onChange={(e) => handleZoneSelect(e.target.value)}
-                      className="py-1 px-3 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-sans"
+                      className="py-1 px-3 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-blue-500 font-sans"
                     >
                       <option value="Bilateral Clear">Bilateral Clear</option>
                       <option value="Right Upper Lobe (RUL)">Right Upper Lobe (RUL)</option>
@@ -728,7 +730,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                         onClick={() => togglePathology(pathology)}
                         className={`px-3 py-1 rounded-full text-[10px] font-semibold transition-all cursor-pointer ${
                           active
-                            ? 'bg-emerald-600 text-white font-bold shadow-sm'
+                            ? 'bg-blue-600 text-white font-bold shadow-sm'
                             : 'bg-white border border-slate-300 text-slate-700 hover:border-slate-400'
                         }`}
                       >
@@ -771,10 +773,10 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                   className={`p-4 rounded-2xl text-xs flex items-center space-x-2 ${
                     feedback.startsWith('Error')
                       ? 'bg-rose-50 border border-rose-300 text-rose-800'
-                      : 'bg-emerald-50 border border-emerald-300 text-emerald-800'
+                      : 'bg-blue-50 border border-blue-300 text-blue-900'
                   }`}
                 >
-                  <Sparkles className="w-4 h-4 text-emerald-600" />
+                  <Sparkles className="w-4 h-4 text-blue-600" />
                   <span>{feedback}</span>
                 </div>
               )}
@@ -796,7 +798,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                         onClick={() => setFindingLabel('Normal')}
                         className={`py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                           findingLabel === 'Normal'
-                            ? 'bg-emerald-600 text-white shadow-sm'
+                            ? 'bg-blue-600 text-white shadow-sm'
                             : 'bg-slate-100 border border-slate-300 text-slate-700 hover:bg-slate-200'
                         }`}
                       >
@@ -818,7 +820,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                         onClick={() => setFindingLabel('Bone Fracture')}
                         className={`py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                           findingLabel === 'Bone Fracture'
-                            ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
+                            ? 'bg-orange-500 text-white font-extrabold shadow-sm'
                             : 'bg-slate-100 border border-slate-300 text-slate-700 hover:bg-slate-200'
                         }`}
                       >
@@ -834,7 +836,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                     <select
                       value={confidenceLevel}
                       onChange={(e) => setConfidenceLevel(e.target.value as any)}
-                      className="w-full py-2.5 px-3 bg-slate-50 border border-slate-300 rounded-2xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 font-sans cursor-pointer"
+                      className="w-full py-2.5 px-3 bg-slate-50 border border-slate-300 rounded-2xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-blue-500 font-sans cursor-pointer"
                     >
                       <option value="High">High Diagnostic Certainty (Gold Standard)</option>
                       <option value="Moderate">Moderate Diagnostic Certainty</option>
@@ -852,7 +854,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                       type="text"
                       value={radiologistName}
                       onChange={(e) => setRadiologistName(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-2xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 font-sans"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-2xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-blue-500 font-sans"
                     />
                   </div>
                   <div>
@@ -861,7 +863,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                       type="text"
                       value={radiologistCode}
                       onChange={(e) => setRadiologistCode(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-2xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 font-mono"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-2xl text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-blue-500 font-mono"
                     />
                   </div>
                 </div>
@@ -875,14 +877,14 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                     value={clinicalNotes}
                     onChange={(e) => setClinicalNotes(e.target.value)}
                     placeholder="Enter radiological findings, focal opacities, pleural effusion, or secondary diagnostic notes..."
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 font-sans"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 font-sans"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-3.5 rounded-full text-xs sm:text-sm font-bold transition-all font-display cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-50 bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/30"
+                  className="w-full py-3.5 rounded-full text-xs sm:text-sm font-bold transition-all font-display cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-50 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-600/25"
                 >
                   {submitting ? (
                     <>
@@ -926,7 +928,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                 type="button"
                 onClick={() => setShowGradCamLayer(!showGradCamLayer)}
                 className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors cursor-pointer ${
-                  showGradCamLayer ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-800 text-slate-300 border-slate-700'
+                  showGradCamLayer ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-800 text-slate-300 border-slate-700'
                 }`}
               >
                 Grad-CAM Fusion: {showGradCamLayer ? 'ON' : 'OFF'}
