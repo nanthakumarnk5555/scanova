@@ -4,7 +4,7 @@ import {
   Search, Filter, Eye, ChevronRight, X, Sparkles, Layers, Stethoscope
 } from 'lucide-react';
 import type { CaseHistoryItem } from '../types';
-import { API_BASE } from '../api/client';
+import { API_BASE, getMediaUrl } from '../api/client';
 
 interface AdjudicationQueueProps {
   cases: CaseHistoryItem[];
@@ -239,14 +239,14 @@ export const AdjudicationQueue: React.FC<AdjudicationQueueProps> = ({ cases, onR
               <div className="space-y-1.5">
                 <span className="text-xs font-semibold text-slate-300 block">Original Chest Radiograph</span>
                 <div className="h-64 bg-black rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
-                  <img src={selectedCase.image_url} alt="Original CXR" className="w-full h-full object-contain" />
+                  <img src={getMediaUrl(selectedCase.image_url)} alt="Original CXR" className="w-full h-full object-contain" />
                 </div>
               </div>
               <div className="space-y-1.5">
                 <span className="text-xs font-semibold text-slate-300 block">DenseNet-121 Grad-CAM Activation</span>
                 <div className="h-64 bg-black rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
                   {selectedCase.prediction?.heatmap_url ? (
-                    <img src={selectedCase.prediction.heatmap_url} alt="Grad-CAM" className="w-full h-full object-contain" />
+                    <img src={getMediaUrl(selectedCase.prediction.heatmap_url)} alt="Grad-CAM" className="w-full h-full object-contain" />
                   ) : (
                     <span className="text-xs text-slate-500">No Heatmap Available</span>
                   )}

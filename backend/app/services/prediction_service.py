@@ -27,10 +27,11 @@ except ImportError:
 def run_densenet_prediction(
     db: Session,
     image_id: str,
+    model_type: str = "pneumonia",
     user: User = None
 ) -> Prediction:
     """
-    Executes DenseNet-121 model inference and Grad-CAM generation for an uploaded image.
+    Executes dedicated AI model inference (Pneumonia or Bone Crack) and Grad-CAM generation for an uploaded image.
     Enforces strict medical X-ray validation prior to executing neural inference.
     """
     image_record = db.query(UploadedImage).filter(UploadedImage.id == image_id).first()
@@ -64,20 +65,18 @@ def run_densenet_prediction(
     heatmap_filename = f"heatmap_{image_record.id}.jpg"
     heatmap_dest = os.path.join(settings.HEATMAP_DIR, heatmap_filename)
 
-    # Run PyTorch DenseNet-121 inference
+    # Execute specific model inference (Pneumonia or Bone Crack)
     inference_svc = get_inference_service()
     inference_result = inference_svc.predict(
         image_input=image_record.file_path,
+        model_type=model_type,
         generate_heatmap=True,
-        heatmap_save_path=heatmap_dest,
-        filename_hint=image_record.filename
+        heatmap_save_path=heatmap_dest
     )
 
-    # Store raw probabilities with image-specific biomarkers, Bone Fracture score, and radiologic sub-finding
+    # Probabilities payload with biomarkers and sub-finding
     prob_payload = {
-        "Normal": inference_result["probabilities"]["Normal"],
-        "Pneumonia": inference_result["probabilities"]["Pneumonia"],
-        "Bone Fracture": inference_result["probabilities"].get("Bone Fracture", 0.0),
+        **inference_result["probabilities"],
         "sub_finding": inference_result.get("sub_finding", ""),
         "biomarkers": inference_result.get("biomarkers", {})
     }
@@ -85,8 +84,8 @@ def run_densenet_prediction(
     # Create Prediction record in database
     prediction_record = Prediction(
         image_id=image_record.id,
-        model_name=inference_result.get("model_architecture", "DenseNet-121"),
-        model_version=inference_result.get("model_version", "v3.0-DynamicRadiomics"),
+        model_name=inference_result.get("model_architecture", "DenseNet-121 CheXNet"),
+        model_version=inference_result.get("model_version", "v2.5-Clinical"),
         prediction_label=inference_result["prediction"],
         confidence_score=inference_result["confidence"],
         raw_probabilities=prob_payload,
@@ -106,8 +105,9 @@ def run_densenet_prediction(
         event_type="ai_prediction_generated",
         entity_type="prediction",
         entity_id=prediction_record.id,
-        action_summary=f"DenseNet-121 classified {image_record.accession_number} as {prediction_record.prediction_label} ({round(prediction_record.confidence_score*100, 1)}%)",
+        action_summary=f"{prediction_record.model_name} classified {image_record.accession_number} as {prediction_record.prediction_label} ({round(prediction_record.confidence_score*100, 1)}%)",
         payload={
+            "model_type": model_type,
             "prediction": prediction_record.prediction_label,
             "confidence": prediction_record.confidence_score,
             "latency_ms": prediction_record.inference_latency_ms

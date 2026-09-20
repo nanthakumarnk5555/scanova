@@ -10,7 +10,7 @@ import {
   Sparkles,
   Award
 } from 'lucide-react';
-import { api, type CaseRecord } from '../api/client';
+import { api, getMediaUrl, type CaseRecord } from '../api/client';
 
 interface ReportGenerationViewProps {
   initialImageId?: string;
@@ -266,7 +266,7 @@ export const ReportGenerationView: React.FC<ReportGenerationViewProps> = ({ init
                 {/* Images side-by-side preview */}
                 <div className="grid grid-cols-2 gap-3 py-1">
                   <div className="rounded-xl overflow-hidden border border-white/10 bg-black aspect-square relative">
-                    <img src={selectedCase.image_url} alt="CXR" className="w-full h-full object-contain" />
+                    <img src={getMediaUrl(selectedCase.image_url)} alt="CXR" className="w-full h-full object-contain" />
                     <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-black/80 text-[10px] font-bold text-white font-mono">
                       Original Radiograph
                     </div>
@@ -274,7 +274,7 @@ export const ReportGenerationView: React.FC<ReportGenerationViewProps> = ({ init
 
                   <div className="rounded-xl overflow-hidden border border-white/10 bg-black aspect-square relative">
                     {selectedCase.prediction?.heatmap_url ? (
-                      <img src={selectedCase.prediction.heatmap_url} alt="Grad-CAM" className="w-full h-full object-contain" />
+                      <img src={getMediaUrl(selectedCase.prediction.heatmap_url)} alt="Grad-CAM" className="w-full h-full object-contain" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-xs text-slate-500 font-mono">
                         Activation Map Active

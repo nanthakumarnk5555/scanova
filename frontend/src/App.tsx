@@ -9,11 +9,13 @@ import { DriftDetectionView } from './components/DriftDetectionView';
 import { AlertsManagerView } from './components/AlertsManagerView';
 import { CaseDatabaseView } from './components/CaseDatabaseView';
 import { ReportGenerationView } from './components/ReportGenerationView';
+import { PneumoniaDashboardView } from './components/PneumoniaDashboardView';
+import { BoneCrackDashboardView } from './components/BoneCrackDashboardView';
 import { api, type UserProfile } from './api/client';
 import { ShieldCheck, Award, Lock } from 'lucide-react';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<string>('platform_overview');
+  const [activeTab, setActiveTab] = useState<string>('cxr_scan');
   const [selectedCaseId, setSelectedCaseId] = useState<string | undefined>(undefined);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [currentRole, setCurrentRole] = useState<'clinician' | 'radiologist' | 'admin'>('clinician');
@@ -25,6 +27,11 @@ export function App() {
   }, []);
 
   const initApp = async () => {
+    // Safety watchdog: ensure loading screen resolves within 2.5s maximum
+    const safetyTimer = setTimeout(() => {
+      setIsInitializing(false);
+    }, 2500);
+
     try {
       const savedToken = localStorage.getItem('scanova_auth_token');
       if (savedToken) {
@@ -37,7 +44,7 @@ export function App() {
           } else if (user.role === 'radiologist') {
             setActiveTab('doctor_review');
           } else {
-            setActiveTab('platform_overview');
+            setActiveTab('cxr_scan');
           }
         } else {
           localStorage.removeItem('scanova_auth_token');
@@ -49,6 +56,7 @@ export function App() {
     } catch (err) {
       console.error('Initialization error:', err);
     } finally {
+      clearTimeout(safetyTimer);
       setIsInitializing(false);
     }
   };
@@ -149,6 +157,14 @@ export function App() {
 
         {activeTab === 'analytics' && (
           <ExecutiveDashboard onNavigateTab={handleNavigateToTab} />
+        )}
+
+        {activeTab === 'pneumonia_model' && (
+          <PneumoniaDashboardView onNavigateTab={handleNavigateToTab} />
+        )}
+
+        {activeTab === 'bone_model' && (
+          <BoneCrackDashboardView onNavigateTab={handleNavigateToTab} />
         )}
 
         {activeTab === 'drift_monitor' && (

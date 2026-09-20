@@ -89,6 +89,16 @@ def on_startup():
         seed_database(db)
     logger.info("Scanova Platform initialized and ready.")
 
+@app.get("/")
+def root_endpoint():
+    return {
+        "status": "online",
+        "name": "Scanova Medical AI Platform API",
+        "version": "2.5.0",
+        "docs": "/docs",
+        "health": "/health"
+    }
+
 @app.get("/health")
 def health_check():
     return {
@@ -98,3 +108,4 @@ def health_check():
         "ai_model": "DenseNet-121 (Chest X-Ray Pneumonia Classifier)",
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
+

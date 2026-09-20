@@ -21,7 +21,7 @@ import {
   MapPin,
   X,
 } from 'lucide-react';
-import { api, type CaseRecord } from '../api/client';
+import { api, getMediaUrl, type CaseRecord } from '../api/client';
 
 interface RadiologistComparisonViewProps {
   initialImageId?: string;
@@ -549,7 +549,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                   >
                     {/* Base Radiograph */}
                     <img
-                      src={selectedCase.image_url}
+                      src={getMediaUrl(selectedCase.image_url)}
                       alt="CXR"
                       className={`w-full h-full object-contain ${getFilterStyle()}`}
                     />
@@ -557,7 +557,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                     {/* Grad-CAM Fusion Layer */}
                     {showGradCamLayer && selectedCase.prediction?.heatmap_url && (
                       <img
-                        src={selectedCase.prediction.heatmap_url}
+                        src={getMediaUrl(selectedCase.prediction.heatmap_url)}
                         alt="Grad-CAM Layer"
                         className="w-full h-full object-contain absolute inset-0 mix-blend-screen pointer-events-none transition-opacity duration-200"
                         style={{ opacity: gradCamOpacity }}
@@ -986,14 +986,14 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
               style={{ transform: `scale(${zoomLevel})` }}
             >
               <img
-                src={selectedCase.image_url}
+                src={getMediaUrl(selectedCase.image_url)}
                 alt="CXR"
                 className={`max-w-full max-h-full object-contain ${getFilterStyle()}`}
               />
 
               {showGradCamLayer && selectedCase.prediction?.heatmap_url && (
                 <img
-                  src={selectedCase.prediction.heatmap_url}
+                  src={getMediaUrl(selectedCase.prediction.heatmap_url)}
                   alt="Grad-CAM Layer"
                   className="max-w-full max-h-full object-contain absolute inset-0 mix-blend-screen pointer-events-none"
                   style={{ opacity: gradCamOpacity }}

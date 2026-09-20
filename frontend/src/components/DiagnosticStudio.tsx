@@ -4,7 +4,7 @@ import {
   Layers, RefreshCw, Sparkles, User, Info, Stethoscope, Eye, Sliders
 } from 'lucide-react';
 import type { SampleXRay, ImageData, PredictionData, RadiologistReportData } from '../types';
-import { API_BASE } from '../api/client';
+import { API_BASE, getMediaUrl } from '../api/client';
 
 interface DiagnosticStudioProps {
   samples: SampleXRay[];
@@ -316,7 +316,7 @@ export const DiagnosticStudio: React.FC<DiagnosticStudioProps> = ({
                 <div className="relative w-full h-full flex items-center justify-center">
                   {/* Base Original Image */}
                   <img
-                    src={currentImage.image_url}
+                    src={getMediaUrl(currentImage.image_url)}
                     alt="Original CXR"
                     className="absolute inset-0 w-full h-full object-contain"
                   />
@@ -324,7 +324,7 @@ export const DiagnosticStudio: React.FC<DiagnosticStudioProps> = ({
                   {/* Grad-CAM Overlay with dynamic opacity */}
                   {currentPrediction.heatmap_url && (
                     <img
-                      src={currentPrediction.heatmap_url}
+                      src={getMediaUrl(currentPrediction.heatmap_url)}
                       alt="Grad-CAM Overlay"
                       style={{ opacity: camOpacity }}
                       className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-opacity duration-150"

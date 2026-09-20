@@ -9,9 +9,9 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
     
-    # DB URL: Connects to MySQL on localhost:3306 by default
+    # DB URL: Connects to DATABASE_URL if provided, else falls back to robust local SQLite
     _DEFAULT_DB_PATH: str = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "scanova_surveillance.db")).replace("\\", "/")
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "mysql+pymysql://root:Nantha%40555@127.0.0.1:3306/scanova_db")
+    DATABASE_URL: str = os.getenv("DATABASE_URL", f"sqlite:///{_DEFAULT_DB_PATH}")
     
     # Base uploads and reports directories
     BASE_DIR: str = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -21,10 +21,6 @@ class Settings(BaseSettings):
     SAMPLE_DATA_DIR: str = os.path.join(BASE_DIR, "sample_data") if os.path.exists(os.path.join(BASE_DIR, "sample_data")) else os.path.abspath(os.path.join(BASE_DIR, "..", "sample_data"))
     
     CORS_ORIGINS: List[str] = [
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:3000",
         "*"
     ]
     

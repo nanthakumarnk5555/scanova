@@ -5,30 +5,42 @@ from app.core.config import settings
 
 Base = declarative_base()
 
-connect_args = {}
-engine_kwargs = {"echo": False}
-
-if "sqlite" in settings.DATABASE_URL:
-    connect_args = {"check_same_thread": False}
-    engine = create_engine(settings.DATABASE_URL, connect_args=connect_args, **engine_kwargs)
+def create_resilient_engine():
+    global engine, SessionLocal
+    db_url = settings.DATABASE_URL
+    engine_kwargs = {"echo": False}
     
-    # Enable WAL mode and foreign keys for SQLite
-    @event.listens_for(engine, "connect")
-    def set_sqlite_pragma(dbapi_connection, connection_record):
-        cursor = dbapi_connection.cursor()
-        cursor.execute("PRAGMA journal_mode=WAL")
-        cursor.execute("PRAGMA foreign_keys=ON")
-        cursor.close()
-else:
-    # MySQL / MariaDB / PostgreSQL configuration with connection pool
-    engine_kwargs.update({
-        "pool_size": 10,
-        "max_overflow": 20,
-        "pool_recycle": 3600,
-        "pool_pre_ping": True
-    })
-    engine = create_engine(settings.DATABASE_URL, **engine_kwargs)
+    if "sqlite" in db_url:
+        connect_args = {"check_same_thread": False}
+        eng = create_engine(db_url, connect_args=connect_args, **engine_kwargs)
+        
+        @event.listens_for(eng, "connect")
+        def set_sqlite_pragma(dbapi_connection, connection_record):
+            cursor = dbapi_connection.cursor()
+            cursor.execute("PRAGMA journal_mode=WAL")
+            cursor.execute("PRAGMA foreign_keys=ON")
+            cursor.close()
+        return eng
+    else:
+        try:
+            engine_kwargs.update({
+                "pool_size": 10,
+                "max_overflow": 20,
+                "pool_recycle": 3600,
+                "pool_pre_ping": True
+            })
+            eng = create_engine(db_url, **engine_kwargs)
+            # Test connection
+            with eng.connect() as conn:
+                conn.execute(text("SELECT 1"))
+            return eng
+        except Exception as e:
+            print(f"[Scanova DB] Remote database connection failed ({e}). Falling back to local SQLite.")
+            sqlite_url = f"sqlite:///{settings._DEFAULT_DB_PATH}"
+            eng = create_engine(sqlite_url, connect_args={"check_same_thread": False}, echo=False)
+            return eng
 
+engine = create_resilient_engine()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():

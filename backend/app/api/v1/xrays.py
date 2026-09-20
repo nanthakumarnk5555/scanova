@@ -81,11 +81,12 @@ def upload_and_predict(
     patient_age: int = Form(50),
     patient_sex: str = Form("M"),
     site_id: str = Form("Main Hospital"),
+    model_type: str = Form("pneumonia"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
-    All-in-one endpoint: Uploads image and immediately executes DenseNet-121 prediction with Grad-CAM.
+    All-in-one endpoint: Uploads image and immediately executes dedicated model prediction (Pneumonia or Bone Crack) with Grad-CAM.
     """
     # 1. Upload
     image_record = save_uploaded_xray(
@@ -98,10 +99,11 @@ def upload_and_predict(
         user=current_user
     )
 
-    # 2. Run DenseNet-121 Inference
+    # 2. Run Model Inference
     prediction_record = run_densenet_prediction(
         db=db,
         image_id=image_record.id,
+        model_type=model_type,
         user=current_user
     )
 
@@ -190,9 +192,12 @@ def load_sample_case(
         user=current_user
     )
 
+    model_type = "bone_crack" if any(k in sample_filename.lower() for k in ["fracture", "bone", "rib", "crack"]) else "pneumonia"
+
     prediction_record = run_densenet_prediction(
         db=db,
         image_id=image_record.id,
+        model_type=model_type,
         user=current_user
     )
 

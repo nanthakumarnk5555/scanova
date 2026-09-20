@@ -13,7 +13,11 @@ import {
   RefreshCw,
   Clock,
   ChevronRight,
-  Radar
+  Stethoscope,
+  Bone,
+  Layers,
+  BarChart2,
+  FileText
 } from 'lucide-react';
 import {
   AreaChart,
@@ -50,9 +54,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
     try {
       setLoading(true);
       const [mRes, tRes, dRes, aRes, hRes] = await Promise.all([
-        api.getMonitoringMetrics(),
-        api.getPerformanceTrends(),
-        api.getDriftStatus(),
+        api.getMonitoringMetrics('all'),
+        api.getPerformanceTrends('all'),
+        api.getDriftStatus('all'),
         api.getAlerts({ status: 'Open' }),
         api.getPredictionHistory({ limit: 8 })
       ]);
@@ -76,7 +80,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
   const handleRunSurveillanceCycle = async () => {
     try {
       setRecalculating(true);
-      await api.triggerMonitoringEvaluation();
+      await api.triggerMonitoringEvaluation('all');
       await loadDashboardData();
     } catch (err) {
       console.error('Surveillance trigger failed:', err);
@@ -88,7 +92,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
   if (loading && !metrics) {
     return (
       <div className="flex flex-col items-center justify-center h-96 space-y-3">
-        <RefreshCw className="w-8 h-8 animate-spin text-amber-400" />
+        <RefreshCw className="w-8 h-8 animate-spin text-emerald-400" />
         <p className="text-sm font-semibold text-white font-sans">Synchronizing Scanova Clinical Intelligence...</p>
       </div>
     );
@@ -96,183 +100,266 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Top Banner & Surveillance Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-[#222836] via-[#2B3345] to-[#222836] border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-xl">
-        <div>
+      {/* HEADER & TOP BANNER */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#222836] via-[#1C2230] to-[#181C26] border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-xl relative overflow-hidden">
+        <div className="space-y-1.5">
           <div className="flex items-center space-x-2">
-            <span className="px-3 py-1 rounded-full text-[10px] uppercase font-mono font-bold bg-white/10 text-white border border-white/20 shadow-[0_0_12px_rgba(255,255,255,0.2)]">
-              Live Medical AI Surveillance
+            <span className="px-3 py-1 rounded-full text-[10px] uppercase font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              CLINICAL AI MODEL MONITORING
             </span>
-            <span className="text-xs text-slate-400 font-medium">DenseNet-121 • 10-Module Integrated Engine</span>
+            <span className="text-xs text-slate-300 font-medium">Dual-Pipeline Surveillance Fleet</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white mt-1.5 font-display">
-            Clinical Executive AI Command Center
+          <h1 className="text-2xl sm:text-3xl font-black text-white font-display">
+            Hospital Diagnostic AI Surveillance Center
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-sans">
-            Continuous diagnostic concordance surveillance, statistical drift tracking, and radiologist ground-truth adjudication.
+          <p className="text-xs sm:text-sm text-slate-300 max-w-2xl font-sans">
+            Continuous diagnostic concordance surveillance, statistical drift tracking (PSI), and radiologist reference auditing across deployed medical imaging models.
           </p>
+          <div className="inline-flex items-center text-xs font-medium text-amber-300 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-md mt-1">
+            <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-amber-400" />
+            Demo Monitoring Data / Illustrative Fleet Surveillance — Academic Demonstration
+          </div>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 flex-shrink-0">
           <button
             type="button"
             onClick={loadDashboardData}
             title="Refresh telemetry"
             className="p-3 rounded-2xl bg-white/[0.04] border border-white/15 text-white hover:border-white transition-all shadow-md cursor-pointer"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-amber-400' : 'text-white'}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-400' : 'text-white'}`} />
           </button>
 
           <button
             type="button"
             onClick={handleRunSurveillanceCycle}
             disabled={recalculating}
-            className="flex items-center space-x-2 px-5 py-3 rounded-full text-xs font-black transition-all font-display cursor-pointer btn-lumina-primary"
+            className="flex items-center space-x-2 px-5 py-3 rounded-full text-xs font-black transition-all font-display cursor-pointer bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 shadow-lg shadow-emerald-950/40"
           >
             {recalculating ? (
-              <RefreshCw className="w-4 h-4 animate-spin text-black" />
+              <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
             ) : (
-              <Cpu className="w-4 h-4 text-black" />
+              <Cpu className="w-4 h-4 text-slate-950" />
             )}
             <span>{recalculating ? 'Evaluating Surveillance Cycle...' : 'Run Surveillance Cycle'}</span>
           </button>
         </div>
       </div>
 
-      {/* Critical Alert Flash Banner (if any open alerts) */}
-      {alerts.length > 0 && (
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-rose-950/40 border border-rose-500/30 text-rose-300 shadow-[0_0_20px_rgba(244,63,94,0.2)]">
-          <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-rose-900/40 text-rose-400 animate-pulse border border-rose-500/30">
-              <AlertTriangle className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-white font-display">
-                {alerts.length} Active Clinical Incident{alerts.length > 1 ? 's' : ''} Require Attention
-              </p>
-              <p className="text-[11px] text-rose-300/90">{alerts[0].title}</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigateTab('alerts')}
-            className="flex items-center space-x-1.5 px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-colors cursor-pointer font-display shadow-md"
-          >
-            <span>Triage Alerts</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
+      {/* OVERVIEW METRICS BANNER */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="p-4 rounded-2xl bg-[#1C2230] border border-white/10 shadow-lg">
+          <p className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Total Models</p>
+          <p className="text-2xl font-black text-white font-mono mt-1">2</p>
+          <span className="text-[10px] text-emerald-400">Pneumonia + Bone Crack</span>
         </div>
-      )}
-
-      {/* Core KPI Metrics Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
-        {/* Total Evaluated Cases */}
-        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-white/15 hover:border-white/40 shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-all duration-300 group">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-bold font-display uppercase tracking-wider text-slate-400">Total X-Rays</span>
-            <div className="p-1.5 rounded-xl bg-white/10 text-white border border-white/20 group-hover:scale-110 transition-transform">
-              <Activity className="w-3.5 h-3.5" />
-            </div>
-          </div>
-          <p className="text-2xl font-black text-white mt-2 font-display">{metrics?.sample_size || 45}</p>
-          <div className="flex items-center space-x-1 mt-1 text-[11px] text-white font-semibold font-mono">
-            <TrendingUp className="w-3 h-3 text-amber-400" />
-            <span>100% Ingested</span>
-          </div>
+        <div className="p-4 rounded-2xl bg-[#1C2230] border border-white/10 shadow-lg">
+          <p className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Active Models</p>
+          <p className="text-2xl font-black text-emerald-400 font-mono mt-1">2 / 2</p>
+          <span className="text-[10px] text-slate-300">100% Operational</span>
         </div>
-
-        {/* AI Accuracy */}
-        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-white/15 hover:border-white/40 shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-all duration-300 group">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-bold font-display uppercase tracking-wider text-slate-400">AI Accuracy</span>
-            <div className="p-1.5 rounded-xl bg-white/10 text-white border border-white/20 group-hover:scale-110 transition-transform">
-              <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-            </div>
-          </div>
-          <p className="text-2xl font-black text-white mt-2 font-display">
-            {metrics ? `${roundPct(metrics.accuracy)}%` : '91.1%'}
-          </p>
-          <p className="text-[10px] font-mono text-amber-400 mt-1">Benchmark: &ge; 88.0%</p>
+        <div className="p-4 rounded-2xl bg-[#1C2230] border border-white/10 shadow-lg">
+          <p className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Monitored Cases</p>
+          <p className="text-2xl font-black text-white font-mono mt-1">458</p>
+          <span className="text-[10px] text-teal-400">Ground-Truth Audited</span>
         </div>
-
-        {/* Sensitivity / Recall */}
-        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-white/15 hover:border-amber-400/40 shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-all duration-300 group">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-bold font-display uppercase tracking-wider text-slate-400">Sensitivity</span>
-            <div className="p-1.5 rounded-xl bg-amber-500/10 text-amber-300 border border-amber-400/30 group-hover:scale-110 transition-transform">
-              <Flame className="w-3.5 h-3.5 text-amber-400" />
-            </div>
-          </div>
-          <p className="text-2xl font-black text-amber-300 mt-2 font-display">
-            {metrics ? `${roundPct(metrics.sensitivity)}%` : '88.9%'}
-          </p>
-          <p className="text-[10px] font-mono text-slate-400 mt-1">Recall on Pathology</p>
-        </div>
-
-        {/* Specificity */}
-        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-white/15 hover:border-white/40 shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-all duration-300 group">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-bold font-display uppercase tracking-wider text-slate-400">Specificity</span>
-            <div className="p-1.5 rounded-xl bg-white/10 text-white border border-white/20 group-hover:scale-110 transition-transform">
-              <ShieldCheck className="w-3.5 h-3.5 text-white" />
-            </div>
-          </div>
-          <p className="text-2xl font-black text-white mt-2 font-display">
-            {metrics ? `${roundPct(metrics.specificity)}%` : '92.6%'}
-          </p>
-          <p className="text-[10px] font-mono text-slate-400 mt-1">True Negative Ratio</p>
-        </div>
-
-        {/* Cohen's Kappa */}
-        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-white/15 hover:border-emerald-500/40 shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-all duration-300 group">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-bold font-display uppercase tracking-wider text-slate-400">Cohen's Kappa</span>
-            <div className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 group-hover:scale-110 transition-transform">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-            </div>
-          </div>
-          <p className="text-2xl font-black text-emerald-400 mt-2 font-display">
-            {metrics?.cohen_kappa ? metrics.cohen_kappa.toFixed(3) : '0.814'}
-          </p>
-          <p className="text-[10px] font-mono text-slate-400 mt-1">High Concordance</p>
-        </div>
-
-        {/* Drift Status with Animated Surveillance Radar */}
-        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-white/15 hover:border-amber-400/40 shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-all duration-300 group">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-bold font-display uppercase tracking-wider text-slate-400">Data Drift</span>
-            {/* Animated Radar Pulse */}
-            <div className="relative w-6 h-6 rounded-full border border-amber-400/50 flex items-center justify-center overflow-hidden">
-              <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0_300deg,#F59E0B_360deg)] animate-radar opacity-70" />
-              <div className="w-1.5 h-1.5 rounded-full bg-white relative z-10" />
-            </div>
-          </div>
-          <p className="text-2xl font-black text-amber-300 mt-2 font-display">
-            {drift?.drift_event?.drift_status || 'Stable'}
-          </p>
-          <p className="text-[10px] font-mono text-slate-400 mt-1">PSI: {drift?.drift_event?.psi_score ? drift.drift_event.psi_score.toFixed(3) : '0.042'}</p>
+        <div className="p-4 rounded-2xl bg-[#1C2230] border border-white/10 shadow-lg">
+          <p className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Requiring Review</p>
+          <p className="text-2xl font-black text-slate-300 font-mono mt-1">0</p>
+          <span className="text-[10px] text-emerald-400">All Metrics Nominal</span>
         </div>
       </div>
 
-      {/* Main Visualizations: 14-Day Trend Timeline & Confusion Matrix */}
+      {/* MODEL HEALTH: SEPARATE PNEUMONIA VS BONE CRACK CARDS */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-bold text-white font-display flex items-center space-x-2">
+            <Layers className="w-4 h-4 text-emerald-400" />
+            <span>Dedicated Model Surveillance Health</span>
+          </h2>
+          <span className="text-xs text-slate-400 font-mono">Independent Architecture Pipelines</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Pneumonia Model Health Card */}
+          <div className="p-6 rounded-3xl bg-[#1C2230] border border-emerald-500/20 hover:border-emerald-500/40 shadow-xl transition-all space-y-4">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <Stethoscope className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-base font-extrabold text-white font-display">Pneumonia Model</h3>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-white/5 text-slate-300 border border-white/10">v2.5.0</span>
+                  </div>
+                  <p className="text-xs text-slate-400 font-mono">CheXNet DenseNet-121 • Chest X-Ray</p>
+                </div>
+              </div>
+
+              <span className="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Nominal</span>
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 text-center pt-2">
+              <div className="p-2.5 rounded-xl bg-[#12161F] border border-white/10">
+                <p className="text-[10px] font-mono text-slate-400">Accuracy</p>
+                <p className="text-lg font-black text-white font-mono mt-0.5">96.4%</p>
+                <span className="text-[9px] text-emerald-400">&ge; 92% SLA</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[#12161F] border border-white/10">
+                <p className="text-[10px] font-mono text-slate-400">Rad. Kappa</p>
+                <p className="text-lg font-black text-emerald-400 font-mono mt-0.5">0.928</p>
+                <span className="text-[9px] text-slate-400">Near-Perfect</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[#12161F] border border-white/10">
+                <p className="text-[10px] font-mono text-slate-400">Drift PSI</p>
+                <p className="text-lg font-black text-white font-mono mt-0.5">0.024</p>
+                <span className="text-[9px] text-emerald-400">Stable</span>
+              </div>
+            </div>
+
+            <div className="pt-2 flex items-center justify-between border-t border-white/10">
+              <span className="text-xs text-slate-400 font-mono">248 Monitored CXR Cases</span>
+              <button
+                type="button"
+                onClick={() => onNavigateTab('pneumonia_model')}
+                className="flex items-center space-x-1.5 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
+              >
+                <span>View Pneumonia Dashboard</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Bone Crack Model Health Card */}
+          <div className="p-6 rounded-3xl bg-[#1C2230] border border-amber-500/20 hover:border-amber-500/40 shadow-xl transition-all space-y-4">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <Bone className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-base font-extrabold text-white font-display">Bone Crack Model</h3>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-white/5 text-slate-300 border border-white/10">v1.8.4</span>
+                  </div>
+                  <p className="text-xs text-slate-400 font-mono">Trauma Radiomics ResNet-50 • Skeletal X-Ray</p>
+                </div>
+              </div>
+
+              <span className="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Nominal</span>
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 text-center pt-2">
+              <div className="p-2.5 rounded-xl bg-[#12161F] border border-white/10">
+                <p className="text-[10px] font-mono text-slate-400">Accuracy</p>
+                <p className="text-lg font-black text-white font-mono mt-0.5">95.2%</p>
+                <span className="text-[9px] text-amber-400">&ge; 90% SLA</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[#12161F] border border-white/10">
+                <p className="text-[10px] font-mono text-slate-400">Rad. Kappa</p>
+                <p className="text-lg font-black text-amber-400 font-mono mt-0.5">0.908</p>
+                <span className="text-[9px] text-slate-400">Near-Perfect</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[#12161F] border border-white/10">
+                <p className="text-[10px] font-mono text-slate-400">Drift PSI</p>
+                <p className="text-lg font-black text-white font-mono mt-0.5">0.021</p>
+                <span className="text-[9px] text-emerald-400">Stable</span>
+              </div>
+            </div>
+
+            <div className="pt-2 flex items-center justify-between border-t border-white/10">
+              <span className="text-xs text-slate-400 font-mono">210 Monitored Bone Cases</span>
+              <button
+                type="button"
+                onClick={() => onNavigateTab('bone_model')}
+                className="flex items-center space-x-1.5 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors"
+              >
+                <span>View Bone Crack Dashboard</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Primary Fleet KPI Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-white/15 hover:border-white/40 shadow-lg transition-all">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Fleet Accuracy</span>
+          <p className="text-2xl font-black text-white mt-2 font-display">
+            {metrics ? `${roundPct(metrics.accuracy)}%` : '95.8%'}
+          </p>
+          <p className="text-[10px] font-mono text-emerald-400 mt-1">SLA Target &ge; 90.0%</p>
+        </div>
+
+        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-white/15 hover:border-white/40 shadow-lg transition-all">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Precision (PPV)</span>
+          <p className="text-2xl font-black text-teal-300 mt-2 font-display">
+            {metrics ? `${roundPct(metrics.ppv)}%` : '96.5%'}
+          </p>
+          <p className="text-[10px] font-mono text-slate-400 mt-1">Positive Predictive</p>
+        </div>
+
+        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-white/15 hover:border-white/40 shadow-lg transition-all">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Recall (Sensitivity)</span>
+          <p className="text-2xl font-black text-purple-300 mt-2 font-display">
+            {metrics ? `${roundPct(metrics.sensitivity)}%` : '95.4%'}
+          </p>
+          <p className="text-[10px] font-mono text-slate-400 mt-1">True Positive Rate</p>
+        </div>
+
+        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-white/15 hover:border-white/40 shadow-lg transition-all">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">F1 Score</span>
+          <p className="text-2xl font-black text-amber-300 mt-2 font-display">
+            {metrics?.f1_score ? metrics.f1_score.toFixed(3) : '0.960'}
+          </p>
+          <p className="text-[10px] font-mono text-slate-400 mt-1">Harmonic Mean</p>
+        </div>
+
+        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-emerald-500/40 shadow-lg transition-all">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Agreement &kappa;</span>
+          <p className="text-2xl font-black text-emerald-400 mt-2 font-display">
+            {metrics?.cohen_kappa ? metrics.cohen_kappa.toFixed(3) : '0.918'}
+          </p>
+          <p className="text-[10px] font-mono text-emerald-400 mt-1">Near-Perfect Agreement</p>
+        </div>
+
+        <div className="p-4 rounded-3xl bg-[#222836]/90 border border-amber-400/40 shadow-lg transition-all">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Fleet Drift (PSI)</span>
+          <p className="text-2xl font-black text-white mt-2 font-display">
+            {drift?.drift_event?.psi_score ? drift.drift_event.psi_score.toFixed(3) : '0.023'}
+          </p>
+          <p className="text-[10px] font-mono text-emerald-400 mt-1">Status: Stable</p>
+        </div>
+      </div>
+
+      {/* Main Visualizations: Performance Trend Timeline & Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* 14-Day Performance Timeline (2 cols) */}
+        {/* Longitudinal Performance Trend */}
         <div className="lg:col-span-2 p-6 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_15px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-white flex items-center space-x-2 font-display">
-                <TrendingUp className="w-4 h-4 text-amber-400" />
-                <span>14-Day Post-Deployment Surveillance Trend</span>
+                <TrendingUp className="w-4 h-4 text-emerald-400" />
+                <span>14-Day Fleet Surveillance Trend</span>
               </h3>
-              <p className="text-xs text-slate-400 font-sans">Daily rolling Accuracy vs Sensitivity over ground-truth reads</p>
+              <p className="text-xs text-slate-400 font-sans">Daily rolling Accuracy vs Sensitivity over verified reads</p>
             </div>
             <div className="flex items-center space-x-3 text-xs font-semibold font-mono">
-              <div className="flex items-center space-x-1.5 text-white">
-                <div className="w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_8px_#FFFFFF]" />
+              <div className="flex items-center space-x-1.5 text-emerald-400">
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#10B981]" />
                 <span>Accuracy %</span>
               </div>
-              <div className="flex items-center space-x-1.5 text-amber-300">
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_#F59E0B]" />
+              <div className="flex items-center space-x-1.5 text-purple-300">
+                <div className="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_8px_#A855F7]" />
                 <span>Sensitivity %</span>
               </div>
             </div>
@@ -283,12 +370,12 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
               <AreaChart data={trends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="accGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#FFFFFF" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.0} />
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0.0} />
                   </linearGradient>
                   <linearGradient id="sensGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.0} />
+                    <stop offset="5%" stopColor="#A855F7" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#A855F7" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#2A3042" vertical={false} />
@@ -301,78 +388,18 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
                     borderRadius: '1rem',
                     fontSize: '12px',
                     color: '#FFFFFF',
-                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.8)',
                   }}
                 />
-                <Area type="monotone" dataKey="accuracy" stroke="#FFFFFF" strokeWidth={2.5} fillOpacity={1} fill="url(#accGrad)" name="Accuracy (%)" />
-                <Area type="monotone" dataKey="sensitivity" stroke="#F59E0B" strokeWidth={2.5} fillOpacity={1} fill="url(#sensGrad)" name="Sensitivity (%)" />
+                <Area type="monotone" dataKey="accuracy" stroke="#10B981" strokeWidth={2.5} fillOpacity={1} fill="url(#accGrad)" name="Accuracy (%)" />
+                <Area type="monotone" dataKey="sensitivity" stroke="#A855F7" strokeWidth={2.5} fillOpacity={1} fill="url(#sensGrad)" name="Sensitivity (%)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* 2x2 Real-Time Confusion Matrix (1 col) */}
-        <div className="p-6 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_15px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl space-y-4">
-          <div>
-            <h3 className="text-sm font-bold text-white flex items-center space-x-2 font-display">
-              <ShieldCheck className="w-4 h-4 text-amber-400" />
-              <span>DenseNet-121 Confusion Matrix</span>
-            </h3>
-            <p className="text-xs text-slate-400 font-sans">AI Predictions vs Radiologist Ground Truth</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 pt-2">
-            {/* True Positive */}
-            <div className="p-3 rounded-2xl bg-amber-950/30 border border-amber-500/30 text-center shadow-[0_0_15px_rgba(245,158,11,0.1)]">
-              <p className="text-[10px] font-bold text-amber-300 uppercase tracking-wider">True Positive (TP)</p>
-              <p className="text-2xl font-black text-white mt-1 font-display">{metrics?.true_positives || 16}</p>
-              <p className="text-[10px] text-amber-400/80">AI: Pneu | Rad: Pneu</p>
-            </div>
-
-            {/* False Positive */}
-            <div className="p-3 rounded-2xl bg-rose-950/30 border border-rose-500/30 text-center shadow-[0_0_15px_rgba(244,63,94,0.1)]">
-              <p className="text-[10px] font-bold text-rose-400 uppercase tracking-wider">False Positive (FP)</p>
-              <p className="text-2xl font-black text-white mt-1 font-display">{metrics?.false_positives || 2}</p>
-              <p className="text-[10px] text-rose-400/80">AI: Pneu | Rad: Norm</p>
-            </div>
-
-            {/* False Negative */}
-            <div className="p-3 rounded-2xl bg-amber-950/30 border border-amber-500/30 text-center shadow-[0_0_15px_rgba(245,158,11,0.1)]">
-              <p className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">False Negative (FN)</p>
-              <p className="text-2xl font-black text-white mt-1 font-display">{metrics?.false_negatives || 2}</p>
-              <p className="text-[10px] text-amber-400/80">AI: Norm | Rad: Pneu</p>
-            </div>
-
-            {/* True Negative */}
-            <div className="p-3 rounded-2xl bg-white/[0.04] border border-white/20 text-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-              <p className="text-[10px] font-bold text-white uppercase tracking-wider">True Negative (TN)</p>
-              <p className="text-2xl font-black text-white mt-1 font-display">{metrics?.true_negatives || 25}</p>
-              <p className="text-[10px] text-slate-400">AI: Norm | Rad: Norm</p>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-2xl bg-[#181C26] border border-white/15 text-xs space-y-1.5 font-mono">
-            <div className="flex justify-between text-slate-300">
-              <span className="text-slate-400">Positive Predictive (PPV):</span>
-              <span className="font-bold text-white">{metrics ? `${roundPct(metrics.ppv)}%` : '88.9%'}</span>
-            </div>
-            <div className="flex justify-between text-slate-300">
-              <span className="text-slate-400">Negative Predictive (NPV):</span>
-              <span className="font-bold text-amber-300">{metrics ? `${roundPct(metrics.npv)}%` : '92.6%'}</span>
-            </div>
-            <div className="flex justify-between text-slate-300">
-              <span className="text-slate-400">F1-Harmonic Score:</span>
-              <span className="font-bold text-emerald-400">{metrics?.f1_score || 0.889}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Launchpad & Recent Diagnostic Case Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Quick Launch Workflow Cards (1 col) */}
+        {/* Quick Actions & Launchpad */}
         <div className="space-y-3">
-          <h3 className="text-sm font-bold text-white font-display">Workflow Launchpad</h3>
+          <h3 className="text-sm font-bold text-white font-display">Quick Actions</h3>
 
           <div
             onClick={() => onNavigateTab('cxr_scan')}
@@ -380,12 +407,12 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-white/10 text-white border border-white/20 group-hover:scale-110 transition-transform">
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 group-hover:scale-110 transition-transform">
                   <UploadCloud className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white font-display">Scan Chest X-Ray</h4>
-                  <p className="text-[11px] text-slate-400">Run DenseNet-121 AI prediction & Grad-CAM</p>
+                  <h4 className="text-xs font-bold text-white font-display">Upload X-Ray</h4>
+                  <p className="text-[11px] text-slate-400">Run AI disease prediction & Grad-CAM</p>
                 </div>
               </div>
               <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -393,17 +420,35 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
           </div>
 
           <div
-            onClick={() => onNavigateTab('doctor_review')}
+            onClick={() => onNavigateTab('pneumonia_model')}
             className="p-4 rounded-2xl bg-[#222836]/90 border border-white/15 hover:border-white/40 cursor-pointer transition-all shadow-md group"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-white/10 text-white border border-white/20 group-hover:scale-110 transition-transform">
-                  <FileCheck2 className="w-5 h-5 text-white" />
+                <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 group-hover:scale-110 transition-transform">
+                  <Stethoscope className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white font-display">Doctor Ground Truth</h4>
-                  <p className="text-[11px] text-slate-400">Enter findings & verify agreement</p>
+                  <h4 className="text-xs font-bold text-white font-display">View Pneumonia Dashboard</h4>
+                  <p className="text-[11px] text-slate-400">Inspect CheXNet DenseNet-121 metrics</p>
+                </div>
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </div>
+          </div>
+
+          <div
+            onClick={() => onNavigateTab('bone_model')}
+            className="p-4 rounded-2xl bg-[#222836]/90 border border-white/15 hover:border-white/40 cursor-pointer transition-all shadow-md group"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 group-hover:scale-110 transition-transform">
+                  <Bone className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white font-display">View Bone Crack Dashboard</h4>
+                  <p className="text-[11px] text-slate-400">Inspect Trauma ResNet-50 metrics</p>
                 </div>
               </div>
               <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -416,106 +461,108 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ onNaviga
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-white/10 text-white border border-white/20 group-hover:scale-110 transition-transform">
-                  <ShieldCheck className="w-5 h-5 text-white" />
+                <div className="p-2.5 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20 group-hover:scale-110 transition-transform">
+                  <FileText className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white font-display">Export Medical Dossier</h4>
-                  <p className="text-[11px] text-slate-400">Download diagnostic PDF reports</p>
+                  <h4 className="text-xs font-bold text-white font-display">Generate Surveillance Report</h4>
+                  <p className="text-[11px] text-slate-400">Export signed clinical PDF dossier</p>
                 </div>
               </div>
               <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Recent Cases Telemetry Stream (2 cols) */}
-        <div className="lg:col-span-2 p-6 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_15px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-bold text-white flex items-center space-x-2 font-display">
-                <Clock className="w-4 h-4 text-amber-400" />
-                <span>Recent Chest X-Ray AI Feed</span>
-              </h3>
-              <p className="text-xs text-slate-400 font-sans">Real-time incoming studies and doctor agreement status</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => onNavigateTab('cases')}
-              className="text-xs text-amber-400 hover:text-amber-300 font-bold flex items-center space-x-1 font-display cursor-pointer"
-            >
-              <span>View All Cases</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
+      {/* Recent Activity Telemetry Stream */}
+      <div className="p-6 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_15px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-white flex items-center space-x-2 font-display">
+              <Clock className="w-4 h-4 text-emerald-400" />
+              <span>Recent Diagnostic Case Telemetry</span>
+            </h3>
+            <p className="text-xs text-slate-400 font-sans">Real-time incoming studies and doctor concordance status</p>
           </div>
+          <button
+            type="button"
+            onClick={() => onNavigateTab('cases')}
+            className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center space-x-1 font-display cursor-pointer"
+          >
+            <span>View All Cases</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[#181C26] text-slate-400 uppercase text-[10px] tracking-wider border-b border-white/10">
-                <tr>
-                  <th className="py-2.5 px-3">Accession #</th>
-                  <th className="py-2.5 px-3">Patient De-ID</th>
-                  <th className="py-2.5 px-3">AI Prediction</th>
-                  <th className="py-2.5 px-3">Confidence</th>
-                  <th className="py-2.5 px-3">Radiologist Read</th>
-                  <th className="py-2.5 px-3">Concordance</th>
-                  <th className="py-2.5 px-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/[0.06]">
-                {recentCases.map((c) => {
-                  const predLabel = c.prediction?.label;
-                  const isPneu = predLabel === 'Pneumonia';
-                  const isConcordant = c.radiologist?.agreement === 'Concordant';
-                  const isDiscordant = c.radiologist?.agreement === 'Discordant';
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-[#181C26] text-slate-400 uppercase text-[10px] tracking-wider border-b border-white/10">
+              <tr>
+                <th className="py-2.5 px-3">Accession #</th>
+                <th className="py-2.5 px-3">Patient De-ID</th>
+                <th className="py-2.5 px-3">AI Prediction</th>
+                <th className="py-2.5 px-3">Confidence</th>
+                <th className="py-2.5 px-3">Radiologist Read</th>
+                <th className="py-2.5 px-3">Concordance</th>
+                <th className="py-2.5 px-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/[0.06]">
+              {recentCases.map((c) => {
+                const predLabel = c.prediction?.label;
+                const isAbnormal = predLabel === 'Pneumonia' || predLabel === 'Bone Fracture';
+                const isConcordant = c.radiologist?.agreement === 'Concordant';
+                const isDiscordant = c.radiologist?.agreement === 'Discordant';
 
-                  return (
-                    <tr key={c.image_id} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="py-2.5 px-3 font-mono text-white font-semibold">{c.accession_number}</td>
-                      <td className="py-2.5 px-3 text-slate-400 font-mono">{c.patient_id_hash?.substring(0, 12)}...</td>
-                      <td className="py-2.5 px-3 font-bold">
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] ${isPneu ? 'bg-rose-950/70 text-rose-300 border border-rose-500/40' : 'bg-white/10 text-white border border-white/20'}`}>
-                          {predLabel || 'Pending'}
+                return (
+                  <tr key={c.image_id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-2.5 px-3 font-mono text-white font-semibold">{c.accession_number}</td>
+                    <td className="py-2.5 px-3 text-slate-400 font-mono">{c.patient_id_hash?.substring(0, 12)}...</td>
+                    <td className="py-2.5 px-3 font-bold">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] ${
+                        isAbnormal ? 'bg-rose-950/70 text-rose-300 border border-rose-500/40' : 'bg-white/10 text-white border border-white/20'
+                      }`}>
+                        {predLabel || 'Pending'}
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-3 text-slate-300 font-mono">
+                      {c.prediction ? `${roundPct(c.prediction.confidence)}%` : '--'}
+                    </td>
+                    <td className="py-2.5 px-3 text-slate-300">
+                      {c.radiologist?.finding ? (
+                        <span className="font-semibold text-white">{c.radiologist.finding}</span>
+                      ) : (
+                        <span className="text-slate-500 italic">Unread</span>
+                      )}
+                    </td>
+                    <td className="py-2.5 px-3">
+                      {isConcordant && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-500/40">
+                          Concordant
                         </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-slate-300 font-mono">
-                        {c.prediction ? `${roundPct(c.prediction.confidence)}%` : '--'}
-                      </td>
-                      <td className="py-2.5 px-3 text-slate-300">
-                        {c.radiologist?.finding ? (
-                          <span className="font-semibold text-white">{c.radiologist.finding}</span>
-                        ) : (
-                          <span className="text-slate-500 italic">Unread</span>
-                        )}
-                      </td>
-                      <td className="py-2.5 px-3">
-                        {isConcordant && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-500/40">
-                            Concordant
-                          </span>
-                        )}
-                        {isDiscordant && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-950/70 text-rose-300 border border-rose-500/40 animate-pulse">
-                            Discordant
-                          </span>
-                        )}
-                        {!c.radiologist && <span className="text-slate-500 text-[11px]">Pending Read</span>}
-                      </td>
-                      <td className="py-2.5 px-3 text-right">
-                        <button
-                          type="button"
-                          onClick={() => onNavigateTab('cases')}
-                          className="px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-[11px] text-white border border-white/10 hover:border-white transition-colors shadow-sm cursor-pointer"
-                        >
-                          Details
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                      )}
+                      {isDiscordant && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-950/70 text-rose-300 border border-rose-500/40 animate-pulse">
+                          Discordant
+                        </span>
+                      )}
+                      {!c.radiologist && <span className="text-slate-500 text-[11px]">Pending Read</span>}
+                    </td>
+                    <td className="py-2.5 px-3 text-right">
+                      <button
+                        type="button"
+                        onClick={() => onNavigateTab('cases')}
+                        className="px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-[11px] text-white border border-white/10 hover:border-white transition-colors shadow-sm cursor-pointer"
+                      >
+                        Details
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -526,3 +573,5 @@ function roundPct(val?: number): string {
   if (val === undefined || val === null) return '0.0';
   return (val * 100).toFixed(1);
 }
+
+export default ExecutiveDashboard;
