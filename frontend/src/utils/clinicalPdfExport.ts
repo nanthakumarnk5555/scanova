@@ -435,3 +435,4 @@ export async function generateAndDownloadClinicalPdf(data: ClinicalDossierData, 
     }
   }
 }
+
