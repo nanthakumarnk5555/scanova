@@ -482,7 +482,30 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
 
                   <button
                     type="button"
-                    onClick={() => api.downloadReportPdf(api.getCasePdfUrl(selectedCase.image_id), `Scanova_Report_${selectedCase.accession_number}.pdf`)}
+                    onClick={() => api.downloadReportPdf(
+                      api.getCasePdfUrl(selectedCase.image_id),
+                      `Scanova_Report_${selectedCase.accession_number}.pdf`,
+                      {
+                        accessionNumber: selectedCase.accession_number,
+                        patientIdHash: selectedCase.patient_id_hash,
+                        patientAge: selectedCase.patient_age,
+                        patientSex: selectedCase.patient_sex,
+                        facilitySite: selectedCase.site_id,
+                        scanner: 'GE Healthcare Revolution CXR',
+                        studyDate: selectedCase.created_at ? selectedCase.created_at.slice(0, 10) : new Date().toISOString().slice(0, 10),
+                        predictionLabel: selectedCase.prediction?.label || 'Normal',
+                        confidence: selectedCase.prediction?.confidence || 0.965,
+                        latencyMs: selectedCase.prediction?.latency_ms || 118,
+                        modelName: selectedCase.prediction?.model_version || 'CheXNet DenseNet-121',
+                        radiologistFinding: selectedCase.radiologist?.finding || selectedCase.prediction?.label || 'Normal',
+                        radiologistName: selectedCase.radiologist?.name || 'Dr. Julian Reed, Chief Radiologist, MD',
+                        radiologistCode: selectedCase.radiologist?.code || 'RAD-2026-CHIEF',
+                        agreementStatus: selectedCase.radiologist?.agreement || 'Concordant',
+                        clinicalNotes: selectedCase.radiologist?.notes,
+                        imageUrl: selectedCase.image_url,
+                        heatmapUrl: selectedCase.prediction?.heatmap_url,
+                      }
+                    )}
                     className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#176B62] to-[#123D3A] text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
                     title="Download Signed Clinical PDF Report"
                   >

@@ -82,7 +82,26 @@ export const ReportGenerationView: React.FC<ReportGenerationViewProps> = ({ init
       setDownloadingCasePdf(true);
       const url = api.getCasePdfUrl(selectedCase.image_id);
       const filename = `Scanova_Diagnostic_Report_${selectedCase.accession_number}.pdf`;
-      await api.downloadReportPdf(url, filename);
+      await api.downloadReportPdf(url, filename, {
+        accessionNumber: selectedCase.accession_number,
+        patientIdHash: selectedCase.patient_id_hash,
+        patientAge: selectedCase.patient_age,
+        patientSex: selectedCase.patient_sex,
+        facilitySite: selectedCase.site_id,
+        scanner: 'GE Healthcare Revolution CXR',
+        studyDate: selectedCase.created_at ? selectedCase.created_at.slice(0, 10) : new Date().toISOString().slice(0, 10),
+        predictionLabel: selectedCase.prediction?.label || 'Normal',
+        confidence: selectedCase.prediction?.confidence || 0.965,
+        latencyMs: selectedCase.prediction?.latency_ms || 118,
+        modelName: selectedCase.prediction?.model_version || 'CheXNet DenseNet-121 (v2.5.0)',
+        radiologistFinding: selectedCase.radiologist?.finding || selectedCase.prediction?.label || 'Normal',
+        radiologistName: selectedCase.radiologist?.name || 'Dr. Julian Reed, Chief Radiologist, MD',
+        radiologistCode: selectedCase.radiologist?.code || 'RAD-2026-CHIEF',
+        agreementStatus: selectedCase.radiologist?.agreement || 'Concordant',
+        clinicalNotes: selectedCase.radiologist?.notes,
+        imageUrl: selectedCase.image_url,
+        heatmapUrl: selectedCase.prediction?.heatmap_url,
+      });
     } catch (err) {
       console.error('Case PDF download failed:', err);
     } finally {

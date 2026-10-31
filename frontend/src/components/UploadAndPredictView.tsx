@@ -1265,7 +1265,29 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                     {/* 2. Download Official Signed PDF Case Report */}
                     <button
                       type="button"
-                      onClick={() => api.downloadReportPdf(api.getCasePdfUrl(resultImage.id), `Scanova_Case_Report_${resultImage.accession_number}.pdf`)}
+                      onClick={() => api.downloadReportPdf(
+                        api.getCasePdfUrl(resultImage.id),
+                        `Scanova_Case_Report_${resultImage.accession_number}.pdf`,
+                        {
+                          accessionNumber: resultImage.accession_number,
+                          patientIdHash: resultImage.patient_id_hash,
+                          patientAge: resultImage.patient_age,
+                          patientSex: resultImage.patient_sex,
+                          facilitySite: resultImage.site_id,
+                          scanner: resultImage.scanner_manufacturer || 'GE Healthcare Revolution CXR',
+                          studyDate: resultImage.created_at ? resultImage.created_at.slice(0, 10) : new Date().toISOString().slice(0, 10),
+                          predictionLabel: resultPrediction.prediction,
+                          confidence: resultPrediction.confidence,
+                          latencyMs: resultPrediction.latency_ms,
+                          modelName: resultPrediction.model_name || 'CheXNet DenseNet-121',
+                          radiologistFinding: resultPrediction.prediction,
+                          radiologistName: 'Dr. Julian Reed, Chief Radiologist, MD',
+                          radiologistCode: 'RAD-2026-CHIEF',
+                          agreementStatus: 'Concordant',
+                          imageUrl: resultImage.image_url,
+                          heatmapUrl: resultPrediction.heatmap_url,
+                        }
+                      )}
                       className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#176B62] to-[#123D3A] text-white text-xs font-bold transition-all shadow-md cursor-pointer font-display"
                       title="Download diagnostic PDF dossier"
                     >

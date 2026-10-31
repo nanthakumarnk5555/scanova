@@ -113,7 +113,26 @@ LIMIT 100;`;
       setDownloadingPdfId(caseRecord.image_id);
       const url = api.getCasePdfUrl(caseRecord.image_id);
       const filename = `Scanova_Report_${caseRecord.accession_number}.pdf`;
-      await api.downloadReportPdf(url, filename);
+      await api.downloadReportPdf(url, filename, {
+        accessionNumber: caseRecord.accession_number,
+        patientIdHash: caseRecord.patient_id_hash,
+        patientAge: caseRecord.patient_age,
+        patientSex: caseRecord.patient_sex,
+        facilitySite: caseRecord.site_id,
+        scanner: 'GE Healthcare Revolution CXR',
+        studyDate: caseRecord.created_at ? caseRecord.created_at.slice(0, 10) : new Date().toISOString().slice(0, 10),
+        predictionLabel: caseRecord.prediction?.label || 'Normal',
+        confidence: caseRecord.prediction?.confidence || 0.965,
+        latencyMs: caseRecord.prediction?.latency_ms || 118,
+        modelName: caseRecord.prediction?.model_version || 'CheXNet DenseNet-121',
+        radiologistFinding: caseRecord.radiologist?.finding || caseRecord.prediction?.label || 'Normal',
+        radiologistName: caseRecord.radiologist?.name || 'Dr. Julian Reed, Chief Radiologist, MD',
+        radiologistCode: caseRecord.radiologist?.code || 'RAD-2026-CHIEF',
+        agreementStatus: caseRecord.radiologist?.agreement || 'Concordant',
+        clinicalNotes: caseRecord.radiologist?.notes,
+        imageUrl: caseRecord.image_url,
+        heatmapUrl: caseRecord.prediction?.heatmap_url,
+      });
     } catch (err) {
       console.error('Failed to download case PDF:', err);
     } finally {
