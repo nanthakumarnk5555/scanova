@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.core.security import decode_token, ROLE_PERMISSIONS
-from app.models.entities import User, Tenant
+from app.models.entities import User
 
 def get_current_user(
     authorization: Optional[str] = Header(None),
