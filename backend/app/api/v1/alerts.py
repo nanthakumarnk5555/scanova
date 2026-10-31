@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.entities import Alert, User
 from app.services.auth_service import get_current_user
+from app.api.deps import get_optional_user
 from app.services.alert_service import update_alert_status
 
 router = APIRouter(prefix="/alerts", tags=["Clinical Alerts & Notifications"])
@@ -18,7 +19,7 @@ def list_alerts(
     status: str = None,
     severity: str = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_optional_user)
 ):
     """
     Returns alerts filtered by status (Open, Investigating, Resolved) and severity.

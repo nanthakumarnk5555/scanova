@@ -28,16 +28,19 @@ try:
 except ImportError:
     from xray_validator import get_xray_validator
 
-def validate_medical_xray(file_bytes: bytes) -> tuple:
+def validate_medical_xray(file_bytes: bytes, filename: str = "") -> tuple:
     """
     Validates whether the uploaded file is a genuine medical X-ray radiograph
     using the multi-tier MedicalXRayValidator engine.
+    Returns: (is_valid, reason, modality_detected, recommended_model)
     """
     validator = get_xray_validator()
-    result = validator.validate_image(file_bytes)
+    result = validator.validate_image(file_bytes, filename=filename)
     if not result.get("is_xray", False):
-        return False, result.get("reason", "Invalid image. Please upload a valid X-ray image."), result.get("modality_detected", "non_xray")
-    return True, "Valid medical radiograph confirmed.", result.get("modality_detected", "xray")
+        return False, result.get("reason", "Invalid image. Please upload a valid X-ray image."), result.get("modality_detected", "non_xray"), "pneumonia"
+    modality = result.get("modality_detected", "chest_xray_radiograph")
+    rec_model = result.get("recommended_model", "pneumonia" if "chest" in modality else "bone_crack")
+    return True, result.get("reason", "Valid medical radiograph confirmed."), modality, rec_model
 
 ALLOWED_MIME_TYPES = {
     "image/jpeg": ".jpg",
@@ -93,7 +96,7 @@ def save_uploaded_xray(
         )
 
     # 3. Medical X-Ray Authenticity & Modality Guardrail
-    is_valid_xray, validation_err, _ = validate_medical_xray(file_bytes)
+    is_valid_xray, validation_err, *_ = validate_medical_xray(file_bytes)
     if not is_valid_xray:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

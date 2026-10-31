@@ -17,7 +17,8 @@ import {
   Tag,
   MapPin,
   X,
-  AlertTriangle
+  AlertTriangle,
+  Download
 } from 'lucide-react';
 import { api, getMediaUrl, type CaseRecord } from '../api/client';
 
@@ -67,7 +68,7 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
     setLoading(true);
     try {
       const res = await api.getPredictionHistory({
-        agreement: filterAgreement === 'all' ? undefined : filterAgreement,
+        agreement: (filterAgreement === 'all' || filterAgreement === 'Pending') ? undefined : filterAgreement,
         limit: 100,
       });
       const data: CaseRecord[] = res.cases || [];
@@ -184,6 +185,52 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
     }
   };
 
+  const handleQuickDiscordantOverride = async () => {
+    if (!selectedCase || !selectedCase.prediction) return;
+    setSubmitting(true);
+    setFeedback(null);
+    try {
+      const opposingLabel = selectedCase.prediction.label === 'Pneumonia' ? 'Normal' : 'Pneumonia';
+      setFindingLabel(opposingLabel as any);
+      const res = await api.submitRadiologistReport({
+        image_id: selectedCase.image_id,
+        finding_label: opposingLabel,
+        confidence_level: 'High',
+        clinical_notes: `[Doctor Adjudication Override] Radiologist clinical assessment differs from AI prediction (${selectedCase.prediction.label}). Adjudicated as ${opposingLabel}.`,
+        radiologist_id_code: radiologistCode,
+        radiologist_name: radiologistName,
+      });
+      setFeedback(res.message);
+      await loadCases();
+    } catch (err: any) {
+      setFeedback(`Error: ${err.message || 'Failed to submit override report'}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleRejectRescan = async () => {
+    if (!selectedCase) return;
+    setSubmitting(true);
+    setFeedback(null);
+    try {
+      const res = await api.submitRadiologistReport({
+        image_id: selectedCase.image_id,
+        finding_label: 'Normal',
+        confidence_level: 'Low',
+        clinical_notes: `[Flagged For Re-Scan] Suboptimal diagnostic radiograph (motion artifact or insufficient inspiration). Study rejected for clinical diagnostic use. Re-scan requested.`,
+        radiologist_id_code: radiologistCode,
+        radiologist_name: radiologistName,
+      });
+      setFeedback('Study flagged for re-scan. Quality alert logged.');
+      await loadCases();
+    } catch (err: any) {
+      setFeedback(`Error: ${err.message || 'Failed to flag case'}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleSubmitReport = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedCase) return;
@@ -216,11 +263,16 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
 
   const filteredCases = cases.filter((c) => {
     const q = searchQuery.toLowerCase();
-    return (
+    const matches = (
       c.accession_number.toLowerCase().includes(q) ||
       c.patient_id_hash.toLowerCase().includes(q) ||
       (c.prediction?.label || '').toLowerCase().includes(q)
     );
+    if (!matches) return false;
+    if (filterAgreement === 'Pending') return !c.radiologist;
+    if (filterAgreement === 'Concordant') return c.radiologist?.agreement === 'Concordant';
+    if (filterAgreement === 'Discordant') return c.radiologist?.agreement === 'Discordant';
+    return true;
   });
 
   const currentIndex = selectedCase ? filteredCases.findIndex((c) => c.image_id === selectedCase.image_id) : -1;
@@ -301,15 +353,15 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
             </div>
 
             {/* Filter Tabs */}
-            <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200 text-[11px] font-bold text-center">
-              {(['all', 'Concordant', 'Discordant'] as const).map((ag) => (
+            <div className="grid grid-cols-4 gap-1 bg-[#F5F3EC] p-1 rounded-2xl border border-[#DCECE7] text-[11px] font-bold text-center">
+              {(['all', 'Pending', 'Concordant', 'Discordant'] as const).map((ag) => (
                 <button
                   key={ag}
                   type="button"
                   onClick={() => setFilterAgreement(ag)}
                   className={`py-1.5 rounded-xl capitalize transition-all cursor-pointer ${filterAgreement === ag
-                    ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-gradient-to-r from-[#176B62] to-[#123D3A] text-white font-extrabold shadow-sm'
+                    : 'text-[#4A5856] hover:text-[#202B2A]'
                     }`}
                 >
                   {ag === 'all' ? 'All' : ag}
@@ -420,11 +472,31 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
 
                   <button
                     type="button"
-                    onClick={() => onNavigateToReports(selectedCase.image_id)}
-                    className="flex items-center space-x-1.5 px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-bold transition-colors cursor-pointer shadow-sm"
+                    onClick={() => api.downloadPatientXray(selectedCase.image_id, selectedCase.image_url, `Patient_XRay_${selectedCase.accession_number}.jpg`)}
+                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 hover:text-[#176B62] text-xs font-bold transition-colors cursor-pointer shadow-sm"
+                    title="Download Patient Raw X-Ray Radiograph"
                   >
-                    <FileText className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>PDF Dossier</span>
+                    <Download className="w-3.5 h-3.5 text-[#176B62]" />
+                    <span>Download X-Ray</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => api.downloadReportPdf(api.getCasePdfUrl(selectedCase.image_id), `Scanova_Report_${selectedCase.accession_number}.pdf`)}
+                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#176B62] to-[#123D3A] text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
+                    title="Download Signed Clinical PDF Report"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-white" />
+                    <span>Case PDF</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onNavigateToReports(selectedCase.image_id)}
+                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-bold transition-colors cursor-pointer shadow-sm"
+                  >
+                    <FileCheck2 className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Dossier View</span>
                   </button>
                 </div>
               </div>
@@ -518,8 +590,11 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                   >
                     <img
                       src={getMediaUrl(selectedCase.image_url)}
-                      alt="CXR"
+                      alt="Medical Radiograph"
                       className={`w-full h-full object-contain ${getFilterStyle()}`}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/sample_cxr.jpg';
+                      }}
                     />
 
                     {showGradCamLayer && selectedCase.prediction?.heatmap_url && (
@@ -528,12 +603,17 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                         alt="Grad-CAM Layer"
                         className="w-full h-full object-contain absolute inset-0 mix-blend-screen pointer-events-none transition-opacity duration-200"
                         style={{ opacity: gradCamOpacity }}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
                       />
                     )}
                   </div>
 
                   <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/20 text-[10px] font-mono font-bold text-white">
-                    PA CXR • {filterPreset.toUpperCase()}
+                    {selectedCase.prediction?.label === 'Bone Fracture' || selectedCase.prediction?.label === 'Intact Bone'
+                      ? 'SKELETAL RADIOGRAPH'
+                      : 'PA CXR'} • {filterPreset.toUpperCase()}
                   </div>
 
                   {showGradCamLayer && (
@@ -616,20 +696,45 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
                     )}
                   </div>
 
-                  <div className="pt-2 border-t border-slate-200 space-y-2">
-                    <div className="flex items-center justify-between text-[11px] text-slate-600 font-medium">
-                      <span>Agree with AI Finding?</span>
-                      <span className="text-emerald-700 font-mono font-bold">1-Click Fast Adjudication</span>
+                  <div className="pt-2 border-t border-[#DCECE7] space-y-2">
+                    <div className="flex items-center justify-between text-[11px] text-[#4A5856] font-medium">
+                      <span>Doctor Adjudication Controls:</span>
+                      <span className="text-[#176B62] font-mono font-bold">1-Click Fast Actions</span>
                     </div>
-                    <button
-                      type="button"
-                      disabled={submitting}
-                      onClick={handleQuickConcordantSign}
-                      className="w-full py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer font-display shadow-sm"
-                    >
-                      <Zap className="w-4 h-4" />
-                      <span>Concur & 1-Click Sign as Concordant</span>
-                    </button>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        disabled={submitting}
+                        onClick={handleQuickConcordantSign}
+                        className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#176B62] to-[#123D3A] text-white text-xs font-bold transition-all flex items-center justify-center space-x-1.5 cursor-pointer font-display shadow-sm disabled:opacity-70"
+                        title="Confirm AI prediction as concordant ground truth"
+                      >
+                        <Zap className="w-3.5 h-3.5 text-[#E1A34C]" />
+                        <span>Confirm AI</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={submitting}
+                        onClick={handleQuickDiscordantOverride}
+                        className="py-2.5 px-3 rounded-xl bg-[#E1A34C] hover:bg-[#D97706] text-white text-xs font-bold transition-all flex items-center justify-center space-x-1.5 cursor-pointer font-display shadow-sm disabled:opacity-70"
+                        title="Override AI prediction with opposing clinical finding"
+                      >
+                        <AlertTriangle className="w-3.5 h-3.5 text-white" />
+                        <span>Override AI</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={submitting}
+                        onClick={handleRejectRescan}
+                        className="py-2.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold transition-all flex items-center justify-center space-x-1.5 cursor-pointer font-display shadow-sm disabled:opacity-70"
+                        title="Reject study and request re-scan due to quality or artifacts"
+                      >
+                        <X className="w-3.5 h-3.5 text-rose-600" />
+                        <span>Flag Re-Scan</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -965,6 +1070,79 @@ export const RadiologistComparisonView: React.FC<RadiologistComparisonViewProps>
           </div>
         </div>
       )}
+
+      {/* Phase 3: Doctor Ground Truth Review History */}
+      <div className="p-6 rounded-3xl bg-white border border-[#DCECE7] shadow-sm space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-[#DCECE7]">
+          <div className="flex items-center space-x-2">
+            <span className="p-2 rounded-xl bg-[#DCECE7] text-[#176B62]">
+              <FileCheck2 className="w-4 h-4 text-[#176B62]" />
+            </span>
+            <div>
+              <h3 className="text-sm font-bold text-[#202B2A] font-display">
+                Doctor Ground Truth Review History
+              </h3>
+              <p className="text-[10px] text-[#728482] font-mono">
+                Audit trail of completed adjudications &amp; inter-observer decisions
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-mono font-bold text-[#176B62] bg-[#DCECE7] px-3 py-1 rounded-full border border-[#7EBFB4]/40">
+            {cases.filter((c) => c.radiologist).length} Completed Reviews
+          </span>
+        </div>
+
+        <div className="space-y-2 max-h-64 overflow-y-auto pr-1 scrollbar-thin">
+          {cases.filter((c) => c.radiologist).length === 0 ? (
+            <p className="text-xs text-[#728482] text-center py-6 italic">
+              No completed doctor reviews yet. Select a pending case above to adjudicate.
+            </p>
+          ) : (
+            cases
+              .filter((c) => c.radiologist)
+              .map((c) => (
+                <div
+                  key={c.image_id}
+                  onClick={() => handleSelectCase(c)}
+                  className="p-3 rounded-2xl bg-[#F5F3EC] border border-[#DCECE7] flex items-center justify-between hover:border-[#176B62] cursor-pointer transition-all text-xs"
+                >
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="font-mono font-bold text-[#202B2A]">{c.accession_number}</span>
+                    <span className="text-[#728482] font-mono text-[11px]">{new Date(c.created_at).toLocaleDateString()}</span>
+                    <span className="text-[#4A5856]">
+                      Doctor: <b className="text-[#202B2A]">{c.radiologist?.name}</b>
+                    </span>
+                    <span className="text-[#4A5856]">
+                      Finding: <b className="text-[#202B2A]">{c.radiologist?.finding}</b>
+                    </span>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        c.radiologist?.agreement === 'Concordant'
+                          ? 'bg-[#DCECE7] text-[#176B62]'
+                          : 'bg-amber-100 text-amber-800'
+                      }`}
+                    >
+                      {c.radiologist?.agreement}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        api.downloadReportPdf(api.getCasePdfUrl(c.image_id), `Scanova_Report_${c.accession_number}.pdf`);
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-white border border-[#DCECE7] hover:border-[#176B62] text-[10px] font-bold text-[#176B62] cursor-pointer shadow-sm"
+                    >
+                      PDF
+                    </button>
+                  </div>
+                </div>
+              ))
+          )}
+        </div>
+      </div>
     </div>
   );
 };

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.entities import Prediction, UploadedImage, RadiologistReport, User
 from app.services.auth_service import get_current_user
+from app.api.deps import get_optional_user
 from app.services.prediction_service import run_densenet_prediction
 
 router = APIRouter(prefix="/predictions", tags=["AI Disease Prediction (DenseNet-121)"])
@@ -11,7 +12,7 @@ router = APIRouter(prefix="/predictions", tags=["AI Disease Prediction (DenseNet
 def predict_image(
     image_id: str,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_optional_user)
 ):
     """
     Runs DenseNet-121 disease classification & Grad-CAM for a specified image ID.
@@ -39,7 +40,7 @@ def get_prediction_history(
     finding: str = None,
     agreement: str = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_optional_user)
 ):
     """
     Returns prediction history with joined image details and radiologist ground truth.

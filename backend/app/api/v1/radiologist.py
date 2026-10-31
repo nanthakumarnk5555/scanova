@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.models.entities import RadiologistReport, UploadedImage, Prediction, User
-from app.services.auth_service import get_current_user
+from app.services.auth_service import get_current_user, require_role
 from app.services.radiologist_service import submit_radiologist_report
 from app.services.monitoring_service import run_full_monitoring_cycle
 from app.services.drift_service import evaluate_drift
@@ -24,11 +24,12 @@ class RadiologistReportRequest(BaseModel):
 def file_radiologist_report(
     req: RadiologistReportRequest,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_role(["radiologist", "admin"]))
 ):
     """
     Submits a radiologist ground truth reading, compares against AI prediction,
     and automatically triggers the AI Monitoring Agent to recalculate performance & check alerts.
+    Strictly restricted to Radiologist Doctors and Admin safety supervisors.
     """
     report = submit_radiologist_report(
         db=db,
@@ -63,10 +64,13 @@ def file_radiologist_report(
     }
 
 @router.get("/discordance-queue")
-def get_discordance_queue(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def get_discordance_queue(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role(["radiologist", "admin"]))
+):
     """
     Retrieves all cases where AI and Radiologist disagreed (False Positives or False Negatives)
-    for clinical audit & peer adjudication.
+    for clinical audit & peer adjudication. Strictly restricted to Radiologist Doctors.
     """
     discordant_cases = (
         db.query(UploadedImage, Prediction, RadiologistReport)

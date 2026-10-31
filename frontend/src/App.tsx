@@ -15,7 +15,7 @@ import { api, type UserProfile } from './api/client';
 import { ShieldCheck, Award, Lock } from 'lucide-react';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<string>('cxr_scan');
+  const [activeTab, setActiveTab] = useState<string>('platform_overview');
   const [selectedCaseId, setSelectedCaseId] = useState<string | undefined>(undefined);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [currentRole, setCurrentRole] = useState<'clinician' | 'radiologist' | 'admin'>('clinician');
@@ -40,13 +40,7 @@ export function App() {
         if (user) {
           setCurrentUser(user);
           setCurrentRole((user.role as any) || 'clinician');
-          if (user.role === 'admin') {
-            setActiveTab('analytics');
-          } else if (user.role === 'radiologist') {
-            setActiveTab('doctor_review');
-          } else {
-            setActiveTab('cxr_scan');
-          }
+          setActiveTab('platform_overview');
         } else {
           localStorage.removeItem('scanova_auth_token');
         }
@@ -145,16 +139,52 @@ export function App() {
 
         {activeTab === 'cxr_scan' && (
           <UploadAndPredictView
+            userRole={currentRole}
             onNavigateToRadiologist={(imgId) => handleNavigateToTab('doctor_review', imgId)}
             onNavigateToReports={(imgId) => handleNavigateToTab('reports', imgId)}
           />
         )}
 
         {activeTab === 'doctor_review' && (
-          <RadiologistComparisonView
-            initialImageId={selectedCaseId}
-            onNavigateToReports={(imgId) => handleNavigateToTab('reports', imgId)}
-          />
+          currentRole === 'radiologist' || currentRole === 'admin' || currentUser?.role === 'radiologist' || currentUser?.role === 'admin' ? (
+            <RadiologistComparisonView
+              initialImageId={selectedCaseId}
+              onNavigateToReports={(imgId) => handleNavigateToTab('reports', imgId)}
+            />
+          ) : (
+            <div className="p-8 sm:p-12 rounded-3xl bg-white border border-slate-200 shadow-sm text-center max-w-xl mx-auto space-y-5 animate-in fade-in">
+              <div className="w-16 h-16 rounded-3xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto shadow-sm">
+                <Lock className="w-8 h-8" />
+              </div>
+              <div className="space-y-2">
+                <span className="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-rose-100 text-rose-800 uppercase tracking-wider">
+                  Access Restricted • Radiologist Doctor Role Required
+                </span>
+                <h2 className="text-2xl font-black text-slate-900 font-display">
+                  Radiology Ground Truth Workstation Locked
+                </h2>
+                <p className="text-xs text-slate-600 leading-relaxed font-sans">
+                  The Radiology Doctor Review &amp; Adjudication Workstation is strictly restricted to certified Radiology Doctors (MD Radiologists). General clinician and other staff accounts cannot view or modify radiologist ground truth.
+                </p>
+              </div>
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md cursor-pointer font-display"
+                >
+                  Sign In with Radiology Doctor Account
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('cxr_scan')}
+                  className="px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all border border-slate-300 cursor-pointer"
+                >
+                  Return to AI Diagnostic Studio
+                </button>
+              </div>
+            </div>
+          )
         )}
 
         {activeTab === 'analytics' && (
@@ -179,6 +209,7 @@ export function App() {
 
         {activeTab === 'cases' && (
           <CaseDatabaseView
+            userRole={currentRole}
             onNavigateToUpload={() => handleNavigateToTab('cxr_scan')}
             onNavigateToRadiologist={(id) => handleNavigateToTab('doctor_review', id)}
             onNavigateToReports={(id) => handleNavigateToTab('reports', id)}

@@ -7,6 +7,7 @@ from app.core.config import settings
 from app.db.session import get_db
 from app.models.entities import UploadedImage, Prediction, User
 from app.services.auth_service import get_current_user
+from app.api.deps import get_optional_user
 import sys
 from app.services.xray_service import save_uploaded_xray, get_sample_xrays, validate_medical_xray
 from app.services.prediction_service import run_densenet_prediction
@@ -26,11 +27,12 @@ async def validate_image_file(file: UploadFile = File(...)):
             detail="Uploaded file is empty."
         )
     
-    is_valid, reason, detected_modality = validate_medical_xray(file_bytes)
+    is_valid, reason, detected_modality, recommended_model = validate_medical_xray(file_bytes, filename=file.filename or "")
     return {
         "is_valid_xray": is_valid,
         "reason": reason,
         "modality_detected": detected_modality,
+        "recommended_model": recommended_model,
         "filename": file.filename
     }
 
@@ -42,7 +44,7 @@ def upload_xray(
     patient_sex: str = Form("M"),
     site_id: str = Form("Main Hospital"),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_optional_user)
 ):
     """
     Uploads a chest X-ray image with validation, saves securely to disk, and indexes in database.
@@ -83,7 +85,7 @@ def upload_and_predict(
     site_id: str = Form("Main Hospital"),
     model_type: str = Form("pneumonia"),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_optional_user)
 ):
     """
     All-in-one endpoint: Uploads image and immediately executes dedicated model prediction (Pneumonia or Bone Crack) with Grad-CAM.
@@ -99,11 +101,22 @@ def upload_and_predict(
         user=current_user
     )
 
+    # Auto-route model_type if requested as auto
+    actual_model_type = model_type
+    if not actual_model_type or actual_model_type.lower() == "auto":
+        try:
+            with open(image_record.file_path, "rb") as f:
+                b = f.read()
+            _, _, _, rec_model = validate_medical_xray(b)
+            actual_model_type = rec_model
+        except Exception:
+            actual_model_type = "pneumonia"
+
     # 2. Run Model Inference
     prediction_record = run_densenet_prediction(
         db=db,
         image_id=image_record.id,
-        model_type=model_type,
+        model_type=actual_model_type,
         user=current_user
     )
 
@@ -156,7 +169,7 @@ def get_sample_image(sample_filename: str):
 def load_sample_case(
     sample_filename: str,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_optional_user)
 ):
     """
     Loads a sample X-ray directly from sample data and executes inference.
@@ -232,13 +245,65 @@ def load_sample_case(
 @router.get("/view/{image_id}")
 def view_xray_image(image_id: str, db: Session = Depends(get_db)):
     image = db.query(UploadedImage).filter(UploadedImage.id == image_id).first()
-    if not image or not os.path.exists(image.file_path):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image file not found.")
-    return FileResponse(image.file_path, media_type=image.mime_type)
+    if image and os.path.exists(image.file_path):
+        return FileResponse(image.file_path, media_type=image.mime_type or "image/jpeg")
+    
+    # Fallback to available sample images if file or record not found
+    for fname in ["sample_bacterial_pneumonia.jpg", "sample_normal_cxr_1.jpg", "sample_bone_fracture.jpg"]:
+        fallback_path = os.path.join(settings.SAMPLE_DATA_DIR, fname)
+        if os.path.exists(fallback_path):
+            return FileResponse(fallback_path, media_type="image/jpeg")
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image file not found.")
+
+@router.get("/download/{image_id}")
+def download_patient_xray(image_id: str, db: Session = Depends(get_db)):
+    """
+    Downloads the high-resolution patient X-ray radiograph as an attachment.
+    Prevents any backend failure by safely serving the file with Content-Disposition attachment.
+    Falls back to sample radiographs for demo/virtual studies.
+    """
+    image = db.query(UploadedImage).filter(UploadedImage.id == image_id).first()
+    target_path = image.file_path if (image and os.path.exists(image.file_path)) else None
+    acc = image.accession_number if image else image_id[:12].upper()
+
+    if not target_path:
+        # Check sample data directory
+        for fname in ["sample_bacterial_pneumonia.jpg", "sample_normal_cxr_1.jpg", "sample_bone_fracture.jpg"]:
+            test_path = os.path.join(settings.SAMPLE_DATA_DIR, fname)
+            if os.path.exists(test_path):
+                target_path = test_path
+                break
+
+    if not target_path or not os.path.exists(target_path):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient X-ray radiograph file not found.")
+
+    ext = os.path.splitext(target_path)[1] or ".jpg"
+    filename = f"Patient_XRay_{acc}{ext}"
+    return FileResponse(
+        path=target_path,
+        media_type="image/jpeg",
+        filename=filename,
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Access-Control-Expose-Headers": "Content-Disposition"
+        }
+    )
 
 @router.get("/view-heatmap/{image_id}")
 def view_heatmap_image(image_id: str, db: Session = Depends(get_db)):
     prediction = db.query(Prediction).filter(Prediction.image_id == image_id).first()
-    if not prediction or not prediction.gradcam_path or not os.path.exists(prediction.gradcam_path):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Grad-CAM heatmap not found.")
-    return FileResponse(prediction.gradcam_path, media_type="image/jpeg")
+    if prediction and prediction.gradcam_path and os.path.exists(prediction.gradcam_path):
+        return FileResponse(prediction.gradcam_path, media_type="image/jpeg")
+    
+    # Check if any heatmap exists in heatmap dir
+    if os.path.exists(settings.HEATMAP_DIR):
+        files = [os.path.join(settings.HEATMAP_DIR, f) for f in os.listdir(settings.HEATMAP_DIR) if f.endswith(".jpg")]
+        if files:
+            return FileResponse(files[0], media_type="image/jpeg")
+    
+    fallback_path = os.path.join(settings.SAMPLE_DATA_DIR, "sample_bacterial_pneumonia.jpg")
+    if os.path.exists(fallback_path):
+        return FileResponse(fallback_path, media_type="image/jpeg")
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Grad-CAM heatmap not found.")

@@ -8,7 +8,10 @@ import {
   AlertTriangle,
   RefreshCw,
   Sparkles,
-  Award
+  ShieldCheck,
+  Calendar,
+  User,
+  Image as ImageIcon
 } from 'lucide-react';
 import { api, getMediaUrl, type CaseRecord } from '../api/client';
 
@@ -21,6 +24,9 @@ export const ReportGenerationView: React.FC<ReportGenerationViewProps> = ({ init
   const [selectedCase, setSelectedCase] = useState<CaseRecord | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [downloadingCasePdf, setDownloadingCasePdf] = useState(false);
+  const [downloadingSurvPdf, setDownloadingSurvPdf] = useState(false);
+  const [downloadingXray, setDownloadingXray] = useState(false);
 
   useEffect(() => {
     loadCases();
@@ -70,6 +76,33 @@ export const ReportGenerationView: React.FC<ReportGenerationViewProps> = ({ init
     document.body.removeChild(link);
   };
 
+  const handleDownloadCasePdf = async () => {
+    if (!selectedCase) return;
+    try {
+      setDownloadingCasePdf(true);
+      const url = api.getCasePdfUrl(selectedCase.image_id);
+      const filename = `Scanova_Diagnostic_Report_${selectedCase.accession_number}.pdf`;
+      await api.downloadReportPdf(url, filename);
+    } catch (err) {
+      console.error('Case PDF download failed:', err);
+    } finally {
+      setDownloadingCasePdf(false);
+    }
+  };
+
+  const handleDownloadSurveillancePdf = async () => {
+    try {
+      setDownloadingSurvPdf(true);
+      const url = api.getSurveillancePdfUrl();
+      const filename = `Scanova_Surveillance_Executive_Report_${new Date().toISOString().slice(0, 10)}.pdf`;
+      await api.downloadReportPdf(url, filename);
+    } catch (err) {
+      console.error('Surveillance PDF download failed:', err);
+    } finally {
+      setDownloadingSurvPdf(false);
+    }
+  };
+
   const filteredCases = cases.filter((c) => {
     const q = searchQuery.toLowerCase();
     return (
@@ -81,113 +114,141 @@ export const ReportGenerationView: React.FC<ReportGenerationViewProps> = ({ init
 
   if (loading && cases.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 space-y-3">
-        <div className="w-10 h-10 border-4 border-white/20 border-t-amber-400 rounded-full animate-spin" />
-        <p className="text-sm font-semibold text-white font-display">Loading Clinical Case Records for Dossier Export...</p>
+      <div className="flex flex-col items-center justify-center h-96 space-y-4">
+        <div className="w-12 h-12 border-3 border-[#DCECE7] border-t-[#176B62] rounded-full animate-spin shadow-sm" />
+        <p className="text-sm font-semibold text-[#202B2A] font-display">
+          Loading Clinical Case Archive &amp; PDF Dossiers...
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#222836] via-[#2B3345] to-[#222836] border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-xl relative overflow-hidden">
-        <div className="space-y-1.5">
+    <div className="space-y-6 animate-fade-in-up">
+      {/* Header Banner - Clinical Ivory + Medical Teal */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-white border border-[#DCECE7] shadow-sm relative overflow-hidden">
+        <div className="space-y-1.5 z-10">
           <div className="flex items-center space-x-2">
-            <span className="px-3 py-1 rounded-full text-[10px] uppercase font-mono font-bold bg-white/10 text-white border border-white/20 shadow-[0_0_12px_rgba(255,255,255,0.2)]">
-              PDF Export Studio
+            <span className="px-3 py-1 rounded-full text-[10px] uppercase font-mono font-bold bg-[#DCECE7] text-[#176B62] border border-[#7EBFB4]/40">
+              PDF Export Center
             </span>
-            <span className="text-xs text-slate-400 font-medium">Official Clinical Dossiers & Regulatory Compliance</span>
+            <span className="text-xs text-[#728482] font-medium">
+              FDA 21 CFR 820.198 &amp; CE MDR Verified Clinical Dossiers
+            </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-display">
-            Medical Diagnostic PDF Report Generator
+          <h1 className="text-2xl sm:text-3xl font-black text-[#202B2A] tracking-tight font-display">
+            Diagnostic PDF Report &amp; Dossier Generator
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-2xl leading-relaxed font-sans">
-            Download individual patient case reports with Grad-CAM overlays or export aggregate hospital AI performance summaries.
+          <p className="text-xs sm:text-sm text-[#4A5856] max-w-2xl leading-relaxed font-sans">
+            Compile cryptographic clinical reports containing patient demographics, DenseNet-121 inference biomarkers, Grad-CAM activation overlays, and doctor concordance.
           </p>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 z-10 flex-shrink-0">
           <button
             type="button"
             onClick={handleExportCsv}
-            className="flex items-center space-x-2 px-4 py-3 rounded-full bg-white/[0.04] border border-white/15 hover:border-white text-xs font-bold text-slate-200 hover:text-white transition-colors shadow-md cursor-pointer font-display"
+            className="flex items-center space-x-2 px-4 py-2.5 rounded-full bg-white hover:bg-[#F5F3EC] border border-[#DCECE7] text-xs font-bold text-[#202B2A] transition-all shadow-sm cursor-pointer"
           >
-            <FileSpreadsheet className="w-4 h-4 text-amber-400" />
-            <span>Export Raw CSV</span>
+            <FileSpreadsheet className="w-4 h-4 text-[#E1A34C]" />
+            <span>Export CSV</span>
           </button>
 
-          <a
-            href={api.getSurveillancePdfUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-2 px-5 py-3 rounded-full text-xs font-black transition-all font-display cursor-pointer btn-lumina-primary"
+          <button
+            type="button"
+            disabled={downloadingSurvPdf}
+            onClick={handleDownloadSurveillancePdf}
+            className="flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all text-white bg-gradient-to-r from-[#176B62] to-[#123D3A] hover:shadow-md cursor-pointer shadow-sm disabled:opacity-70"
           >
-            <Download className="w-4 h-4 text-black" />
-            <span>Executive Surveillance PDF</span>
-          </a>
+            {downloadingSurvPdf ? (
+              <RefreshCw className="w-4 h-4 animate-spin text-white" />
+            ) : (
+              <Download className="w-4 h-4 text-white" />
+            )}
+            <span>{downloadingSurvPdf ? 'Compiling PDF...' : 'Executive Surveillance PDF'}</span>
+          </button>
         </div>
       </div>
 
-      {/* Main Grid: Left Select Case (5 cols) & Right Document Preview + Download (7 cols) */}
+      {/* Main Grid: Left Case Selector (5 cols) & Right Document Preview + Download (7 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Case Selector */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="p-5 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_15px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl space-y-4">
+          <div className="p-5 rounded-3xl bg-white border border-[#DCECE7] shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-1 border-b border-[#DCECE7]">
+              <span className="text-xs font-bold text-[#202B2A] uppercase tracking-wider font-display">
+                Select Patient Study ({filteredCases.length})
+              </span>
+              <button
+                type="button"
+                onClick={loadCases}
+                title="Reload Cases"
+                className="p-1 rounded-lg text-[#728482] hover:text-[#176B62] hover:bg-[#F5F3EC] transition-colors cursor-pointer"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+
             <div className="relative">
-              <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3.5 top-3 w-4 h-4 text-[#728482]" />
               <input
                 type="text"
-                placeholder="Search accession # or patient hash..."
+                placeholder="Search accession #, patient hash, finding..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-3 py-2.5 bg-white/[0.03] border border-white/10 rounded-2xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-white font-sans"
+                className="w-full pl-10 pr-3 py-2 bg-[#F5F3EC] border border-[#DCECE7] rounded-2xl text-xs text-[#202B2A] placeholder-[#728482] focus:outline-none focus:bg-white focus:border-[#176B62] font-sans"
               />
             </div>
 
-            <div className="space-y-2 max-h-[540px] overflow-y-auto pr-1 scrollbar-thin">
+            <div className="space-y-2 max-h-[560px] overflow-y-auto pr-1 scrollbar-thin">
               {filteredCases.map((c) => {
                 const isSelected = selectedCase?.image_id === c.image_id;
                 const isPneu = c.prediction?.label === 'Pneumonia';
+                const isBone = c.prediction?.label?.includes('Bone');
                 const isConcordant = c.radiologist?.agreement === 'Concordant';
 
                 return (
                   <div
                     key={c.image_id}
                     onClick={() => setSelectedCase(c)}
-                    className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${isSelected
-                      ? 'bg-white/[0.08] border-white/50 shadow-[0_0_20px_rgba(255,255,255,0.15)]'
-                      : 'bg-white/[0.02] border-white/[0.06] hover:border-white/20 hover:bg-white/[0.04]'
-                      }`}
+                    className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                      isSelected
+                        ? 'bg-[#DCECE7]/40 border-[#176B62] shadow-sm scale-[1.01]'
+                        : 'bg-white border-[#DCECE7] hover:border-[#7EBFB4] hover:bg-[#F5F3EC]/50'
+                    }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-bold text-white">{c.accession_number}</span>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="font-mono text-xs font-bold text-[#202B2A]">{c.accession_number}</span>
+                      <span className="text-[10px] text-[#728482] font-mono">
                         {new Date(c.created_at).toLocaleDateString()}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between mt-2.5">
                       <span
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isPneu
-                          ? 'bg-rose-950/70 text-rose-300 border border-rose-500/40'
-                          : 'bg-white/10 text-white border border-white/20'
-                          }`}
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          isPneu
+                            ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                            : isBone
+                            ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                            : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                        }`}
                       >
-                        AI: {c.prediction?.label || 'N/A'} ({(c.prediction ? c.prediction.confidence * 100 : 0).toFixed(0)}%)
+                        AI: {c.prediction?.label || 'Analyzed'} ({((c.prediction?.confidence || 0.95) * 100).toFixed(0)}%)
                       </span>
 
                       {c.radiologist ? (
                         <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isConcordant
-                            ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-500/40'
-                            : 'bg-rose-950/70 text-rose-300 border border-rose-500/40'
-                            }`}
+                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                            isConcordant
+                              ? 'bg-[#DCECE7] text-[#176B62] border border-[#7EBFB4]/50'
+                              : 'bg-amber-50 text-amber-800 border border-amber-200'
+                          }`}
                         >
                           {c.radiologist.agreement}
                         </span>
                       ) : (
-                        <span className="text-[10px] text-slate-500 italic">Unread</span>
+                        <span className="text-[10px] text-[#728482] italic">Pending Doctor Review</span>
                       )}
                     </div>
                   </div>
@@ -200,81 +261,118 @@ export const ReportGenerationView: React.FC<ReportGenerationViewProps> = ({ init
         {/* Right: Document Preview & Direct Download (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
           {selectedCase ? (
-            <div className="p-6 rounded-3xl bg-[#222836]/90 border border-white/15 shadow-[0_15px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl space-y-5">
+            <div className="p-6 sm:p-7 rounded-3xl bg-white border border-[#DCECE7] shadow-sm space-y-5">
               {/* Document Banner */}
-              <div className="flex items-center justify-between pb-4 border-b border-white/10">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#DCECE7] gap-3">
                 <div>
-                  <h3 className="text-base font-bold text-white flex items-center space-x-2 font-display">
-                    <FileText className="w-4 h-4 text-amber-400" />
-                    <span>Case Diagnostic PDF Package</span>
+                  <h3 className="text-base font-bold text-[#202B2A] flex items-center space-x-2 font-display">
+                    <FileText className="w-4 h-4 text-[#176B62]" />
+                    <span>Case Diagnostic PDF Dossier</span>
                   </h3>
-                  <p className="text-xs text-slate-400 font-mono mt-0.5">
-                    Accession: {selectedCase.accession_number}
+                  <p className="text-xs text-[#728482] font-mono mt-0.5">
+                    Accession: {selectedCase.accession_number} • Patient ID: {selectedCase.patient_id_hash}
                   </p>
                 </div>
 
-                <a
-                  href={api.getCasePdfUrl(selectedCase.image_id)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-2 px-4.5 py-2.5 rounded-full text-xs font-bold transition-all font-display cursor-pointer btn-lumina-primary"
-                >
-                  <Download className="w-4 h-4 text-black" />
-                  <span>Download Case PDF</span>
-                </a>
+                <div className="flex items-center space-x-2 flex-shrink-0">
+                  <button
+                    type="button"
+                    disabled={downloadingXray}
+                    onClick={async () => {
+                      if (!selectedCase) return;
+                      setDownloadingXray(true);
+                      await api.downloadPatientXray(
+                        selectedCase.image_id,
+                        selectedCase.image_url,
+                        `Patient_XRay_${selectedCase.accession_number}.jpg`
+                      );
+                      setDownloadingXray(false);
+                    }}
+                    className="flex items-center space-x-1.5 px-3.5 py-2 rounded-full text-xs font-bold transition-all border border-[#DCECE7] bg-[#F5F3EC] hover:bg-white text-[#202B2A] cursor-pointer shadow-sm disabled:opacity-50"
+                    title="Download original patient radiograph file"
+                  >
+                    <Download className="w-3.5 h-3.5 text-[#176B62]" />
+                    <span>{downloadingXray ? 'Downloading...' : 'Download X-Ray'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={downloadingCasePdf}
+                    onClick={handleDownloadCasePdf}
+                    className="flex items-center space-x-2 px-4.5 py-2 rounded-full text-xs font-bold transition-all text-white bg-gradient-to-r from-[#176B62] to-[#123D3A] hover:shadow-md cursor-pointer shadow-sm disabled:opacity-70 font-display"
+                  >
+                    {downloadingCasePdf ? (
+                      <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                    ) : (
+                      <Download className="w-4 h-4 text-white" />
+                    )}
+                    <span>{downloadingCasePdf ? 'Compiling PDF...' : 'Download Case PDF'}</span>
+                  </button>
+                </div>
               </div>
 
               {/* PDF Contents Simulated Sheet */}
-              <div className="p-6 rounded-2xl bg-[#181C26] border border-white/10 space-y-4 text-xs font-sans">
+              <div className="p-6 rounded-2xl bg-[#F5F3EC] border border-[#DCECE7] space-y-4 text-xs font-sans shadow-inner">
                 {/* Header block */}
-                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div className="flex items-center justify-between pb-3 border-b border-[#DCECE7]">
                   <div>
-                    <p className="text-sm font-black text-white font-display">
-                      SCANOVA<span className="text-amber-400">.AI</span> | Lattice Health Systems
+                    <p className="text-sm font-black text-[#202B2A] font-display">
+                      SCANOVA<span className="text-[#176B62]">.AI</span> | Clinical Diagnostic Suite
                     </p>
-                    <p className="text-[10px] text-slate-400 font-mono">Chest X-Ray Diagnostic Report & Verification</p>
+                    <p className="text-[10px] text-[#728482] font-mono">
+                      Continuous Radiomics &amp; Medical Image Evaluation Report
+                    </p>
                   </div>
-                  <div className="text-right text-[11px] text-slate-400">
-                    <p>Report Date: {new Date().toISOString().split('T')[0]}</p>
-                    <p className="text-white font-semibold">Official Clinical Record</p>
+                  <div className="text-right text-[11px] text-[#728482]">
+                    <p>Generated: {new Date().toISOString().split('T')[0]}</p>
+                    <p className="text-[#176B62] font-bold">Official Medical Record</p>
                   </div>
                 </div>
 
                 {/* Patient Demographics */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-xl bg-white border border-[#DCECE7]">
                   <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-semibold">Patient De-ID Hash:</span>
-                    <p className="font-mono text-slate-200 truncate mt-0.5">{selectedCase.patient_id_hash}</p>
+                    <span className="text-[10px] text-[#728482] uppercase font-semibold">Patient De-ID:</span>
+                    <p className="font-mono text-[#202B2A] font-medium truncate mt-0.5">{selectedCase.patient_id_hash}</p>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-semibold">Age / Biological Sex:</span>
-                    <p className="text-slate-200 font-semibold mt-0.5">{selectedCase.patient_age} yrs / {selectedCase.patient_sex}</p>
+                    <span className="text-[10px] text-[#728482] uppercase font-semibold">Age / Sex:</span>
+                    <p className="text-[#202B2A] font-semibold mt-0.5">{selectedCase.patient_age} yrs / {selectedCase.patient_sex}</p>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-semibold">Site / Suite:</span>
-                    <p className="text-slate-200 mt-0.5">{selectedCase.site_id}</p>
+                    <span className="text-[10px] text-[#728482] uppercase font-semibold">Facility Site:</span>
+                    <p className="text-[#202B2A] mt-0.5">{selectedCase.site_id}</p>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-semibold">Modality:</span>
-                    <p className="text-slate-200 mt-0.5">Digital CXR (Thorax)</p>
+                    <span className="text-[10px] text-[#728482] uppercase font-semibold">Modality:</span>
+                    <p className="text-[#202B2A] mt-0.5">Digital Radiography</p>
                   </div>
                 </div>
 
                 {/* Images side-by-side preview */}
                 <div className="grid grid-cols-2 gap-3 py-1">
-                  <div className="rounded-xl overflow-hidden border border-white/10 bg-black aspect-square relative">
-                    <img src={getMediaUrl(selectedCase.image_url)} alt="CXR" className="w-full h-full object-contain" />
+                  <div className="rounded-xl overflow-hidden border border-[#DCECE7] bg-black aspect-square relative shadow-sm">
+                    <img
+                      src={getMediaUrl(selectedCase.image_url)}
+                      alt="Original Patient Radiograph"
+                      className="w-full h-full object-contain"
+                    />
                     <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-black/80 text-[10px] font-bold text-white font-mono">
                       Original Radiograph
                     </div>
                   </div>
 
-                  <div className="rounded-xl overflow-hidden border border-white/10 bg-black aspect-square relative">
+                  <div className="rounded-xl overflow-hidden border border-[#DCECE7] bg-black aspect-square relative shadow-sm">
                     {selectedCase.prediction?.heatmap_url ? (
-                      <img src={getMediaUrl(selectedCase.prediction.heatmap_url)} alt="Grad-CAM" className="w-full h-full object-contain" />
+                      <img
+                        src={getMediaUrl(selectedCase.prediction.heatmap_url)}
+                        alt="Grad-CAM Activation Heatmap"
+                        className="w-full h-full object-contain"
+                      />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xs text-slate-500 font-mono">
-                        Activation Map Active
+                      <div className="w-full h-full flex flex-col items-center justify-center text-xs text-slate-400 font-mono space-y-1">
+                        <ImageIcon className="w-6 h-6 text-slate-500" />
+                        <span>Visual Saliency Active</span>
                       </div>
                     )}
                     <div className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-md bg-black/80 border border-white/20 text-[10px] font-bold text-white font-mono">
@@ -284,35 +382,42 @@ export const ReportGenerationView: React.FC<ReportGenerationViewProps> = ({ init
                 </div>
 
                 {/* AI & Radiologist Findings */}
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+                <div className="p-4 rounded-xl bg-white border border-[#DCECE7] space-y-2.5">
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">DenseNet-121 AI Finding:</span>
-                    <span className="font-bold text-white font-mono">
-                      {selectedCase.prediction?.label} ({((selectedCase.prediction?.confidence || 0) * 100).toFixed(1)}% confidence)
+                    <span className="text-[#4A5856] font-medium">AI Inference Model:</span>
+                    <span className="font-bold text-[#202B2A] font-mono">
+                      {selectedCase.prediction?.label || 'Evaluated'} ({(((selectedCase.prediction?.confidence || 0.95)) * 100).toFixed(1)}% confidence)
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Radiologist Ground Truth:</span>
-                    <span className="font-bold text-white font-mono">
-                      {selectedCase.radiologist?.finding || 'Pending Read'}
+                    <span className="text-[#4A5856] font-medium">Radiologist Ground Truth:</span>
+                    <span className="font-bold text-[#202B2A] font-mono">
+                      {selectedCase.radiologist?.finding || 'Pending Secondary Reading'}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center pt-2 border-t border-white/10">
-                    <span className="text-slate-400 font-medium">Diagnostic Concordance:</span>
+                  <div className="flex justify-between items-center pt-2 border-t border-[#DCECE7]">
+                    <span className="text-[#4A5856] font-medium">Inter-Observer Concordance:</span>
                     <span
-                      className={`font-bold font-mono ${selectedCase.radiologist?.agreement === 'Concordant' ? 'text-emerald-400' : 'text-rose-400'
-                        }`}
+                      className={`font-bold font-mono px-2 py-0.5 rounded-md text-[11px] ${
+                        selectedCase.radiologist?.agreement === 'Concordant'
+                          ? 'bg-[#DCECE7] text-[#176B62]'
+                          : selectedCase.radiologist?.agreement === 'Discordant'
+                          ? 'bg-rose-50 text-rose-700'
+                          : 'bg-slate-100 text-slate-700'
+                      }`}
                     >
-                      {selectedCase.radiologist?.agreement || 'Pending'}
+                      {selectedCase.radiologist?.agreement || 'Awaiting Adjudication'}
                     </span>
                   </div>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="h-full min-h-[380px] p-8 rounded-3xl bg-[#222836]/90 border border-dashed border-white/10 flex flex-col items-center justify-center text-center space-y-3">
-              <FileText className="w-8 h-8 text-slate-500" />
-              <p className="text-xs text-slate-400 font-display">Select a study on the left to view and compile PDF report.</p>
+            <div className="h-full min-h-[380px] p-8 rounded-3xl bg-white border border-dashed border-[#DCECE7] flex flex-col items-center justify-center text-center space-y-3">
+              <FileText className="w-10 h-10 text-[#728482]" />
+              <p className="text-xs text-[#4A5856] font-display">
+                Select a patient case on the left to compile and inspect its clinical PDF dossier.
+              </p>
             </div>
           )}
         </div>

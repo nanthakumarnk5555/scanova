@@ -43,6 +43,19 @@ def seed_database(db: Session):
         )
         db.add(radiologist)
 
+    rad_doctor = db.query(User).filter(User.email == "radiology.doctor@scanova.health").first()
+    if not rad_doctor:
+        rad_doctor = User(
+            id=str(uuid.uuid4()),
+            email="radiology.doctor@scanova.health",
+            hashed_password=get_password_hash("Scanova2026!"),
+            full_name="Dr. Julian Reed, Chief Radiologist, MD",
+            role="radiologist",
+            is_active=True,
+            created_at=datetime.now(timezone.utc)
+        )
+        db.add(rad_doctor)
+
     admin = db.query(User).filter(User.email == "admin@scanova.health").first()
     if not admin:
         admin = User(

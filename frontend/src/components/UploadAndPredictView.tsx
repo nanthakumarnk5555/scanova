@@ -24,7 +24,8 @@ import {
   Trash2,
   Cpu,
   Target,
-  Crosshair
+  Crosshair,
+  Download
 } from 'lucide-react';
 import {
   api,
@@ -36,11 +37,13 @@ import {
 interface UploadAndPredictViewProps {
   onNavigateToRadiologist: (imageId: string) => void;
   onNavigateToReports: (imageId: string) => void;
+  userRole?: string;
 }
 
 export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
   onNavigateToRadiologist,
   onNavigateToReports,
+  userRole = 'clinician',
 }) => {
   const [activeModel, setActiveModel] = useState<'pneumonia' | 'bone_crack'>('pneumonia');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -189,16 +192,59 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
     if (isChestHint) {
       currentChosenModel = 'pneumonia';
       setActiveModel('pneumonia');
-      setAutoRouteNotice('🫁 Auto-detected Chest Radiograph: Switched to CheXNet DenseNet-121 (Pneumonia Model)');
+      setAutoRouteNotice('🫁 Auto-detected Chest Radiograph: Switched to CheXNet DenseNet-121 (Chest X-Ray / Pneumonia Model)');
     } else if (isBoneHint) {
       currentChosenModel = 'bone_crack';
       setActiveModel('bone_crack');
-      setAutoRouteNotice('🦴 Auto-detected Skeletal Radiograph: Switched to Trauma ResNet-50 (Bone Crack Model)');
+      setAutoRouteNotice('🦴 Auto-detected Skeletal Radiograph: Switched to Trauma ResNet-50 (Bone Crack / Fracture Model)');
     }
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      setFilePreview(e.target?.result as string);
+      const dataUri = e.target?.result as string;
+      setFilePreview(dataUri);
+
+      // Instant Client-side Anatomical Discriminator
+      try {
+        const imgObj = new Image();
+        imgObj.onload = () => {
+          const cvs = document.createElement('canvas');
+          cvs.width = 64;
+          cvs.height = 64;
+          const ctx = cvs.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(imgObj, 0, 0, 64, 64);
+            const p = ctx.getImageData(0, 0, 64, 64).data;
+            let mLeft = 0, mCenter = 0, mRight = 0;
+            for (let y = 16; y < 44; y++) {
+              for (let x = 8; x < 24; x++) {
+                const idx = (y * 64 + x) * 4;
+                mLeft += (p[idx] + p[idx+1] + p[idx+2]) / 3;
+              }
+              for (let x = 27; x < 37; x++) {
+                const idx = (y * 64 + x) * 4;
+                mCenter += (p[idx] + p[idx+1] + p[idx+2]) / 3;
+              }
+              for (let x = 40; x < 56; x++) {
+                const idx = (y * 64 + x) * 4;
+                mRight += (p[idx] + p[idx+1] + p[idx+2]) / 3;
+              }
+            }
+            mLeft /= (16 * 28);
+            mCenter /= (10 * 28);
+            mRight /= (16 * 28);
+            const hasCentralSpine = (mCenter > mLeft * 1.05) && (mCenter > mRight * 1.05);
+            if (!isBoneHint && (hasCentralSpine || isChestHint)) {
+              setActiveModel('pneumonia');
+              setAutoRouteNotice('🫁 Auto-detected Chest Radiograph: Switched to CheXNet DenseNet-121 (Chest X-Ray / Pneumonia Model)');
+            } else if (isBoneHint || !hasCentralSpine) {
+              setActiveModel('bone_crack');
+              setAutoRouteNotice('🦴 Auto-detected Skeletal Radiograph: Switched to Trauma ResNet-50 (Bone Crack / Fracture Model)');
+            }
+          }
+        };
+        imgObj.src = dataUri;
+      } catch (_) {}
     };
     reader.readAsDataURL(file);
 
@@ -213,12 +259,13 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
         setValidationReason(valRes.reason || 'Verified Medical Radiograph');
 
         const mod = valRes.modality_detected?.toLowerCase() || '';
-        if (isChestHint || mod.includes('chest') || mod.includes('thoracic')) {
-          setActiveModel('pneumonia');
-          setAutoRouteNotice('🫁 Auto-detected Chest Radiograph: Switched to CheXNet DenseNet-121 (Pneumonia Model)');
-        } else if (isBoneHint || mod.includes('skeletal') || mod.includes('bone')) {
+        const recModel = (valRes as any).recommended_model;
+        if (recModel === 'bone_crack' || isBoneHint || mod.includes('skeletal') || mod.includes('bone')) {
           setActiveModel('bone_crack');
-          setAutoRouteNotice('🦴 Auto-detected Skeletal Radiograph: Switched to Trauma ResNet-50 (Bone Crack Model)');
+          setAutoRouteNotice('🦴 Auto-detected Bone Fracture / Skeletal: Switched to Trauma ResNet-50 (Bone Crack Model)');
+        } else if (recModel === 'pneumonia' || isChestHint || mod.includes('chest') || mod.includes('thoracic')) {
+          setActiveModel('pneumonia');
+          setAutoRouteNotice('🫁 Auto-detected Chest Radiograph: Switched to CheXNet DenseNet-121 (Chest X-Ray / Pneumonia Model)');
         }
       } else {
         setValidationStatus('invalid');
@@ -440,18 +487,20 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
 
         {resultImage && (
           <div className="flex items-center space-x-3 flex-shrink-0">
-            <button
-              type="button"
-              onClick={() => onNavigateToRadiologist(resultImage.id)}
-              className="flex items-center space-x-2 px-5 py-2.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 hover:text-slate-900 transition-all shadow-sm cursor-pointer"
-            >
-              <FileCheck2 className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Doctor Review</span>
-            </button>
+            {userRole !== 'clinician' && (
+              <button
+                type="button"
+                onClick={() => onNavigateToRadiologist(resultImage.id)}
+                className="flex items-center space-x-2 px-5 py-2.5 rounded-2xl bg-white hover:bg-[#F5F3EC] border border-[#DCECE7] text-xs font-bold text-[#202B2A] transition-all shadow-sm cursor-pointer"
+              >
+                <FileCheck2 className="w-3.5 h-3.5 text-[#176B62]" />
+                <span>Doctor Review</span>
+              </button>
+            )}
             <button
               type="button"
               onClick={() => onNavigateToReports(resultImage.id)}
-              className="flex items-center space-x-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/25 cursor-pointer"
+              className="flex items-center space-x-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#176B62] to-[#123D3A] text-white text-xs font-bold transition-all shadow-md cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5" />
               <span>PDF Dossier</span>
@@ -1181,6 +1230,60 @@ export const UploadAndPredictView: React.FC<UploadAndPredictViewProps> = ({
                           </p>
                         </div>
                       </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* PATIENT RADIOGRAPH & OFFICIAL REPORT DOWNLOAD ACTION BAR */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-sm">
+                      <Download className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-900 font-display">
+                        Official Case Dossier &amp; Radiograph Export
+                      </p>
+                      <p className="text-[10px] text-slate-600 font-mono">
+                        Accession: {resultImage.accession_number} • De-ID: {resultImage.patient_id_hash}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* 1. Download Patient Radiograph Image */}
+                    <button
+                      type="button"
+                      onClick={() => api.downloadPatientXray(resultImage.id, resultImage.image_url, `Patient_XRay_${resultImage.accession_number}.jpg`)}
+                      className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:border-[#176B62] text-xs font-bold text-slate-700 hover:text-[#176B62] transition-all shadow-sm cursor-pointer"
+                      title="Download the full-resolution patient X-ray image"
+                    >
+                      <Download className="w-3.5 h-3.5 text-[#176B62]" />
+                      <span>Download Patient X-Ray</span>
+                    </button>
+
+                    {/* 2. Download Official Signed PDF Case Report */}
+                    <button
+                      type="button"
+                      onClick={() => api.downloadReportPdf(api.getCasePdfUrl(resultImage.id), `Scanova_Case_Report_${resultImage.accession_number}.pdf`)}
+                      className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#176B62] to-[#123D3A] text-white text-xs font-bold transition-all shadow-md cursor-pointer font-display"
+                      title="Download diagnostic PDF dossier"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-white" />
+                      <span>Download Case PDF</span>
+                    </button>
+
+                    {/* 3. Send to Radiology Doctor Review (DOCTORS ONLY - Hidden for Clinicians per Phase 4) */}
+                    {userRole !== 'clinician' && (
+                      <button
+                        type="button"
+                        onClick={() => onNavigateToRadiologist(resultImage.id)}
+                        className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-white border border-[#DCECE7] hover:border-[#176B62] text-xs font-bold text-[#202B2A] hover:text-[#176B62] transition-all shadow-sm cursor-pointer"
+                        title="Open in Radiology Doctor Ground Truth Workstation"
+                      >
+                        <FileCheck2 className="w-3.5 h-3.5 text-[#176B62]" />
+                        <span>Doctor Adjudication</span>
+                      </button>
                     )}
                   </div>
                 </div>

@@ -6,95 +6,108 @@
 
 :root {
   color-scheme: light;
-  --bg-void: #F8FAFC;
+  --bg-ivory: #F5F3EC;
+  --bg-mint: #DCECE7;
+  --teal-med: #176B62;
+  --teal-deep: #123D3A;
+  --amber-accent: #E1A34C;
+  --text-main: #202B2A;
+  --color-white: #FFFFFF;
+
+  --bg-void: #F5F3EC;
   --surface-card: #FFFFFF;
-  --surface-border: #E2E8F0;
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #64748B;
-  --clinical-blue: #0284C7;
-  --clinical-emerald: #059669;
-  --clinical-teal: #0D9488;
-  --clinical-coral: #E11D48;
-  --clinical-amber: #D97706;
+  --surface-border: #DCECE7;
+  --text-primary: #202B2A;
+  --text-secondary: #4A5856;
+  --text-muted: #728482;
+  --clinical-blue: #176B62;
+  --clinical-emerald: #176B62;
+  --clinical-teal: #176B62;
+  --clinical-coral: #D94848;
+  --clinical-amber: #E1A34C;
 }
 
 body {
   margin: 0;
   padding: 0;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-  background-color: #F8FAFC;
-  color: #0F172A;
+  background-color: #F5F3EC;
+  color: #202B2A;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Clean Medical Grid Background */
+/* Official SCANOVA Clinical Ivory & Mint Grid Background */
 .medical-grid-bg {
-  background-color: #F8FAFC;
+  background-color: #F5F3EC;
   background-image:
-    radial-gradient(circle at 10% 10%, rgba(2, 132, 199, 0.04) 0%, transparent 40%),
-    radial-gradient(circle at 90% 20%, rgba(5, 150, 105, 0.04) 0%, transparent 40%),
-    linear-gradient(to right, rgba(226, 232, 240, 0.6) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
+    radial-gradient(circle at 10% 10%, rgba(23, 107, 98, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 90% 20%, rgba(220, 236, 231, 0.6) 0%, transparent 50%),
+    linear-gradient(to right, rgba(220, 236, 231, 0.7) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(220, 236, 231, 0.7) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
 }
 
-/* Clean Clinical White Cards */
-.glass-card {
+/* Clean Clinical Cards */
+.glass-card,
+.card-clinical {
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  border: 1px solid #DCECE7;
+  box-shadow: 0 4px 20px -2px rgba(18, 61, 58, 0.05), 0 2px 6px -1px rgba(18, 61, 58, 0.03);
   border-radius: 1.25rem;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glass-card:hover {
-  border-color: #CBD5E1;
-  box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.10), 0 4px 10px -2px rgba(15, 23, 42, 0.06);
-  transform: translateY(-1px);
+.glass-card:hover,
+.card-clinical:hover {
+  border-color: #7EBFB4;
+  box-shadow: 0 12px 30px -4px rgba(18, 61, 58, 0.10), 0 4px 12px -2px rgba(18, 61, 58, 0.05);
+  transform: translateY(-2px);
 }
 
 .glass-elevated {
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
-  box-shadow: 0 20px 35px -8px rgba(15, 23, 42, 0.08), 0 6px 16px -4px rgba(15, 23, 42, 0.04);
+  border: 1px solid #DCECE7;
+  box-shadow: 0 20px 40px -8px rgba(18, 61, 58, 0.08), 0 6px 16px -4px rgba(18, 61, 58, 0.04);
   border-radius: 1.5rem;
 }
 
 .glass-dock {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid #E2E8F0;
-  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08);
+  border: 1px solid #DCECE7;
+  box-shadow: 0 10px 30px -5px rgba(18, 61, 58, 0.07);
 }
 
-/* Primary Clinical Action Buttons */
+/* Primary Clinical Action Buttons - Medical Teal to Deep Teal */
 .btn-aidoc-orange,
-.btn-lumina-primary {
-  background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+.btn-lumina-primary,
+.btn-scanova-primary {
+  background: linear-gradient(135deg, #176B62 0%, #123D3A 100%);
   color: #FFFFFF;
   font-weight: 700;
   border-radius: 9999px;
-  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(23, 107, 98, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-aidoc-orange:hover,
-.btn-lumina-primary:hover {
-  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.45);
-  transform: translateY(-1px);
+.btn-lumina-primary:hover,
+.btn-scanova-primary:hover {
+  box-shadow: 0 6px 22px rgba(23, 107, 98, 0.45);
+  transform: translateY(-1.5px);
 }
 
-.btn-lumina-white {
+.btn-lumina-white,
+.btn-scanova-secondary {
   background: #FFFFFF;
-  color: #0F172A;
+  color: #202B2A;
   font-weight: 700;
   border-radius: 9999px;
-  border: 1px solid #CBD5E1;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  border: 1px solid #DCECE7;
+  box-shadow: 0 2px 8px rgba(18, 61, 58, 0.04);
   transition: all 0.2s ease;
 }
 
@@ -172,5 +185,91 @@ body {
 }
 
 .laser-bone-beam-glow {
-  box-shadow: 0 0 16px 4px rgba(234, 88, 12, 0.85), 0 0 32px 8px rgba(249, 115, 22, 0.6);
+  box-shadow: 0 0 16px 4px rgba(225, 163, 76, 0.85), 0 0 32px 8px rgba(225, 163, 76, 0.5);
+}
+
+/* Phase 8 Professional Clinical Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardEntrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.97) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pulseTeal {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(23, 107, 98, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(23, 107, 98, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes gradcamReveal {
+  from {
+    opacity: 0;
+    filter: brightness(0.6) saturate(0.5);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1) saturate(1);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-card-entrance {
+  animation: cardEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-pulse-teal {
+  animation: pulseTeal 2.2s infinite;
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #F5F3EC 25%, #DCECE7 50%, #F5F3EC 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+
+.animate-gradcam-reveal {
+  animation: gradcamReveal 0.6s ease-out forwards;
+}
+
+/* Reduced motion preference respect */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
