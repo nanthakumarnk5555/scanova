@@ -169,71 +169,84 @@ def build_paper():
     add_run(p_title, "SCANOVA : An AI-Powered Clinical Diagnostic & Surveillance System for Automated Radiological Analysis", 
             TITLE_SZ, bold=True)
 
-    # 2. Author Table (3 Columns x 2 Rows)
-    # Exactly ONE Staff: Assistant Professor (Row 1 Col 1)
-    # 5 Students (Row 1 Col 2-3, Row 2 Col 1-3)
-    auth_table = doc.add_table(rows=2, cols=3)
-    auth_table.autofit = True
+    # 2. Author Tables (Row 1: 3 Columns, Row 2: 2 Columns)
+    # 1 Staff (Assistant Professor) + 4 Supporting Authors (B.E. CSE Students)
+    auth_table1 = doc.add_table(rows=1, cols=3)
+    auth_table1.autofit = True
 
-    authors = [
-        # (Row 0, Col 0) - Staff
-        (0, 0, [
-            ("Dr./Mrs. Staff Name", True, False),
+    authors_row1 = [
+        # (Col 0) - Staff / Corresponding Author
+        (0, [
+            ("Mrs. M. Yogadharani", True, False),
             ("Assistant Professor", False, True),
             ("Department of Computer Science and Engineering", False, False),
-            ("Panimalar Engineering College", False, False),
-            ("Chennai , India", False, False),
-            ("staff.cse@panimalar.ac.in", False, False)
+            ("SNS College of Engineering", False, False),
+            ("Coimbatore , India", False, False),
+            ("yogadharani.m.cse@snsce.ac.in", False, False)
         ]),
-        # (Row 0, Col 1) - Student 1
-        (0, 1, [
-            ("Student Name 1", True, False),
-            ("B.E. CSE Student", False, False),
+        # (Col 1) - Student 1
+        (1, [
+            ("M. Nanthakumar", True, False),
+            ("Student", False, False),
             ("Department of Computer Science and Engineering", False, False),
-            ("Panimalar Engineering College", False, False),
-            ("Chennai , India", False, False),
-            ("student1.cse@gmail.com", False, False)
+            ("SNS College of Engineering", False, False),
+            ("Coimbatore , India", False, False),
+            ("nanthakumarnk5555@gmail.com", False, False)
         ]),
-        # (Row 0, Col 2) - Student 2
-        (0, 2, [
-            ("Student Name 2", True, False),
-            ("B.E. CSE Student", False, False),
+        # (Col 2) - Student 2
+        (2, [
+            ("A. Risikash", True, False),
+            ("Student", False, False),
             ("Department of Computer Science and Engineering", False, False),
-            ("Panimalar Engineering College", False, False),
-            ("Chennai , India", False, False),
-            ("student2.cse@gmail.com", False, False)
-        ]),
-        # (Row 1, Col 0) - Student 3
-        (1, 0, [
-            ("Student Name 3", True, False),
-            ("B.E. CSE Student", False, False),
-            ("Department of Computer Science and Engineering", False, False),
-            ("Panimalar Engineering College", False, False),
-            ("Chennai , India", False, False),
-            ("student3.cse@gmail.com", False, False)
-        ]),
-        # (Row 1, Col 1) - Student 4
-        (1, 1, [
-            ("Student Name 4", True, False),
-            ("B.E. CSE Student", False, False),
-            ("Department of Computer Science and Engineering", False, False),
-            ("Panimalar Engineering College", False, False),
-            ("Chennai , India", False, False),
-            ("student4.cse@gmail.com", False, False)
-        ]),
-        # (Row 1, Col 2) - Student 5
-        (1, 2, [
-            ("Student Name 5", True, False),
-            ("B.E. CSE Student", False, False),
-            ("Department of Computer Science and Engineering", False, False),
-            ("Panimalar Engineering College", False, False),
-            ("Chennai , India", False, False),
-            ("student5.cse@gmail.com", False, False)
+            ("SNS College of Engineering", False, False),
+            ("Coimbatore , India", False, False),
+            ("risikash.cse@gmail.com", False, False)
         ])
     ]
 
-    for r, c, lines in authors:
-        cell = auth_table.cell(r, c)
+    for c, lines in authors_row1:
+        cell = auth_table1.cell(0, c)
+        cell.text = ""
+        p = cell.paragraphs[0]
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.paragraph_format.space_before = Pt(2)
+        p.paragraph_format.space_after = Pt(2)
+        p.paragraph_format.line_spacing = Pt(9.5)
+        for text, bold, italic in lines:
+            add_run(p, text + "\n", AUTHOR_NAME_SZ if bold else AUTHOR_DETAIL_SZ, bold=bold, italic=italic)
+
+    # Gap between author rows
+    p_row_gap = doc.add_paragraph()
+    p_row_gap.paragraph_format.space_before = Pt(2)
+    p_row_gap.paragraph_format.space_after = Pt(2)
+
+    # Row 2 Table (2 Columns)
+    auth_table2 = doc.add_table(rows=1, cols=2)
+    auth_table2.autofit = True
+
+    authors_row2 = [
+        # (Col 0) - Student 3
+        (0, [
+            ("N. Yashwanth", True, False),
+            ("Student", False, False),
+            ("Department of Computer Science and Engineering", False, False),
+            ("SNS College of Engineering", False, False),
+            ("Coimbatore , India", False, False),
+            ("yashwanth.cse@gmail.com", False, False)
+        ]),
+        # (Col 1) - Student 4
+        (1, [
+            ("E. Sanjith", True, False),
+            ("Student", False, False),
+            ("Department of Computer Science and Engineering", False, False),
+            ("SNS College of Engineering", False, False),
+            ("Coimbatore , India", False, False),
+            ("sanjith.cse@gmail.com", False, False)
+        ])
+    ]
+
+    for c, lines in authors_row2:
+        cell = auth_table2.cell(0, c)
         cell.text = ""
         p = cell.paragraphs[0]
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
